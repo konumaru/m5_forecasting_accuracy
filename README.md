@@ -23,12 +23,14 @@ Estimate the unit sales of Walmart retail goods.
 ## Commands
 
 - 次の実験用ディレクトリの作成
+
 ```
 $ pipenv run invoke CreateNewExperiment
 ```
 
 - データサイズの軽量化
   - 注）入力データのファイル名はハードコードすること。
+
 ```
 $ pipenv run invoke ReduceDataSize
 ```
