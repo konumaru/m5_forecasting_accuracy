@@ -41,11 +41,10 @@ def CreateNewExperiment(c):
 @invoke.task
 def ReduceDataSize(c):
     SRC_FILES = [
+        'calendar.csv',
+        'sales_train_validation.csv',
         'sample_submission.csv',
-        'specs.csv',
-        'test.csv',
-        'train_labels.csv',
-        'train.csv'
+        'sell_prices.csv'
     ]
 
     def reduce_mem_usage(df, verbose=True):
@@ -83,5 +82,6 @@ def ReduceDataSize(c):
         raw_df = pd.read_csv('./data/raw/' + src_file)
         reduced_df = reduce_mem_usage(raw_df)
         # Export
+        os.makedirs('./data/reduced/', exist_ok=True)
         filename = src_file.split('.')[0]
         reduced_df.to_pickle('./data/reduced/' + filename + '.pkl')
