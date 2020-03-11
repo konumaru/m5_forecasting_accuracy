@@ -19,6 +19,10 @@ matplotlib = "*"
 tqdm = "*"
 joblib = "*"
 numba = "*"
+torch = "*"
+torchvision = "*"
+beautifulsoup4 = "*"
+pytorch-ignite = "*"
 
 [requires]
 python_version = "3.8"
