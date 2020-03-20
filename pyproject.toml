@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "m5_forecasting_accuracy"
+version = "0.1.0"
+description = ""
+authors = ["Rui Konuma <17187586+louis1022@users.noreply.github.com>"]
+readme = "README.md"
+packages = [
+    { include = "test.py" },
+]
+
+[tool.poetry.scripts]
+hello = "tasks:hello"
+new-exp = "tasks:CreateNewExperiment"
+reduce-data = "tasks:ReduceData"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+numpy = "^1.18.2"
+pandas = "^1.0.3"
+sklearn = "^0.0"
+lightgbm = "^2.3.1"
+xgboost = "^1.0.2"
+catboost = "^0.22"
+seaborn = "^0.10.0"
+jupyterlab = "^2.0.1"
+ipywidgets = "^7.5.1"
+matplotlib = "^3.2.1"
+tqdm = "^4.43.0"
+joblib = "^0.14.1"
+numba = "^0.48.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

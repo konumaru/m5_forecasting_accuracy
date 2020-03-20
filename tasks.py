@@ -1,5 +1,3 @@
-import invoke
-
 import os
 import re
 
@@ -7,13 +5,11 @@ import numpy as np
 import pandas as pd
 
 
-@invoke.task
-def hello(c):
-    invoke.run('echo "hello invoke!"')
+def hello():
+    print("Hello Poetry !!")
 
 
-@invoke.task
-def CreateNewExperiment(c):
+def CreateNewExperiment():
     def get_version_num(dir_name: str):
         match = re.match(r'v(\d{2})\d{3}', dir_name)
         if match:
@@ -27,19 +23,16 @@ def CreateNewExperiment(c):
     new_exp_path = 'v' + next_version.zfill(2) + '000'
 
     try:
-        # folderの作成
-        os.mkdir(new_exp_path)
-        # version_ref.mdの作成
-        with open(os.path.join(new_exp_path, 'version_ref.md'), 'w') as f:
+        os.mkdir(new_exp_path)  # folderの作成
+        with open(os.path.join(new_exp_path, 'version_ref.md'), 'w') as f:  # version_ref.mdの作成
             f.write('# Version Reference')
 
-        invoke.run(f'echo "Create {new_exp_path} Experiment Directory"')
+        print(f'Create {new_exp_path} Experiment Directory')
     except FileExistsError as err:
-        invoke.run(f'echo "{err}"')
+        print(err)
 
 
-@invoke.task
-def ReduceDataSize(c):
+def ReduceData():
     SRC_FILES = [
         'calendar.csv',
         'sales_train_validation.csv',
