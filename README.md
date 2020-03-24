@@ -14,10 +14,26 @@ Estimate the unit sales of Walmart retail goods.
   - submit: サブミッションデータを格納
 - docs: 雑多なメモ
 - notebook: コンペ全体で扱うnotebook
-- vXXXXX: 
+- vXXXXX:
   - features: 加工の特徴量を格納
   - notebook: 試行錯誤中のスクリプトを格納
   - script.py: notebookから吐き出したスクリプトなど。
+
+
+## GCP Commands
+
+start instance
+
+```
+$ gcloud compute instances start kaggle-instance
+```
+
+
+stop instance
+```
+$ gcloud compute instances stop kaggle-instance
+```
+
 
 
 ## Commands
@@ -25,12 +41,12 @@ Estimate the unit sales of Walmart retail goods.
 - 次の実験用ディレクトリの作成
 
 ```
-$ pipenv run invoke CreateNewExperiment
+$ poetry run new-exp
 ```
 
 - データサイズの軽量化
   - 注）入力データのファイル名はハードコードすること。
 
 ```
-$ pipenv run invoke ReduceDataSize
+$ poetry run reduce-data
 ```
