@@ -165,6 +165,7 @@ def create_features(df, filename, use_cache=True):
 
     PRED_INTERVAL = 28
     id_grouped = df.groupby('id')
+
     # Shift Features
     shift_cols = ['sales', 'sell_price']
     shift_size = [0, 1, 2, 3, 5, 7, 14, 28]
@@ -172,28 +173,38 @@ def create_features(df, filename, use_cache=True):
         size = PRED_INTERVAL + size
         col_name = [f'shifted_{c}_t{size}' for c in shift_cols]
         df[col_name] = id_grouped[shift_cols].shift(size)
+
     # Rolling Features
+    def add_rolling_feature(df, grouped, roll_cols, roll_size, agg_funcs):
+        PRED_INTERVAL = 28
+        if isinstance(agg_funcs, dict):
+            agg_func_name = agg_funcs.keys()
+            agg_func = agg_funcs.values()
+        else:
+            agg_func_name = agg_funcs
+
+        for size in tqdm(roll_size):
+            col_name = [f'{c}_{f.upper()}_rolling_t{size}' for f in agg_funcs for c in roll_cols]
+            roll_temp = grouped[rolling_cols].shift(PRED_INTERVAL).rolling(size).agg(agg_funcs)
+            roll_temp.columns = col_name
+            df = pd.concat([df, roll_temp], axis=1)
+        return df.dropna(axis=1)
+
     rolling_cols = ['sales', 'sell_price']
+
     rolling_size = [3, 7, 14, 30, 60, 180]
     agg_funcs = ['mean', 'std', 'sum', 'min', 'max']
-    for size in tqdm(rolling_size):
-        col_name = [f'{roll_col}_{c.upper()}_rolling_t{size}' for c in agg_funcs
-                    for roll_col in rolling_cols]
-        df[col_name] = id_grouped.shift(PRED_INTERVAL).rolling(size).agg(agg_funcs)
+    df = add_rolling_feature(df, id_grouped, rolling_cols, rolling_size, agg_funcs)
 
     rolling_size = [30, 60, 180]
     agg_funcs = ['skew', 'kurt']
-    for size in tqdm(rolling_size):
-        col_name = [f'{roll_col}_{c.upper()}_rolling_t{size}' for c in agg_funcs
-                    for roll_col in rolling_cols]
-        df[col_name] = id_grouped.shift(PRED_INTERVAL).rolling(size).agg(agg_funcs)
+    df = add_rolling_feature(df, id_grouped, rolling_cols, rolling_size, agg_funcs)
 
-    slope_func = lambda x: linregress(np.arange(len(x)), x)[0]
     rolling_size = [7, 30]
-    for size in tqdm(rolling_size):
-        col_name = [f'{roll_col}_SLOPE_rolling_t{size}' for roll_col in rolling_cols]
-        df[col_name] = id_grouped.shift(PRED_INTERVAL).rolling(size).agg(slope_func)
+    agg_funcs = {'slope': lambda x: linregress(np.arange(len(x)), x)[0]}
+    df = add_rolling_feature(df, id_grouped, rolling_cols, rolling_size, agg_funcs)
 
+    df.dropna(axis=0, inplace=True)
     df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
     return df
@@ -306,7 +317,7 @@ def main():
     del calendar, sell_prices, test; gc.collect()
 
     print('\n--- Create Features ---\n')
-    train = create_features(train, filename='train_created_feature', use_cache=True)
+    train = create_features(train, filename='train_created_feature', use_cache=False)
 
     print(train.shape)
     print(train.head())
