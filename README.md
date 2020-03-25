@@ -34,6 +34,11 @@ stop instance
 $ gcloud compute instances stop kaggle-instance
 ```
 
+Copy local files to Instance.
+```
+$ scp -r data/ rui@gce-kaggle:m5_forecasting_accuracy/
+```
+
 
 
 ## Commands
