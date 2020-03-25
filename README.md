@@ -34,6 +34,11 @@ stop instance
 $ gcloud compute instances stop "kaggle-instance" --zone "us-central1-a" --project "lofty-totality-272106"
 ```
 
+Copy local files to Instance.
+```
+$ scp -r data/ rui@gce-kaggle:m5_forecasting_accuracy/
+```
+
 
 
 ## Commands
