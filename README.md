@@ -25,13 +25,13 @@ Estimate the unit sales of Walmart retail goods.
 start instance
 
 ```
-$ gcloud compute instances start kaggle-instance
+$ gcloud compute instances start "kaggle-instance" --zone "us-central1-a" --project "lofty-totality-272106"
 ```
 
 
 stop instance
 ```
-$ gcloud compute instances stop kaggle-instance
+$ gcloud compute instances stop "kaggle-instance" --zone "us-central1-a" --project "lofty-totality-272106"
 ```
 
 Copy local files to Instance.
