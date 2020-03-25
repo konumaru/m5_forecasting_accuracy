@@ -5,7 +5,7 @@ description = ""
 authors = ["Rui Konuma <17187586+louis1022@users.noreply.github.com>"]
 readme = "README.md"
 packages = [
-    { include = "test.py" },
+    { include = "tasks.py" },
 ]
 
 [tool.poetry.scripts]
