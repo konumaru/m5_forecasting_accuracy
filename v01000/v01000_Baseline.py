@@ -146,6 +146,49 @@ def melt_data(df, calendar, sell_prices, encode_maps, filepath, use_cache=True):
 
 
 # Create Features
+def add_sales_features(df):
+    DAYS_PRED = 28
+    col = 'sales'
+    grouped_df = df.groupby(["id"])[col]
+
+    for diff in [0, 1, 2]:
+        shift = DAYS_PRED + diff
+        df[f"{col}_shift_t{shift}"] = grouped_df.transform(lambda x: x.shift(shift))
+
+    for window in [7, 30, 60, 90, 180]:
+        df[f"{col}_rolling_STD_t{window}"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(window).std())
+
+    for window in [7, 30, 60, 90, 180]:
+        df[f"{col}rolling_MEAN_t{window}"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(window).mean())
+
+    for window in [7, 30, 60]:
+        df[f"{col}rolling_MIN_t{window}"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(window).min())
+
+    for window in [7, 30, 60]:
+        df[f"{col}rolling_MAX_t{window}"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(window).max())
+
+    df[f"{col}rolling_SKEW_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).skew())
+    df[f"{col}rolling_KURT_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).kurt())
+
+    slope_func = lambda x: linregress(np.arange(len(x)), x)[0]
+    df[f"{col}rolling_SLOPE_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).slope_func())
+    return df
+
+
+def add_price_features(df):
+    col = 'sell_price'
+    grouped_df = df.groupby(["id"])[col]
+    df[f"{col}_shift_price_t1"] = grouped_df.transform(lambda x: x.shift(1))
+    df[f"{col}_rolling_price_MAX_t365"] = grouped_df.transform(lambda x: x.shift(1).rolling(365).max())
+
+    df[f"{col}__change_t1"] = (df[f"{col}_shift_price_t1"] - df[col]) / (df[f"{col}_shift_price_t1"])
+    df[f"{col}__change_t365"] = (df[f"{col}_rolling_price_MAX_t365"] - df[col]
+                                 ) / (df[f"{col}_rolling_price_MAX_t365"])
+    df[f"{col}_rolling_price_std_t7"] = grouped_df.transform(lambda x: x.rolling(7).std())
+    df[f"{col}_rolling_price_std_t30"] = grouped_df.transform(lambda x: x.rolling(30).std())
+    return df.drop([f"{col}_rolling_price_MAX_t365", f"{col}_shift_price_t1"], axis=1)
+
+
 def create_features(df, filename, use_cache=True):
     '''
     # TODO
@@ -175,37 +218,10 @@ def create_features(df, filename, use_cache=True):
         df[col_name] = id_grouped[shift_cols].shift(size)
 
     # Rolling Features
-    def add_rolling_feature(df, grouped, roll_cols, roll_size, agg_funcs):
-        PRED_INTERVAL = 28
-        if isinstance(agg_funcs, dict):
-            agg_func_name = agg_funcs.keys()
-            agg_func = agg_funcs.values()
-        else:
-            agg_func_name = agg_funcs
-
-        for size in tqdm(roll_size):
-            col_name = [f'{c}_{f.upper()}_rolling_t{size}' for f in agg_funcs for c in roll_cols]
-            roll_temp = grouped[rolling_cols].shift(PRED_INTERVAL).rolling(size).agg(agg_funcs)
-            roll_temp.columns = col_name
-            df = pd.concat([df, roll_temp], axis=1)
-        return df.dropna(axis=1)
-
-    rolling_cols = ['sales', 'sell_price']
-
-    rolling_size = [3, 7, 14, 30, 60, 180]
-    agg_funcs = ['mean', 'std', 'sum', 'min', 'max']
-    df = add_rolling_feature(df, id_grouped, rolling_cols, rolling_size, agg_funcs)
-
-    rolling_size = [30, 60, 180]
-    agg_funcs = ['skew', 'kurt']
-    df = add_rolling_feature(df, id_grouped, rolling_cols, rolling_size, agg_funcs)
-
-    rolling_size = [7, 30]
-    agg_funcs = {'slope': lambda x: linregress(np.arange(len(x)), x)[0]}
-    df = add_rolling_feature(df, id_grouped, rolling_cols, rolling_size, agg_funcs)
+    df = add_sales_features(df).pipe(reduce_mem_usage)
+    df = add_price_features(df).pipe(reduce_mem_usage)
 
     df.dropna(axis=0, inplace=True)
-    df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
     return df
 
@@ -329,8 +345,8 @@ def main():
         "test_days": 28,
         "dt_col": 'date',
     }
-    cv = CustomTimeSeriesSplitter(**cv_params)
-    plot_cv_indices(cv, train.iloc[::1000][['date']].reset_index(drop=True), None, 'date')
+    # cv = CustomTimeSeriesSplitter(**cv_params)
+    # plot_cv_indices(cv, train.iloc[::1000][['date']].reset_index(drop=True), None, 'date')
     # TODO:
     # - dataをtrain, validation, evaluation, （今回のみの）submissionに分ける。
     # - LightGBMで学習する。

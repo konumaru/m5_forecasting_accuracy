@@ -15,7 +15,6 @@ sudo apt install -y libncursesw5-dev
 sudo apt install -y xz-utils
 sudo apt install -y tk-dev
 sudo apt install -y libffi-dev
-sudo apt install -y liblzma-dev
 sudo apt install -y libssl-dev # openssl
 
 # Install pyenv
