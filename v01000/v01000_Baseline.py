@@ -60,15 +60,9 @@ def reduce_mem_usage(df, verbose=True):
                 elif c_min > np.iinfo(np.int64).min and c_max < np.iinfo(np.int64).max:
                     df[col] = df[col].astype(np.int64)
             else:
-                if (
-                    c_min > np.finfo(np.float16).min
-                    and c_max < np.finfo(np.float16).max
-                ):
+                if c_min > np.finfo(np.float16).min and c_max < np.finfo(np.float16).max:
                     df[col] = df[col].astype(np.float16)
-                elif (
-                    c_min > np.finfo(np.float32).min
-                    and c_max < np.finfo(np.float32).max
-                ):
+                elif c_min > np.finfo(np.float32).min and c_max < np.finfo(np.float32).max:
                     df[col] = df[col].astype(np.float32)
                 else:
                     df[col] = df[col].astype(np.float64)
@@ -76,12 +70,13 @@ def reduce_mem_usage(df, verbose=True):
     if verbose:
         print(
             "Mem. usage decreased to {:5.2f} Mb ({:.1f}% reduction)".format(
-                end_mem, 100 * (start_mem - end_mem) / start_mem)
+                end_mem, 100 * (start_mem - end_mem) / start_mem
+            )
         )
     return df
 
 
-def encode_calendar(df, filename, use_cache=True):
+def encode_calendar(df, filename='encoded_calendar', use_cache=True):
     filepath = f'features/{filename}.pkl'
 
     if use_cache and os.path.exists(filepath):
@@ -139,39 +134,60 @@ def melt_data(df, calendar, sell_prices, encode_maps, filepath, use_cache=True):
     df = pd.merge(df, calendar, how='left', on='d')
     df = pd.merge(df, sell_prices, how='left', on=['store_id', 'item_id', 'wm_yr_wk'])
     # MEMO: sell_price を直近価格で過去の値を埋める。
-    df['sell_price'] = df.groupby('item_id')['sell_price'].bfill()
+    # df['sell_price'] = df.groupby('item_id')['sell_price'].bfill()
     df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
     return df
 
 
 # Create Features
+#     print('')
+#     print('\tADD Roll SLOPE Feature', end='')
+#     slope_func = lambda x: linregress(np.arange(len(x)), x)[0]
+#     df[f"{col}rolling_SLOPE_t30"] = grouped_df.transform(
+#           lambda x: x.shift(DAYS_PRED).rolling(30).agg(slope_func))
 def add_sales_features(df):
+    print('Create sales Features: ')
     DAYS_PRED = 28
     col = 'sales'
     grouped_df = df.groupby(["id"])[col]
-
+    print('\tAdd Shift Feature', end='')
     for diff in [0, 1, 2]:
+        print(f' {diff}', end='')
         shift = DAYS_PRED + diff
         df[f"{col}_shift_t{shift}"] = grouped_df.transform(lambda x: x.shift(shift))
 
+    print('')
+    print('\tADD Roll STD Feature', end='')
     for window in [7, 30, 60, 90, 180]:
+        print(f' {window}', end='')
         df[f"{col}_rolling_STD_t{window}"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(window).std())
 
+    print('')
+    print('\tADD Roll MEAN Feature', end='')
     for window in [7, 30, 60, 90, 180]:
+        print(f' {window}', end='')
         df[f"{col}rolling_MEAN_t{window}"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(window).mean())
 
+    print('')
+    print('\tADD Roll MIN Feature', end='')
     for window in [7, 30, 60]:
+        print(f' {window}', end='')
         df[f"{col}rolling_MIN_t{window}"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(window).min())
 
+    print('')
+    print('\tADD Roll MAX Feature', end='')
     for window in [7, 30, 60]:
+        print(f' {window}', end='')
         df[f"{col}rolling_MAX_t{window}"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(window).max())
 
+    print('')
+    print('\tADD Roll SKEW and KURT Feature', end='')
     df[f"{col}rolling_SKEW_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).skew())
     df[f"{col}rolling_KURT_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).kurt())
 
-    slope_func = lambda x: linregress(np.arange(len(x)), x)[0]
-    df[f"{col}rolling_SLOPE_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).slope_func())
+    print('')
+    print('\tAll Feature Created')
     return df
 
 
@@ -204,22 +220,10 @@ def create_features(df, filename, use_cache=True):
     filepath = f'features/{filename}.pkl'
 
     if use_cache and os.path.exists(filepath):
-        return pd.read_pickle(filepath)
+        return pd.read_pickle(filepath)\
 
-    PRED_INTERVAL = 28
-    id_grouped = df.groupby('id')
-
-    # Shift Features
-    shift_cols = ['sales', 'sell_price']
-    shift_size = [0, 1, 2, 3, 5, 7, 14, 28]
-    for size in tqdm(shift_size):
-        size = PRED_INTERVAL + size
-        col_name = [f'shifted_{c}_t{size}' for c in shift_cols]
-        df[col_name] = id_grouped[shift_cols].shift(size)
-
-    # Rolling Features
     df = add_sales_features(df).pipe(reduce_mem_usage)
-    df = add_price_features(df).pipe(reduce_mem_usage)
+    # df = add_price_features(df).pipe(reduce_mem_usage)
 
     df.dropna(axis=0, inplace=True)
     df.to_pickle(filepath)
@@ -326,9 +330,9 @@ def main():
     encode_maps = {col: {label: i for i, label in enumerate(sorted(train[col].unique()))}
                    for col in categorical_cols}
     train = melt_data(train, calendar, sell_prices, encode_maps,
-                      filepath='melted_train', use_cache=True)
+                      filepath='melted_train', use_cache=False)
     test = melt_data(test, calendar, sell_prices, encode_maps,
-                     filepath='melted_test', use_cache=True)
+                     filepath='melted_test', use_cache=False)
 
     del calendar, sell_prices, test; gc.collect()
 
