@@ -38,8 +38,7 @@ def CreateNewExperiment():
                 os.makedirs(dir_path, exist_ok=True)
 
     check_dir_exist(dirs=[
-        'features', 'submit',
-        'result/importance', 'result/scores', 'result/cv_split'
+        'features', 'submit', 'result/importance', 'result/cv_split'
     ])
 
 
