@@ -22,14 +22,25 @@ def CreateNewExperiment():
     next_version = str(max(versions) + 1)
     new_exp_path = 'v' + next_version.zfill(2) + '000'
 
-    try:
-        os.mkdir(new_exp_path)  # folderの作成
-        with open(os.path.join(new_exp_path, 'version_ref.md'), 'w') as f:  # version_ref.mdの作成
-            f.write('# Version Reference')
+    os.makedirs(new_exp_path, exist_ok=True)
 
-        print(f'Create {new_exp_path} Experiment Directory')
-    except FileExistsError as err:
-        print(err)
+    with open(os.path.join(new_exp_path, 'version_ reference.md'), 'w') as f:
+        f.write('# Version Reference')
+    print(f'Create {new_exp_path} Experiment Directory')
+
+    def check_dir_exist(dirs):
+        for path in dirs:
+            if os.path.exists(path):
+                continue
+            else:
+                dir_path = os.path.join(new_exp_path, path)
+                print(f'{dir_path} is not exist, so create it.')
+                os.makedirs(dir_path, exist_ok=True)
+
+    check_dir_exist(dirs=[
+        'features', 'submit',
+        'result/importance', 'result/scores', 'result/cv_split'
+    ])
 
 
 def ReduceData():

@@ -49,15 +49,6 @@ def read_data():
     return dst_data.values()
 
 
-def check_dir_exist(dirs):
-    for path in dirs:
-        if os.path.exists(path):
-            continue
-        else:
-            print(f'{path} is not exist, so create it.')
-            os.makedirs(path, exist_ok=True)
-
-
 '''Transform Data
 '''
 
@@ -574,11 +565,6 @@ class WRMSSEEvaluator(object):
 
 
 def main():
-    check_dir_exist(dirs=[
-        'features', 'submit',
-        'result/importance', 'result/scores', 'result/cv_split'
-    ])
-
     print('\n--- Load Data ---\n')
     # TODO: sales_train_evaluation.csv が公開されたらtestに代入
     calendar, submission, train, sell_prices = read_data()
