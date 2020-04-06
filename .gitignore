@@ -5,9 +5,7 @@
 *.feather
 *.pkl
 .vscode/
-!submit/*.csv.gz
-*.csv.gz
-*.gz
+!*.csv.gz
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
