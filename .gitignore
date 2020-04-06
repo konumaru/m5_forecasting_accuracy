@@ -6,6 +6,7 @@
 *.pkl
 .vscode/
 *.csv.gz
+!submit/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
