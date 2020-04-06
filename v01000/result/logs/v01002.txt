@@ -1,0 +1,46 @@
+/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/compat/__init__.py:117: UserWarning: Could not import the lzma module. Your installed Python is incomplete. Attempting to use lzma compression will result in a RuntimeError.
+  warnings.warn(msg)
+
+--- Load Data ---
+
+Reading calendar ....
+Reading sample_submission ....
+Reading sales_train_validation ....
+Reading sell_prices ....
+
+--- Transform Data ---
+
+Train DataFrame: (59181090, 30)
+                              id  item_id  ...  is_weekend  sell_price
+0  HOBBIES_1_001_CA_1_validation     1437  ...           1         NaN
+1  HOBBIES_1_002_CA_1_validation     1438  ...           1         NaN
+2  HOBBIES_1_003_CA_1_validation     1439  ...           1         NaN
+3  HOBBIES_1_004_CA_1_validation     1440  ...           1         NaN
+4  HOBBIES_1_005_CA_1_validation     1441  ...           1         NaN
+
+[5 rows x 30 columns]
+
+--- Feature Engineering ---
+
+Mem. usage decreased to 6264.78 Mb (0.0% reduction)
+Mem. usage decreased to 6716.30 Mb (0.0% reduction)
+Mem. usage decreased to 6829.18 Mb (0.0% reduction)
+Train DataFrame: (52839170, 59)
+                              id  ...    weight
+0  HOBBIES_1_001_CA_1_validation  ...  0.000000
+1  HOBBIES_1_002_CA_1_validation  ...  0.285645
+2  HOBBIES_1_003_CA_1_validation  ...  0.000000
+3  HOBBIES_1_004_CA_1_validation  ...  0.785645
+4  HOBBIES_1_005_CA_1_validation  ...  0.428467
+
+[5 rows x 59 columns]
+
+--- Train Model ---
+Cross Validation Parameters:
+{'n_splits': 5, 'train_days': 730, 'test_days': 90, 'dt_col': 'date'}
+model parameters:
+{'boosting_type': 'gbdt', 'metric': 'None', 'objective': 'poisson', 'seed': 11, 'learning_rate': 0.3, 'max_depth': 5, 'num_leaves': 32, 'min_data_in_leaf': 50, 'bagging_fraction': 0.8, 'bagging_freq': 10, 'feature_fraction': 0.8, 'verbosity': -1}
+
+Fold: (1 / 5)
+
+Training until validation scores don't improve for 50 rounds
