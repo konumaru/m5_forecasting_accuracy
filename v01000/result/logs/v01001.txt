@@ -1,0 +1,113 @@
+
+--- Load Data ---
+
+Reading calendar ....
+Reading sample_submission ....
+Reading sales_train_validation ....
+Reading sell_prices ....
+
+--- Transform Data ---
+
+Train DataFrame: (59181090, 30)
+                              id  item_id  ...  is_weekend  sell_price
+0  HOBBIES_1_001_CA_1_validation     1437  ...           1         NaN
+1  HOBBIES_1_002_CA_1_validation     1438  ...           1         NaN
+2  HOBBIES_1_003_CA_1_validation     1439  ...           1         NaN
+3  HOBBIES_1_004_CA_1_validation     1440  ...           1         NaN
+4  HOBBIES_1_005_CA_1_validation     1441  ...           1         NaN
+
+[5 rows x 30 columns]
+
+--- Feature Engineering ---
+
+Mem. usage decreased to 6264.78 Mb (0.0% reduction)
+Mem. usage decreased to 6716.30 Mb (0.0% reduction)
+Mem. usage decreased to 6829.18 Mb (0.0% reduction)
+Train DataFrame: (52839170, 59)
+                              id  ...    weight
+0  HOBBIES_1_001_CA_1_validation  ...  0.000000
+1  HOBBIES_1_002_CA_1_validation  ...  0.285645
+2  HOBBIES_1_003_CA_1_validation  ...  0.000000
+3  HOBBIES_1_004_CA_1_validation  ...  0.785645
+4  HOBBIES_1_005_CA_1_validation  ...  0.428467
+
+[5 rows x 59 columns]
+
+--- Train Model ---
+
+---------- Fold: (1 / 5) ----------
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's WRMSLE: 0.649024	valid's WRMSLE: 0.651395
+[200]	train's WRMSLE: 0.644598	valid's WRMSLE: 0.650297
+[300]	train's WRMSLE: 0.642094	valid's WRMSLE: 0.649979
+Early stopping, best iteration is:
+[277]	train's WRMSLE: 0.642514	valid's WRMSLE: 0.649814
+
+---------- Fold: (2 / 5) ----------
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's WRMSLE: 0.64682	valid's WRMSLE: 0.638162
+[200]	train's WRMSLE: 0.643182	valid's WRMSLE: 0.634845
+[300]	train's WRMSLE: 0.64053	valid's WRMSLE: 0.632611
+[400]	train's WRMSLE: 0.638699	valid's WRMSLE: 0.631971
+[500]	train's WRMSLE: 0.637409	valid's WRMSLE: 0.631058
+Early stopping, best iteration is:
+[521]	train's WRMSLE: 0.637007	valid's WRMSLE: 0.630629
+
+---------- Fold: (3 / 5) ----------
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's WRMSLE: 0.639979	valid's WRMSLE: 0.642895
+[200]	train's WRMSLE: 0.636727	valid's WRMSLE: 0.640574
+[300]	train's WRMSLE: 0.634568	valid's WRMSLE: 0.638443
+[400]	train's WRMSLE: 0.632815	valid's WRMSLE: 0.637169
+[500]	train's WRMSLE: 0.631231	valid's WRMSLE: 0.636078
+[600]	train's WRMSLE: 0.630221	valid's WRMSLE: 0.635356
+[700]	train's WRMSLE: 0.629192	valid's WRMSLE: 0.63444
+[800]	train's WRMSLE: 0.62839	valid's WRMSLE: 0.633795
+Early stopping, best iteration is:
+[838]	train's WRMSLE: 0.628025	valid's WRMSLE: 0.633373
+
+---------- Fold: (4 / 5) ----------
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's WRMSLE: 0.632431	valid's WRMSLE: 0.607274
+[200]	train's WRMSLE: 0.628786	valid's WRMSLE: 0.60452
+[300]	train's WRMSLE: 0.626476	valid's WRMSLE: 0.602627
+[400]	train's WRMSLE: 0.624938	valid's WRMSLE: 0.60148
+[500]	train's WRMSLE: 0.623578	valid's WRMSLE: 0.600652
+[600]	train's WRMSLE: 0.622401	valid's WRMSLE: 0.600136
+[700]	train's WRMSLE: 0.62142	valid's WRMSLE: 0.599721
+[800]	train's WRMSLE: 0.620521	valid's WRMSLE: 0.599307
+[900]	train's WRMSLE: 0.619837	valid's WRMSLE: 0.599157
+Early stopping, best iteration is:
+[860]	train's WRMSLE: 0.620048	valid's WRMSLE: 0.599046
+
+---------- Fold: (5 / 5) ----------
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's WRMSLE: 0.62107	valid's WRMSLE: 0.603752
+[200]	train's WRMSLE: 0.617979	valid's WRMSLE: 0.602134
+[300]	train's WRMSLE: 0.61601	valid's WRMSLE: 0.601162
+[400]	train's WRMSLE: 0.614538	valid's WRMSLE: 0.600575
+Early stopping, best iteration is:
+[436]	train's WRMSLE: 0.614038	valid's WRMSLE: 0.60045
+
+--- Evaluation ---
+
+RMSE: 2.1882077123563746
+RMSLE: 0.5610044975896414
+WRMSSE: 0.7117909495990515
+
+--- Submission ---
+
+Submit DataFrame: (60980, 29)
+                              id        F1  ...       F27       F28
+0  HOBBIES_1_001_CA_1_validation  0.867662  ...  1.248306  1.281125
+1  HOBBIES_1_002_CA_1_validation  0.506435  ...  0.467131  0.464349
+2  HOBBIES_1_003_CA_1_validation  0.542119  ...  0.894738  0.885747
+3  HOBBIES_1_004_CA_1_validation  1.898773  ...  2.787307  2.631669
+4  HOBBIES_1_005_CA_1_validation  0.953288  ...  1.408887  1.620210
+
+[5 rows x 29 columns]

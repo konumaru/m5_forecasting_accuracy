@@ -657,7 +657,9 @@ def main():
     del X_train, y_train; gc.collect()
 
     print('\n--- Evaluation ---\n')
-    preds = np.mean([m.predict(X_eval.drop(['date', 'weight'], axis=1)) for m in models], axis=0)
+    preds = np.mean([m.predict(
+        X_eval.drop(['date', 'weight'], axis=1), num_iteration=m.best_iteration)
+        for m in models], axis=0)
 
     rmse = mean_squared_error(y_eval.values, preds, squared=False)
     print(f'RMSE: {rmse}')
