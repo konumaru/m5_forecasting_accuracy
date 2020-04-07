@@ -686,8 +686,7 @@ def main():
         "objective": "poisson",
         "seed": 11,
         "learning_rate": 0.3,
-        'max_depth': 5,
-        'num_leaves': 32,
+        'max_depth': 9,
         'min_data_in_leaf': 50,
         "bagging_fraction": 0.8,
         "bagging_freq": 10,
@@ -696,7 +695,7 @@ def main():
     }
 
     fit_params = {
-        "num_boost_round": 100_000,
+        "num_boost_round": 100000,
         "early_stopping_rounds": 50,
         "verbose_eval": 100,
     }
