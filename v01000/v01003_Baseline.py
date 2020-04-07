@@ -132,8 +132,8 @@ def encode_calendar(df, filename='encoded_calendar', use_cache=True):
 
     for c in event_cols:
         for diff in [1, 2]:
-            df[f"{c}_lag_t{diff}"] = df.shift(diff)
-
+            df[f"{c}_lag_t{diff}"] = df[c].shift(diff)
+    df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
     return df
 
@@ -161,6 +161,8 @@ def parse_sell_price(df, calendar, filename='encoded_sell_price', use_cache=True
         'sell_price'].transform('mean')
     df['price_momentum_year'] = df['sell_price'] / df.groupby(['store_id', 'item_id', 'year'])[
         'sell_price'].transform('mean')
+
+    df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
     return df
 
@@ -616,14 +618,15 @@ def main():
     print('\n--- Transform Data ---\n')
     train = hstack_sales_colums(train, last_d=1913)
     test = hstack_sales_colums(train, last_d=1913)
-    calendar = encode_calendar(calendar, filename='encoded_calendar', use_cache=False)
     sell_prices = parse_sell_price(sell_prices, calendar[['wm_yr_wk', 'month', 'year']],
                                    filename='encoded_sell_price', use_cache=False)
+    calendar = encode_calendar(calendar, filename='encoded_calendar', use_cache=False)
 
-    encode_maps = {}
     categorical_cols = ['item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
     encode_maps = {col: {label: i for i, label in enumerate(sorted(train[col].unique()))}
                    for col in categorical_cols}
+
+    del test, submission; gc.collect()
 
     train = melt_data(train, calendar, sell_prices, encode_maps,
                       filename='melted_train', use_cache=False)
@@ -772,6 +775,7 @@ def main():
         sub_validation, index='id', columns='date', values='sales').reset_index()
     sub_validation.columns = ['id'] + ['F' + str(i + 1) for i in range(28)]
 
+    submission = pd.read_pickle('../data/reduced/sample_submission.pkl')
     submit_process(wrmsse, submission, sub_validation)
 
 

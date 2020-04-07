@@ -1,0 +1,58 @@
+/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/compat/__init__.py:117: UserWarning: Could not import the lzma module. Your installed Python is incomplete. Attempting to use lzma compression will result in a RuntimeError.
+  warnings.warn(msg)
+
+--- Load Data ---
+
+Reading calendar ....
+Reading sample_submission ....
+Reading sales_train_validation ....
+Reading sell_prices ....
+
+--- Transform Data ---
+
+Mem. usage decreased to 2412.77 Mb (10.2% reduction)
+Mem. usage decreased to  0.10 Mb (47.5% reduction)
+Traceback (most recent call last):
+  File "v01003_Baseline.py", line 783, in <module>
+    main()
+  File "v01003_Baseline.py", line 631, in main
+    train = melt_data(train, calendar, sell_prices, encode_maps,
+  File "v01003_Baseline.py", line 182, in melt_data
+    df = pd.merge(df, calendar, how='left', on='d')
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/reshape/merge.py", line 88, in merge
+    return op.get_result()
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/reshape/merge.py", line 655, in get_result
+    result_data = concatenate_block_managers(
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/internals/managers.py", line 2022, in concatenate_block_managers
+    concatenate_join_units(join_units, concat_axis, copy=copy),
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/internals/concat.py", line 246, in concatenate_join_units
+    to_concat = [
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/internals/concat.py", line 247, in <listcomp>
+    ju.get_reindexed_values(empty_dtype=empty_dtype, upcasted_na=upcasted_na)
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/internals/concat.py", line 231, in get_reindexed_values
+    values = algos.take_nd(values, indexer, axis=ax, fill_value=fill_value)
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/algorithms.py", line 1657, in take_nd
+    out = np.empty(out_shape, dtype=dtype)
+MemoryError: Unable to allocate 2.65 GiB for an array with shape (6, 59181090) and data type int64
+Traceback (most recent call last):
+  File "v01003_Baseline.py", line 783, in <module>
+    main()
+  File "v01003_Baseline.py", line 631, in main
+    train = melt_data(train, calendar, sell_prices, encode_maps,
+  File "v01003_Baseline.py", line 183, in melt_data
+    df = pd.merge(df, sell_prices, how='left', on=['store_id', 'item_id', 'wm_yr_wk'])
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/reshape/merge.py", line 88, in merge
+    return op.get_result()
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/reshape/merge.py", line 655, in get_result
+    result_data = concatenate_block_managers(
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/internals/managers.py", line 2022, in concatenate_block_managers
+    concatenate_join_units(join_units, concat_axis, copy=copy),
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/internals/concat.py", line 246, in concatenate_join_units
+    to_concat = [
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/internals/concat.py", line 247, in <listcomp>
+    ju.get_reindexed_values(empty_dtype=empty_dtype, upcasted_na=upcasted_na)
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/internals/concat.py", line 231, in get_reindexed_values
+    values = algos.take_nd(values, indexer, axis=ax, fill_value=fill_value)
+  File "/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/core/algorithms.py", line 1657, in take_nd
+    out = np.empty(out_shape, dtype=dtype)
+MemoryError: Unable to allocate 12.7 GiB for an array with shape (5, 340471152) and data type int64
