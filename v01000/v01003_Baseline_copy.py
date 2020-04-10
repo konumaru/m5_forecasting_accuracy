@@ -89,6 +89,7 @@ def reduce_mem_usage(df, verbose=True):
 
 
 def encode_map(filename='encode_map', use_cache=True):
+    print('processing encode_map.')
     filepath = f'features/{filename}.pkl'
     if use_cache and os.path.exists(filepath):
         with open(filepath, 'rb') as file:
@@ -108,6 +109,7 @@ def encode_map(filename='encode_map', use_cache=True):
 
 
 def parse_sell_price(filename='encoded_sell_price', use_cache=True):
+    print('processing parse_sell_price.')
     filepath = f'features/{filename}.pkl'
     if use_cache and os.path.exists(filepath):
         return pd.read_pickle(filepath)
@@ -145,6 +147,7 @@ def parse_sell_price(filename='encoded_sell_price', use_cache=True):
 
 
 def encode_calendar(filename='encoded_calendar', use_cache=True):
+    print('processing encode_calendar.')
     filepath = f'features/{filename}.pkl'
     if use_cache and os.path.exists(filepath):
         return pd.read_pickle(filepath)
@@ -197,6 +200,7 @@ def hstack_sales_colums(df, latest_d, stack_days=28):
 
 
 def melt_data(is_test=False, filename='melted_train', use_cache=True):
+    print('processing melt_data.')
     filepath = f'features/{filename}.pkl'
     # check is exist cached file.
     if use_cache and os.path.exists(filepath):
@@ -225,7 +229,7 @@ def melt_data(is_test=False, filename='melted_train', use_cache=True):
     df = pd.merge(df, sell_price, how='left', on=['store_id', 'item_id', 'wm_yr_wk'])
     # Drop before released data.
     is_released = (df['wm_yr_wk'] >= df['release'])
-    df = df[is_released]
+    df = df[is_released].reset_index(drop=True)
     # Cache DataFrame.
     df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
@@ -301,7 +305,7 @@ class AddSalesFeature(BaseFeature):
 
         df[f"{col}_rolling_SKEW_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).skew())
         df[f"{col}_rolling_KURT_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).kurt())
-        return df
+        return df.pipe(reduce_mem_usage)
 
 
 class AddPriceFeature(BaseFeature):
@@ -320,17 +324,19 @@ class AddPriceFeature(BaseFeature):
 
         df[f"{col}_rolling_price_std_t7"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(7).std())
         df[f"{col}_rolling_price_std_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).std())
-        return df.drop([f"{col}_rolling_price_MAX_t365"], axis=1)
+        return df.drop([f"{col}_rolling_price_MAX_t365"], axis=1).pipe(reduce_mem_usage)
 
 
 class AddWeight(BaseFeature):
     def create_feature(self, df):
         grouped_df = df.groupby(["id"])['sales']
-        df['weight'] = grouped_df.transform(lambda x: 1 - (x == 0).rolling(28).mean())
-        return df
+        df['weight'] = grouped_df.transform(lambda x: 1 - (x == 0).shift(28).rolling(28).mean())
+        df.dropna(subset=['weight'], axis=0, inplace=True)
+        df = df.loc[df['weight'] != 0, :]
+        return df.pipe(reduce_mem_usage)
 
 
-def create_features(df, is_use_cache=False):
+def create_features(df, is_use_cache=True):
     '''
     # TODO
     - 当該月の特徴量
@@ -342,29 +348,29 @@ def create_features(df, is_use_cache=False):
     '''
     print('Add Sales Feature.')
     with AddSalesFeature(filename='add_sales_train', use_cache=is_use_cache) as feat:
-        df = feat.get_feature(df).pipe(reduce_mem_usage)
+        df = feat.get_feature(df)
     print('Add Price Feature.')
     with AddPriceFeature(filename='add_price_train', use_cache=is_use_cache) as feat:
-        df = feat.get_feature(df).pipe(reduce_mem_usage)
+        df = feat.get_feature(df)
     print('Add Weight.')
-    with AddWeight(filename='add_weight', use_cache=is_use_cache) as feat:
-        df = feat.get_feature(df).pipe(reduce_mem_usage)
-    return df
+    with AddWeight(filename='add_weight', use_cache=False) as feat:
+        df = feat.get_feature(df)
+    return df.reset_index()
 
 
 ''' Train Model
 '''
 
 
-def split_train_data(df, pred_interval=28):
+def split_train_eval_submit(df, pred_interval=28):
     latest_date = df['date'].max()
     submit_date = latest_date - datetime.timedelta(days=pred_interval)
     submit_mask = (df["date"] > submit_date)
 
     eval_date = latest_date - datetime.timedelta(days=pred_interval * 2)
     eval_mask = ((df["date"] > eval_date) & (df["date"] <= submit_date))
-    train_mask = ((~eval_mask) & (~submit_mask))
 
+    train_mask = ((~eval_mask) & (~submit_mask))
     return df[train_mask], df[eval_mask], df[submit_mask]
 
 
@@ -403,6 +409,7 @@ def plot_cv_indices(cv, X, y, dt_col, lw=10):
     ax.tick_params(axis="both", which="major", labelsize=MIDDLE)
     ax.set_title("{}".format(type(cv).__name__), fontsize=LARGE)
     fig.savefig(f"result/cv_split/{VERSION}.png")
+    plt.close('all')
 
 
 class CustomTimeSeriesSplitter:
@@ -462,6 +469,7 @@ def plot_importance(models, max_num_features=50, figsize=(15, 20)):
         grid=True, align="center"
     )
     plt.savefig(f'result/importance/{VERSION}.png')
+    plt.close('all')
 
 
 def rmsle(preds, actual, weight=None):
@@ -471,8 +479,9 @@ def rmsle(preds, actual, weight=None):
 
 def lgbm_rmsle(preds, data):
     weight = data.get_weight()
+    actual = data.get_label()
     metric_name = 'RMSLE' if weight is None else 'WRMSLE'
-    return metric_name, rmsle(preds, data.get_label(), weight), False
+    return metric_name, rmsle(preds, actual, weight), False
 
 
 def train_lgb(bst_params, fit_params, X, y, cv, drop_when_train=[]):
@@ -685,13 +694,7 @@ def main():
     print(train.head())
 
     print('\n--- Feature Engineering ---\n')
-    train = create_features(train)
-    # TODO: 特徴量にあたる Column が nulll だったら drop するなどの処理にしたほうが良さそう。
-    # DAYS_PRED = 28
-    # num_unique_id = train['id'].nunique()
-    # max_roll_days = 180
-    # skip_raws = num_unique_id * (max_roll_days + DAYS_PRED)
-    # train = train.iloc[skip_raws:].reset_index(drop=True)
+    train = create_features(train, is_use_cache=True)
 
     print('Train DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
@@ -716,7 +719,7 @@ def main():
     cols_to_drop = ['id', 'wm_yr_wk', 'd', 'date'] + [target_col]
     features = [f for f in features if f not in cols_to_drop]
 
-    train_data, eval_data, submit_data = split_train_data(train)
+    train_data, eval_data, submit_data = split_train_eval_submit(train)
     del train; gc.collect()
 
     bst_params = {
@@ -725,7 +728,8 @@ def main():
         "objective": "poisson",
         "seed": 11,
         "learning_rate": 0.3,
-        'max_depth': 9,
+        'max_depth': 7,
+        'num_leaves': 128,
         'min_data_in_leaf': 50,
         "bagging_fraction": 0.8,
         "bagging_freq": 10,
@@ -752,6 +756,24 @@ def main():
             eval_data.drop(['date', 'weight', target_col], axis=1), num_iteration=m.best_iteration
         ) for m in models], axis=0
     )
+    rmse = mean_squared_error(eval_data[target_col].values, preds, squared=False)
+    print(f'RMSE: {rmse}')
+    rmsle = rmsle(preds, eval_data[target_col].values)
+    print(f'RMSLE: {rmsle}')
+    wrmsse = 111111  # e.score(valid_pred_df)
+    print(f'WRMSSE: {wrmsse}')
+
+    print('\n--- Submission ---\n')
+    sub_validation = submit_data[['id', 'date']]
+    pred_validation = [m.predict(
+        submit_data[features].values, num_iteration=m.best_iteration) for m in models]
+    sub_validation['sales'] = np.mean(pred_validation, axis=0)
+    sub_validation = pd.pivot(
+        sub_validation, index='id', columns='date', values='sales').reset_index()
+    sub_validation.columns = ['id'] + ['F' + str(i + 1) for i in range(28)]
+
+    submission = pd.read_pickle('../data/reduced/sample_submission.pkl')
+    submit_process(wrmsse, submission, sub_validation)
 
 
 if __name__ == '__main__':
