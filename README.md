@@ -39,6 +39,11 @@ Copy local files to Instance.
 $ scp -r data/ rui@gce-kaggle:m5_forecasting_accuracy/
 ```
 
+Background runnning & Export running log.
+```
+$ nohup poetry run python -u version.py >> result/log/version.txt
+```
+
 
 
 ## Commands
