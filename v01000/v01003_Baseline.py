@@ -144,10 +144,10 @@ def parse_sell_price(filename='encoded_sell_price', use_cache=True):
 
     df['price_momentum'] = df['sell_price'] / df.groupby(
         ['store_id', 'item_id'])['sell_price'].transform(lambda x: x.shift(1))
-    df['price_momentum_month'] = df['sell_price'] / df.groupby(['store_id', 'item_id', 'month'])[
-        'sell_price'].transform('mean')
-    df['price_momentum_year'] = df['sell_price'] / df.groupby(['store_id', 'item_id', 'year'])[
-        'sell_price'].transform('mean')
+    # df['price_momentum_month'] = df['sell_price'] / df.groupby(['store_id', 'item_id', 'month'])[
+    #     'sell_price'].transform('mean')
+    # df['price_momentum_year'] = df['sell_price'] / df.groupby(['store_id', 'item_id', 'year'])[
+    #     'sell_price'].transform('mean')
 
     df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
@@ -727,16 +727,16 @@ def main():
 
     print('\n--- Transfrom Data ---\n')
     _ = encode_map(filename='encode_map', use_cache=True)
-    _ = parse_sell_price(filename='encoded_sell_price', use_cache=True)
+    _ = parse_sell_price(filename='encoded_sell_price', use_cache=False)
     _ = encode_calendar(filename='encoded_calendar', use_cache=True)
 
-    train = melt_data(is_test=False, filename='melted_train', use_cache=True)
+    train = melt_data(is_test=False, filename='melted_train', use_cache=False)
     print('\nTrain DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())
 
     print('\n--- Feature Engineering ---\n')
-    train = create_features(train, is_use_cache=True)
+    train = create_features(train, is_use_cache=False)
     print('Train DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())
