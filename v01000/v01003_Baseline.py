@@ -1,6 +1,7 @@
 import os
 import gc
 import re
+import pickle
 import datetime
 from tqdm import tqdm
 
@@ -9,7 +10,7 @@ import pandas as pd
 
 from typing import Union
 
-import seaborn as sns
+import seaborn
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-darkgrid')
 
@@ -17,6 +18,7 @@ from scipy.stats import linregress
 
 from sklearn import preprocessing
 from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_log_error
 
 import lightgbm as lgb
 
@@ -53,6 +55,16 @@ def read_data():
 '''
 
 
+def load_pickle(filepath):
+    with open(filepath, 'rb') as file:
+        return pickle.load(file)
+
+
+def dump_pickle(data, filepath):
+    with open(filepath, 'wb') as file:
+        pickle.dump(data, file, protocol=pickle.HIGHEST_PROTOCOL)
+
+
 def reduce_mem_usage(df, verbose=True):
     numerics = ["int16", "int32", "int64", "float16", "float32", "float64"]
     start_mem = df.memory_usage().sum() / 1024 ** 2
@@ -87,18 +99,68 @@ def reduce_mem_usage(df, verbose=True):
     return df
 
 
-def hstack_sales_colums(df, last_d, stack_days=28):
-    # MEMO: 予測日数分のデータをtrain/testに水平結合する。
-    add_columns = ['d_' + str(i + 1) for i in range(last_d, last_d + stack_days)]
-    add_df = pd.DataFrame(index=df.index, columns=add_columns).fillna(0)
-    return pd.concat([df, add_df], axis=1)
+def encode_map(filename='encode_map', use_cache=True):
+    print('processing encode_map.')
+    filepath = f'features/{filename}.pkl'
+    if use_cache and os.path.exists(filepath):
+        return load_pickle(filepath)
+
+    train = pd.read_pickle('../data/reduced/sales_train_validation.pkl')
+    categorical_cols = ['item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
+    encode_map = {
+        col: {label: i for i, label in enumerate(sorted(train[col].unique()))}
+        for col in categorical_cols
+    }
+
+    dump_pickle(encode_map, filepath)
+    return encode_map
 
 
-def encode_calendar(df, filename='encoded_calendar', use_cache=True):
+def parse_sell_price(filename='encoded_sell_price', use_cache=True):
+    print('processing parse_sell_price.')
     filepath = f'features/{filename}.pkl'
     if use_cache and os.path.exists(filepath):
         return pd.read_pickle(filepath)
 
+    df = pd.read_pickle('../data/reduced/sell_prices.pkl')
+    calendar = pd.read_pickle('../data/reduced/calendar.pkl')[['wm_yr_wk', 'month', 'year']]
+
+    df['month'] = df['wm_yr_wk'].map({
+        row[0]: row[1] for index, row in calendar[['wm_yr_wk', 'month']].iterrows()})
+    df['year'] = df['wm_yr_wk'].map({
+        row[0]: row[1] for index, row in calendar[['wm_yr_wk', 'year']].iterrows()})
+    del calendar; gc.collect()
+
+    df['release'] = df.groupby(['store_id', 'item_id'])['wm_yr_wk'].transform('min')
+    df['price_MAX'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('max')
+    df['price_MIN'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('min')
+    df['price_STD'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('std')
+    df['price_MEAN'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('mean')
+
+    df['price_NORM'] = df['sell_price'] / df['price_MAX']
+
+    df['price_NUNIQUE'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('nunique')
+    df['item_NUNIQUE'] = df.groupby(['store_id', 'sell_price'])['item_id'].transform('nunique')
+
+    df['price_momentum'] = df['sell_price'] / df.groupby(
+        ['store_id', 'item_id'])['sell_price'].transform(lambda x: x.shift(1))
+    df['price_momentum_month'] = df['sell_price'] / df.groupby(['store_id', 'item_id', 'month'])[
+        'sell_price'].transform('mean')
+    df['price_momentum_year'] = df['sell_price'] / df.groupby(['store_id', 'item_id', 'year'])[
+        'sell_price'].transform('mean')
+
+    df = df.pipe(reduce_mem_usage)
+    df.to_pickle(filepath)
+    return df
+
+
+def encode_calendar(filename='encoded_calendar', use_cache=True):
+    print('processing encode_calendar.')
+    filepath = f'features/{filename}.pkl'
+    if use_cache and os.path.exists(filepath):
+        return pd.read_pickle(filepath)
+
+    df = pd.read_pickle('../data/reduced/calendar.pkl')
     # Drop Columns
     cols_to_drop = ['weekday', 'wday', 'year']
     df.drop(cols_to_drop, axis=1, inplace=True)
@@ -138,55 +200,44 @@ def encode_calendar(df, filename='encoded_calendar', use_cache=True):
     return df
 
 
-def parse_sell_price(df, calendar, filename='encoded_sell_price', use_cache=True):
+def hstack_sales_colums(df, latest_d, stack_days=28):
+    # MEMO: 予測日数分のデータをtrain/testに水平結合する。
+    add_columns = ['d_' + str(i + 1) for i in range(latest_d, latest_d + stack_days)]
+    add_df = pd.DataFrame(index=df.index, columns=add_columns).fillna(0)
+    return pd.concat([df, add_df], axis=1)
+
+
+def melt_data(is_test=False, filename='melted_train', use_cache=True):
+    print('processing melt_data.')
     filepath = f'features/{filename}.pkl'
+    # check is exist cached file.
     if use_cache and os.path.exists(filepath):
         return pd.read_pickle(filepath)
-    df = pd.merge(df, calendar, on='wm_yr_wk', how='left')
-
-    df['release'] = df.groupby(['store_id', 'item_id'])['wm_yr_wk'].transform('min')
-    df['price_MAX'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('max')
-    df['price_MIN'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('min')
-    df['price_STD'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('std')
-    df['price_MEAN'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('mean')
-
-    df['price_NORM'] = df['sell_price'] / df['price_MAX']
-
-    df['price_NUNIQUE'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('nunique')
-    df['item_NUNIQUE'] = df.groupby(['store_id', 'sell_price'])['item_id'].transform('nunique')
-
-    df['price_momentum'] = df['sell_price'] / df.groupby(['store_id',
-                                                          'item_id'])['sell_price'].transform(lambda x: x.shift(1))
-    df['price_momentum_month'] = df['sell_price'] / df.groupby(['store_id', 'item_id', 'month'])[
-        'sell_price'].transform('mean')
-    df['price_momentum_year'] = df['sell_price'] / df.groupby(['store_id', 'item_id', 'year'])[
-        'sell_price'].transform('mean')
-
-    df = df.pipe(reduce_mem_usage)
-    df.to_pickle(filepath)
-    return df
-
-
-def melt_data(df, calendar, sell_prices, encode_maps, filename, use_cache=True):
-    filepath = f'features/{filename}.pkl'
-    if use_cache and os.path.exists(filepath):
-        return pd.read_pickle(filepath)
-    # MEMO: ラベルは全データ共通なので、train/test/sell_prices の LabelEncode に使える。
-    for label, encode_map in encode_maps.items():
+    # Load Data
+    if is_test:
+        df = pd.read_pickle('../data/reduced/sales_train_evaluation.pkl')
+        latest_d = 1913  # 1941
+    else:
+        df = pd.read_pickle('../data/reduced/sales_train_validation.pkl')
+        latest_d = 1913
+    df = hstack_sales_colums(df, latest_d)
+    sell_price = pd.read_pickle('features/encoded_sell_price.pkl')
+    calendar = pd.read_pickle('features/encoded_calendar.pkl')
+    with open('features/encode_map.pkl', 'rb') as file:
+        encode_map = pickle.load(file)
+    # Label encoding main dataframe.
+    for label, encode_map in encode_map.items():
         df[label] = df[label].map(encode_map)
         if label in ['item_id', 'store_id']:
-            sell_prices[label] = sell_prices[label].map(encode_map)
+            sell_price[label] = sell_price[label].map(encode_map)
     # Melt Main Data and Join Optinal Data.
     id_columns = ['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
     df = pd.melt(df, id_vars=id_columns, var_name='d', value_name='sales')
     df = pd.merge(df, calendar, how='left', on='d')
-    df = pd.merge(df, sell_prices, how='left', on=['store_id', 'item_id', 'wm_yr_wk'])
-    # MEMO: sell_price を直近価格で過去の値を埋める。
-    # - 値が入っていない商品はないが、値が入っていない週は存在する。
-    # - 欠損値の原因は、欠品なのか、計測漏れなのか理由が定かでないので、安易に保管するのは危険。
-    # - 様々な保管方法を試して、後で、Null Importanceで確かめるなどしたほうがよい。
-    # - 上記の理由から、今は欠損値のまま扱う。
-    # df['sell_price'] = df.groupby('item_id')['sell_price'].bfill()
+    df = pd.merge(df, sell_price, how='left', on=['store_id', 'item_id', 'wm_yr_wk'])
+    # Drop before released data.
+    is_released = (df['wm_yr_wk'] >= df['release'])
+    df = df[is_released].reset_index(drop=True)
     # Cache DataFrame.
     df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
@@ -249,18 +300,20 @@ class AddSalesFeature(BaseFeature):
                 lambda x: x.shift(DAYS_PRED).rolling(window).std())
 
         for window in [7, 30, 60, 90, 180]:
-            df[f"{col}rolling_MEAN_t{window}"] = grouped_df.transform(
+            df[f"{col}_rolling_MEAN_t{window}"] = grouped_df.transform(
                 lambda x: x.shift(DAYS_PRED).rolling(window).mean())
 
         for window in [7, 30, 60]:
-            df[f"{col}rolling_MIN_t{window}"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(window).min())
+            df[f"{col}_rolling_MIN_t{window}"] = grouped_df.transform(
+                lambda x: x.shift(DAYS_PRED).rolling(window).min())
 
         for window in [7, 30, 60]:
-            df[f"{col}rolling_MAX_t{window}"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(window).max())
+            df[f"{col}_rolling_MAX_t{window}"] = grouped_df.transform(
+                lambda x: x.shift(DAYS_PRED).rolling(window).max())
 
         df[f"{col}_rolling_SKEW_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).skew())
         df[f"{col}_rolling_KURT_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).kurt())
-        return df
+        return df.pipe(reduce_mem_usage)
 
 
 class AddPriceFeature(BaseFeature):
@@ -279,41 +332,54 @@ class AddPriceFeature(BaseFeature):
 
         df[f"{col}_rolling_price_std_t7"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(7).std())
         df[f"{col}_rolling_price_std_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).std())
-        return df.drop([f"{col}_rolling_price_MAX_t365"], axis=1)
+        return df.drop([f"{col}_rolling_price_MAX_t365"], axis=1).pipe(reduce_mem_usage)
 
 
 class AddWeight(BaseFeature):
     def create_feature(self, df):
         grouped_df = df.groupby(["id"])['sales']
-        df['weight'] = grouped_df.transform(lambda x: 1 - (x == 0).rolling(28).mean())
-        return df
+        df['weight'] = grouped_df.transform(lambda x: 1 - (x == 0).shift(28).rolling(28).mean())
+        df.dropna(subset=['weight'], axis=0, inplace=True)
+        return df.pipe(reduce_mem_usage)
 
 
-def create_features(df):
+def create_features(df, is_use_cache=True):
     '''
     # TODO
-        - (PRED_INTERVAL + N)日rollingした統計量
-        - 翌日休日フラグ・連続休日フラグ
-        - 当該月の特徴量
-            - 月初・月末（１日）の売上
-            - 15, 20日などのクレジットカードの締日のごとの統計量
-        - 過去１ヶ月間の（特定item_idの売上 / スーパー全体の売上）
-            - （特定item_idの売上個数 / スーパー全体の売上個数）
-            - （特定item_idの売上個数 / スーパー全体の売上個数）
+    - 当該月の特徴量
+        - 月初・月末（１日）の売上
+        - 15, 20日などのクレジットカードの締日のごとの統計量
+    - 過去１ヶ月間の（特定item_idの売上 / スーパー全体の売上）
+        - （特定item_idの売上個数 / スーパー全体の売上個数）
+        - （特定item_idの売上個数 / スーパー全体の売上個数）
+    - 過去N日で、0を連続で取る数の統計量
     '''
-    with AddSalesFeature(filename='add_sales_train', use_cache=False) as feat:
-        df = feat.get_feature(df).pipe(reduce_mem_usage)
-
-    with AddPriceFeature(filename='add_price_train', use_cache=False) as feat:
-        df = feat.get_feature(df).pipe(reduce_mem_usage)
-
+    print('Add Sales Feature.')
+    with AddSalesFeature(filename='add_sales_train', use_cache=is_use_cache) as feat:
+        df = feat.get_feature(df)
+    print('Add Price Feature.')
+    with AddPriceFeature(filename='add_price_train', use_cache=is_use_cache) as feat:
+        df = feat.get_feature(df)
+    print('Add Weight.')
     with AddWeight(filename='add_weight', use_cache=False) as feat:
-        df = feat.get_feature(df).pipe(reduce_mem_usage)
-    return df
+        df = feat.get_feature(df)
+    return df.reset_index(drop=True)
 
 
 ''' Train Model
 '''
+
+
+def split_train_eval_submit(df, pred_interval=28):
+    latest_date = df['date'].max()
+    submit_date = latest_date - datetime.timedelta(days=pred_interval)
+    submit_mask = (df["date"] > submit_date)
+
+    eval_date = latest_date - datetime.timedelta(days=pred_interval * 2)
+    eval_mask = ((df["date"] > eval_date) & (df["date"] <= submit_date))
+
+    train_mask = ((~eval_mask) & (~submit_mask))
+    return df[train_mask], df[eval_mask], df[submit_mask]
 
 
 def plot_cv_indices(cv, X, y, dt_col, lw=10):
@@ -351,6 +417,7 @@ def plot_cv_indices(cv, X, y, dt_col, lw=10):
     ax.tick_params(axis="both", which="major", labelsize=MIDDLE)
     ax.set_title("{}".format(type(cv).__name__), fontsize=LARGE)
     fig.savefig(f"result/cv_split/{VERSION}.png")
+    plt.close('all')
 
 
 class CustomTimeSeriesSplitter:
@@ -410,39 +477,36 @@ def plot_importance(models, max_num_features=50, figsize=(15, 20)):
         grid=True, align="center"
     )
     plt.savefig(f'result/importance/{VERSION}.png')
+    plt.close('all')
 
 
-def rmsele(preds, actual, weight=None):
-    return mean_squared_error(
-        np.log1p(actual), np.log1p(preds), sample_weight=weight, squared=False)
+def rmsle(preds, actual, weight=None):
+    return np.sqrt(mean_squared_log_error(actual, preds, sample_weight=weight))
 
 
-def rmsle(preds, data):
-    weight = data.get_weight()
+def lgbm_rmsle(preds, data):
+    weight = None  # data.get_weight()
+    actual = data.get_label()
     metric_name = 'RMSLE' if weight is None else 'WRMSLE'
-    return metric_name, rmsele(preds, data.get_label(), weight), False
+    return metric_name, rmsle(preds, actual), False
 
 
-def train_lgb(bst_params, fit_params, X, y, cv, drop_when_train=[]):
-    print('Model Parameters:')
-    print(bst_params)
-
+def train_lgb(bst_params, fit_params, X, y, cv, features=[]):
     models = []
     for idx_fold, (idx_trn, idx_val) in enumerate(cv.split(X, y)):
-        print(f"\nFold: ({idx_fold + 1} / {cv.get_n_splits()})\n")
+        print(f"\n{idx_fold + 1} of {cv.get_n_splits()} Fold:\n")
 
         X_trn, X_val = X.iloc[idx_trn], X.iloc[idx_val]
         y_trn, y_val = y.iloc[idx_trn], y.iloc[idx_val]
-        train_set = lgb.Dataset(X_trn.drop(drop_when_train, axis=1), label=y_trn, weight=X_trn['weight'])
-        val_set = lgb.Dataset(X_val.drop(drop_when_train, axis=1), label=y_val, weight=X_val['weight'])
-
+        train_set = lgb.Dataset(X_trn[features], label=y_trn, weight=X_trn['weight'])
+        val_set = lgb.Dataset(X_val[features], label=y_val, weight=X_val['weight'])
         model = lgb.train(
             bst_params,
             train_set,
             valid_sets=[train_set, val_set],
             valid_names=["train", "valid"],
             **fit_params,
-            feval=rmsle,
+            feval=lgbm_rmsle,
         )
         models.append(model)
 
@@ -505,7 +569,7 @@ class WRMSSEEvaluator(object):
         scaling factor for each series ignoring starting zeros
         '''
         scales = []
-        for i in tqdm(range(len(self.train_series))):
+        for i in range(len(self.train_series)):
             series = self.train_series.iloc[i].values
             series = series[np.argmax(series != 0):]
             scale = ((series[1:] - series[:-1]) ** 2).mean()
@@ -548,7 +612,7 @@ class WRMSSEEvaluator(object):
             [self.train_df[self.id_columns], weight_df], axis=1, sort=False
         )
         weights_map = {}
-        for i, group_id in enumerate(tqdm(self.group_ids, leave=False)):
+        for i, group_id in enumerate(self.group_ids):
             lv_weight = weight_df.groupby(group_id)[self.weight_columns].sum().sum(axis=1)
             lv_weight = lv_weight / lv_weight.sum()
             for i in range(len(lv_weight)):
@@ -561,7 +625,7 @@ class WRMSSEEvaluator(object):
 
     def trans_30490_to_42840(self, df, cols, group_ids, dis=False):
         series_map = {}
-        for i, group_id in enumerate(tqdm(self.group_ids, leave=False, disable=dis)):
+        for i, group_id in enumerate(self.group_ids):
             tr = df.groupby(group_id)[cols].sum()
             for i in range(len(tr)):
                 series_map[self.get_name(tr.index[i])] = tr.iloc[i].values
@@ -593,61 +657,92 @@ class WRMSSEEvaluator(object):
         return np.sum(self.contributors)
 
 
+def estimate_wrmsse(eval_data, preds, eval_days=28):
+    def ordered_d_cols(df_cols):
+        return sorted(df_cols, key=lambda x: int((re.search(r"\d+", x)).group(0)))
+    # Processing train data.
+    df = pd.read_pickle('../data/reduced/sales_train_validation.pkl')
+    train_idx_labels = df.iloc[:, :-eval_days].copy(deep=True)
+    # Processing eval label data.
+    eval_labels = pd.pivot_table(
+        eval_data, index='id', columns='d', values='sales', fill_value=0).reset_index()
+    eval_labels = eval_labels[ordered_d_cols(eval_labels.drop('id', axis=1).columns.tolist())]
+    # Processing eval predict data.
+    eval_data['pred'] = preds
+    pred_labels = pd.pivot_table(
+        eval_data, index='id', columns='d', values='pred', fill_value=0).reset_index()
+    pred_labels = pred_labels[ordered_d_cols(pred_labels.drop('id', axis=1).columns.tolist())]
+    # Estimate WRMSSE score.
+    calendar = pd.read_pickle('../data/reduced/calendar.pkl')
+    sell_prices = pd.read_pickle('../data/reduced/sell_prices.pkl')
+    e = WRMSSEEvaluator(train_idx_labels, eval_labels, calendar, sell_prices)
+    score = e.score(pred_labels)
+    return score
+
+
+def evaluation_model(eval_data, features):
+    models = load_pickle(f'result/model/{VERSION}.pkl')
+    preds = [m.predict(eval_data[features].values, num_iteration=m.best_iteration) for m in models]
+    preds = np.mean(preds, axis=0)
+    metric_scores = {}
+    metric_scores['RMSE'] = mean_squared_error(eval_data['sales'].values, preds, squared=False)
+    metric_scores['RMSLE'] = rmsle(preds, eval_data['sales'].values)
+    metric_scores['WRMSSE'] = estimate_wrmsse(eval_data, preds)
+    for metric, score in metric_scores.items():
+        print(f'{metric}: {score}')
+
+    return metric_scores
+
+
 ''' Submission
 '''
 
 
-def submit_process(score, submission, validation, evaluation=None):
-    sub_df = pd.DataFrame()
-    sub_df['id'] = submission['id']
+def create_submission_file(submit_data, features, score):
+    submission = pd.read_pickle('../data/reduced/sample_submission.pkl')['id'].to_frame()
+    models = load_pickle(f'result/model/{VERSION}.pkl')
 
-    sub_df = pd.merge(sub_df, validation, how='left', on='id')
-    sub_df.fillna(0, inplace=True)
-    sub_df.to_csv(f'submit/{VERSION}_{score:.04f}.csv.gz', index=False, compression='gzip')
+    preds = [m.predict(submit_data[features].values, num_iteration=m.best_iteration) for m in models]
+    submit_data['pred'] = np.mean(preds, axis=0)
+    sub_validation = pd.pivot(submit_data, index='id', columns='date', values='pred').reset_index()
+    sub_validation.columns = ['id'] + ['F' + str(i + 1) for i in range(28)]
 
-    print('Submit DataFrame:', sub_df.shape)
-    print(sub_df.head())
+    submission = pd.merge(submission, sub_validation, how='left', on='id')
+    submission.fillna(0, inplace=True)
+
+    submission.to_csv(f'submit/{VERSION}_{score:.04f}.csv.gz', index=False, compression='gzip')
+
+    print('Submit DataFrame:', submission.shape)
+    print(submission.head())
 
 
 def main():
+    # TODO: run するときに日付をprintした。
+    now = str(datetime.datetime.now())
+    print('\n\n' + '=' * 100, '\n\n')
+    print(f'RUNNING at {now}\n')
+
     print('\n--- Load Data ---\n')
-    # TODO: sales_train_evaluation.csv が公開されたらtestに代入
-    calendar, submission, train, sell_prices = read_data()
-    test = train.sample(10000).copy(deep=True)
+    print('Loading and initial processing have already been completed.')
 
-    print('\n--- Transform Data ---\n')
-    train = hstack_sales_colums(train, last_d=1913)
-    test = hstack_sales_colums(train, last_d=1913)
-    sell_prices = parse_sell_price(sell_prices, calendar[['wm_yr_wk', 'month', 'year']],
-                                   filename='encoded_sell_price', use_cache=False)
-    calendar = encode_calendar(calendar, filename='encoded_calendar', use_cache=False)
+    print('\n--- Transfrom Data ---\n')
+    _ = encode_map(filename='encode_map', use_cache=True)
+    _ = parse_sell_price(filename='encoded_sell_price', use_cache=True)
+    _ = encode_calendar(filename='encoded_calendar', use_cache=True)
 
-    categorical_cols = ['item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
-    encode_maps = {col: {label: i for i, label in enumerate(sorted(train[col].unique()))}
-                   for col in categorical_cols}
-
-    del test, submission; gc.collect()
-
-    train = melt_data(train, calendar, sell_prices, encode_maps,
-                      filename='melted_train', use_cache=False)
-
-    print('Train DataFrame:', train.shape)
+    train = melt_data(is_test=False, filename='melted_train', use_cache=True)
+    print('\nTrain DataFrame:', train.shape)
+    print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())
 
     print('\n--- Feature Engineering ---\n')
-    train = create_features(train)
-
-    DAYS_PRED = 28
-    num_unique_id = train['id'].nunique()
-    max_roll_days = 180
-
-    skip_raws = num_unique_id * (max_roll_days + DAYS_PRED)
-    train = train.iloc[skip_raws:].reset_index(drop=True)
-
+    train = create_features(train, is_use_cache=True)
     print('Train DataFrame:', train.shape)
+    print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())
 
-    print('\n--- Train Model ---')
+    print('\n--- Train Model ---\n')
+    # TODO: train のコードをもう少しきれいにしたい。
     cv_params = {
         "n_splits": 5,
         "train_days": 365 * 2,
@@ -659,26 +754,14 @@ def main():
     cv = CustomTimeSeriesSplitter(**cv_params)
     # Plotting all the points takes long time.
     plot_cv_indices(cv, train.iloc[::1000][['date']].reset_index(drop=True), None, 'date')
-
-    PRED_INTERVAL = 28
+    # Split train, eval, submit data.
     target_col = 'sales'
     features = train.columns.tolist()
-
     cols_to_drop = ['id', 'wm_yr_wk', 'd', 'date'] + [target_col]
     features = [f for f in features if f not in cols_to_drop]
 
-    latest_date = train['date'].max()
-    submit_date = latest_date - datetime.timedelta(days=PRED_INTERVAL)
-    submit_mask = (train["date"] > submit_date)
-
-    eval_date = latest_date - datetime.timedelta(days=PRED_INTERVAL * 2)
-    eval_mask = ((train["date"] > eval_date) & (train["date"] <= submit_date))
-
-    train_mask = ((~eval_mask) & (~submit_mask))
-
-    X_train, y_train = train[train_mask][['date'] + features], train[train_mask][target_col]
-    X_eval, y_eval = train[eval_mask][['date'] + features], train[eval_mask][target_col]
-    X_submit, y_submit = train[submit_mask][['date'] + features], train[submit_mask][target_col]
+    train_data, eval_data, submit_data = split_train_eval_submit(train)
+    del train; gc.collect()
 
     bst_params = {
         "boosting_type": "gbdt",
@@ -686,7 +769,8 @@ def main():
         "objective": "poisson",
         "seed": 11,
         "learning_rate": 0.3,
-        'max_depth': 9,
+        'max_depth': 7,
+        'num_leaves': 128,
         'min_data_in_leaf': 50,
         "bagging_fraction": 0.8,
         "bagging_freq": 10,
@@ -699,83 +783,20 @@ def main():
         "early_stopping_rounds": 50,
         "verbose_eval": 100,
     }
-
+    print('Model Parameters:')
+    print(bst_params)
     models = train_lgb(
-        bst_params, fit_params, X_train, y_train, cv, drop_when_train=['date', 'weight']
+        bst_params, fit_params,
+        train_data[['date'] + features], train_data[target_col],
+        cv, features=features
     )
-
-    del X_train, y_train; gc.collect()
+    dump_pickle(models, f'result/model/{VERSION}.pkl')
 
     print('\n--- Evaluation ---\n')
-    preds = np.mean([m.predict(
-        X_eval.drop(['date', 'weight'], axis=1), num_iteration=m.best_iteration)
-        for m in models], axis=0)
-
-    rmse = mean_squared_error(y_eval.values, preds, squared=False)
-    print(f'RMSE: {rmse}')
-    rmsle = rmsele(preds, y_eval.values)
-    print(f'RMSLE: {rmsle}')
-
-    train_label_df = train[train_mask][['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id', 'd', 'sales']]
-    train_label_df['sales'] = train[train_mask][target_col].astype(int)
-
-    train_label_df = pd.pivot_table(
-        train_label_df,
-        index=['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id'],
-        columns='d',
-        values='sales'
-    ).reset_index()
-
-    def reverse_map(d):
-        return {v: k for k, v in d.items()}
-
-    for label, encode_map in encode_maps.items():
-        train_label_df[label] = train_label_df[label].map(reverse_map(encode_map))
-
-    fill_cols = train_label_df.columns[train_label_df.columns.str.startswith('d_')]
-    train_label_df[fill_cols] = train_label_df[fill_cols].fillna(0).astype(int)
-
-    fill_cols = sorted(fill_cols, key=lambda x: int((re.search(r"\d+", x)).group(0)))
-    cols = ['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id'] + fill_cols
-    train_label_df[cols] = train_label_df[cols]
-
-    valid_label_df = train[eval_mask][['id', 'd']]
-    valid_label_df['sales'] = train[eval_mask][target_col]
-
-    valid_label_df = pd.pivot(valid_label_df, index='id', columns='d', values='sales').reset_index()
-    fill_cols = valid_label_df.columns[valid_label_df.columns.str.startswith('d_')]
-    valid_label_df[fill_cols] = valid_label_df[fill_cols].fillna(0).astype(int)
-
-    valid_label_df.drop('id', axis=1, inplace=True)
-
-    valid_pred_df = train[eval_mask][['id', 'date']]
-    valid_pred_df['sales'] = preds
-
-    valid_pred_df = pd.pivot(valid_pred_df, index='id', columns='date', values='sales').reset_index()
-    # valid_pred_df.columns = ['id'] + ['F' + str(i + 1) for i in range(28)]
-    valid_pred_df.columns = ['id'] + valid_label_df.columns.tolist()
-    valid_pred_df.fillna(0, inplace=True)
-
-    valid_pred_df.drop('id', axis=1, inplace=True)
-
-    calendar = pd.read_pickle('../data/reduced/calendar.pkl')
-    sell_prices = pd.read_pickle('../data/reduced/sell_prices.pkl')
-    e = WRMSSEEvaluator(train_label_df, valid_label_df, calendar, sell_prices)
-
-    wrmsse = e.score(valid_pred_df)
-    print(f'WRMSSE: {wrmsse}')
+    metric_scores = evaluation_model(eval_data, features)
 
     print('\n--- Submission ---\n')
-    sub_validation = train[submit_mask][['id', 'date']]
-    pred_validation = [m.predict(X_submit.drop(['date', 'weight'], axis=1),
-                                 num_iteration=m.best_iteration) for m in models]
-    sub_validation['sales'] = np.mean(pred_validation, axis=0)
-    sub_validation = pd.pivot(
-        sub_validation, index='id', columns='date', values='sales').reset_index()
-    sub_validation.columns = ['id'] + ['F' + str(i + 1) for i in range(28)]
-
-    submission = pd.read_pickle('../data/reduced/sample_submission.pkl')
-    submit_process(wrmsse, submission, sub_validation)
+    create_submission_file(submit_data, features, metric_scores['WRMSSE'])
 
 
 if __name__ == '__main__':
