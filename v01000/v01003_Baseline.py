@@ -361,7 +361,7 @@ def create_features(df, is_use_cache=True):
     with AddPriceFeature(filename='add_price_train', use_cache=is_use_cache) as feat:
         df = feat.get_feature(df)
     print('Add Weight.')
-    with AddWeight(filename='add_weight', use_cache=False) as feat:
+    with AddWeight(filename='add_weight', use_cache=is_use_cache) as feat:
         df = feat.get_feature(df)
     return df.reset_index(drop=True)
 
@@ -485,7 +485,7 @@ def rmsle(preds, actual, weight=None):
 
 
 def lgbm_rmsle(preds, data):
-    weight = None  # data.get_weight()
+    weight = data.get_weight()
     actual = data.get_label()
     metric_name = 'RMSLE' if weight is None else 'WRMSLE'
     return metric_name, rmsle(preds, actual), False
@@ -746,7 +746,7 @@ def main():
     cv_params = {
         "n_splits": 5,
         "train_days": 365 * 2,
-        "test_days": 90,
+        "test_days": 28,
         "dt_col": 'date',
     }
     print('Cross Validation Parameters:')
@@ -769,8 +769,8 @@ def main():
         "objective": "poisson",
         "seed": 11,
         "learning_rate": 0.3,
-        'max_depth': 7,
-        'num_leaves': 128,
+        'max_depth': 5,
+        'num_leaves': 32,
         'min_data_in_leaf': 50,
         "bagging_fraction": 0.8,
         "bagging_freq": 10,
