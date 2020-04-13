@@ -1,6 +1,7 @@
 import os
 import gc
 import re
+import json
 import pickle
 import datetime
 from tqdm import tqdm
@@ -148,7 +149,7 @@ def parse_sell_price(filename='encoded_sell_price', use_cache=True):
     #     'sell_price'].transform('mean')
     # df['price_momentum_year'] = df['sell_price'] / df.groupby(['store_id', 'item_id', 'year'])[
     #     'sell_price'].transform('mean')
-
+    df.drop(['month', 'year'], axis=1, inplace=True)
     df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
     return df
@@ -238,6 +239,7 @@ def melt_data(is_test=False, filename='melted_train', use_cache=True):
     # Drop before released data.
     is_released = (df['wm_yr_wk'] >= df['release'])
     df = df[is_released].reset_index(drop=True)
+    df.drop('release', axis=1, inplace=True)
     # Cache DataFrame.
     df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
@@ -355,6 +357,7 @@ def create_features(df, is_use_cache=True):
         - （特定item_idの売上個数 / スーパー全体の売上個数）
         - （特定item_idの売上個数 / スーパー全体の売上個数）
     - 過去N日で、0を連続で取る数の統計量
+    - 移動平均のshift
     '''
     print('Add Sales Feature.')
     with AddSalesFeature(filename='add_sales_train', use_cache=is_use_cache) as feat:
@@ -362,9 +365,9 @@ def create_features(df, is_use_cache=True):
     print('Add Price Feature.')
     with AddPriceFeature(filename='add_price_train', use_cache=is_use_cache) as feat:
         df = feat.get_feature(df)
-    print('Add Weight.')
-    with AddWeight(filename='add_weight', use_cache=is_use_cache) as feat:
-        df = feat.get_feature(df)
+    # print('Add Weight.')
+    # with AddWeight(filename='add_weight', use_cache=is_use_cache) as feat:
+    #     df = feat.get_feature(df)
     return df.reset_index(drop=True)
 
 
@@ -500,8 +503,8 @@ def train_lgb(bst_params, fit_params, X, y, cv, features=[]):
 
         X_trn, X_val = X.iloc[idx_trn], X.iloc[idx_val]
         y_trn, y_val = y.iloc[idx_trn], y.iloc[idx_val]
-        train_set = lgb.Dataset(X_trn[features], label=y_trn, weight=X_trn['weight'])
-        val_set = lgb.Dataset(X_val[features], label=y_val, weight=X_val['weight'])
+        train_set = lgb.Dataset(X_trn[features], label=y_trn)
+        val_set = lgb.Dataset(X_val[features], label=y_val)
         model = lgb.train(
             bst_params,
             train_set,
@@ -692,7 +695,9 @@ def evaluation_model(eval_data, features):
     metric_scores['WRMSSE'] = estimate_wrmsse(eval_data, preds)
     for metric, score in metric_scores.items():
         print(f'{metric}: {score}')
-
+    # Dump metric_scores as Json file.
+    with open(f'result/score/{VERSION}.json', 'w') as file:
+        json.dump(metric_scores, file, indent=4)
     return metric_scores
 
 
@@ -719,7 +724,6 @@ def create_submission_file(submit_data, features, score):
 
 
 def main():
-    # TODO: run するときに日付をprintした。
     now = str(datetime.datetime.now())
     print('\n\n' + '=' * 100, '\n\n')
     print(f'RUNNING at {now}\n')
@@ -729,7 +733,7 @@ def main():
 
     print('\n--- Transfrom Data ---\n')
     _ = encode_map(filename='encode_map', use_cache=True)
-    _ = parse_sell_price(filename='encoded_sell_price', use_cache=False)
+    _ = parse_sell_price(filename='encoded_sell_price', use_cache=True)
     _ = encode_calendar(filename='encoded_calendar', use_cache=True)
 
     train = melt_data(is_test=False, filename='melted_train', use_cache=False)
