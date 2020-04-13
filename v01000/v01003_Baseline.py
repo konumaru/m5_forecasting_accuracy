@@ -267,7 +267,8 @@ class BaseFeature():
 
     def __exit__(self, exc_type, exc_value, traceback):
         if not self.is_exist_cahce:
-            self.df.to_pickle(self.filepath)
+            with open(self.filepath, 'wb') as file:
+                pickle.dump(self.df, file, protocol=pickle.HIGHEST_PROTOCOL)
 
     def check_exist_cahce(self):
         if os.path.exists(self.filepath):
@@ -275,7 +276,8 @@ class BaseFeature():
 
     def get_feature(self, df):
         if self.is_exist_cahce:
-            self.df = pd.read_pickle(self.filepath)
+            with open(self.filepath, 'rb') as file:
+                self.df = pickle.load(file)
             return self.df
         else:
             self.df = self.create_feature(df)
