@@ -18,6 +18,7 @@ plt.style.use('seaborn-darkgrid')
 from scipy.stats import linregress
 
 from sklearn import preprocessing
+from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_squared_log_error
 
@@ -349,25 +350,28 @@ class AddWeight(BaseFeature):
 
 def create_features(df, is_use_cache=True):
     '''
-    # TODO
-    - 当該月の特徴量
-        - 月初・月末（１日）の売上
-        - 15, 20日などのクレジットカードの締日のごとの統計量
-    - 過去１ヶ月間の（特定item_idの売上 / スーパー全体の売上）
-        - （特定item_idの売上個数 / スーパー全体の売上個数）
-        - （特定item_idの売上個数 / スーパー全体の売上個数）
-    - 過去N日で、0を連続で取る数の統計量
-    - 移動平均のshift
+    TODO:
+        - 当該月の特徴量
+            - 月初・月末（１日）の売上
+            - 15, 20日などのクレジットカードの締日のごとの統計量
+        - 過去１ヶ月間の（特定item_idの売上 / スーパー全体の売上）
+            - （特定item_idの売上個数 / スーパー全体の売上個数）
+            - （特定item_idの売上個数 / スーパー全体の売上個数）
+        - 過去N日で、0を連続で取る数の統計量
+        - 移動平均のshift
     '''
     print('Add Sales Feature.')
     with AddSalesFeature(filename='add_sales_train', use_cache=is_use_cache) as feat:
         df = feat.get_feature(df)
+
     print('Add Price Feature.')
     with AddPriceFeature(filename='add_price_train', use_cache=is_use_cache) as feat:
         df = feat.get_feature(df)
+
     # print('Add Weight.')
     # with AddWeight(filename='add_weight', use_cache=is_use_cache) as feat:
     #     df = feat.get_feature(df)
+
     return df.reset_index(drop=True)
 
 
@@ -387,139 +391,103 @@ def split_train_eval_submit(df, pred_interval=28):
     return df[train_mask], df[eval_mask], df[submit_mask]
 
 
-def plot_cv_indices(cv, X, y, dt_col, lw=10):
-    n_splits = cv.get_n_splits()
-    fig, ax = plt.subplots(figsize=(20, n_splits))
+class LGBM_Model():
+    def __init__(self, X, y, cv_param, model_param, train_param, groups=None):
+        self.cv = self.set_cv(cv_param)
+        self.models = self.fit(X, y, model_param, train_param, groups)
 
-    # Generate the training/testing visualizations for each CV split
-    for ii, (tr, tt) in enumerate(cv.split(X=X, y=y)):
-        # Fill in indices with the training/test groups
-        indices = np.array([np.nan] * len(X))
-        indices[tt] = 1
-        indices[tr] = 0
+    def set_cv(self, cv_param):
+        cv = TimeSeriesSplit(n_splits=cv_param['n_splits'], max_train_size=cv_param['max_train_size'])
+        return cv
 
-        # Visualize the results
-        ax.scatter(
-            X[dt_col],
-            [ii + 0.5] * len(indices),
-            c=indices,
-            marker="_",
-            lw=lw,
-            cmap=plt.cm.coolwarm,
-            vmin=-0.2,
-            vmax=1.2,
+    def fit(self, X, y, model_param, train_param, groups):
+        models = []
+        for n_fold, (train_idx, valid_idx) in enumerate(self.cv.split(X)):
+            print(f"\n{n_fold + 1} of {self.cv.get_n_splits()} Fold:\n")
+            train_X, train_y = X.iloc[train_idx], y.iloc[train_idx]
+            valid_X, valid_y = X.iloc[valid_idx], y.iloc[valid_idx]
+
+            print('Train DataFrame Size:', train_X.shape)
+            print('Valid DataFrame Size:', valid_X.shape)
+            train_dataset = lgb.Dataset(train_X, label=train_y)
+            valid_dataset = lgb.Dataset(valid_X, label=valid_y, reference=train_dataset)
+            model = lgb.train(
+                model_param,
+                train_dataset,
+                valid_sets=[train_dataset, valid_dataset],
+                valid_names=["train", "valid"],
+                **train_param
+            )
+            models.append(model)
+            del train_X, valid_X, train_y, valid_y; gc.collect()
+        return models
+
+    def get_models(self):
+        return self.models
+
+    def predict(self, data):
+        models = self.get_models()
+        return [m.predict(data.values, num_iteration=m.best_iteration) for m in models]
+
+    def save_importance(self, filepath, max_num_features=50, figsize=(15, 20), plot=False):
+        models = self.get_models()
+        # Define Feature Importance DataFrame.
+        imp_df = pd.DataFrame(
+            [m.feature_importance() for m in models],
+            columns=models[0].feature_name()
+        ).T
+        imp_df['AVG_Importance'] = imp_df.iloc[:, :len(models)].mean(axis=1)
+        imp_df['STD_Importance'] = imp_df.iloc[:, :len(models)].std(axis=1)
+        imp_df.sort_values(by='AVG_Importance', inplace=True)
+        # Plot Importance DataFrame.
+        plt.figure(figsize=figsize)
+        imp_df[-max_num_features:].plot(
+            kind='barh', title='Feature importance', figsize=figsize,
+            y='AVG_Importance', xerr='STD_Importance', align="center"
         )
-
-    # Formatting
-    MIDDLE = 15
-    LARGE = 20
-    ax.set_xlabel("Datetime", fontsize=LARGE)
-    ax.set_xlim([X[dt_col].min(), X[dt_col].max()])
-    ax.set_ylabel("CV iteration", fontsize=LARGE)
-    ax.set_yticks(np.arange(n_splits) + 0.5)
-    ax.set_yticklabels(list(range(n_splits)))
-    ax.invert_yaxis()
-    ax.tick_params(axis="both", which="major", labelsize=MIDDLE)
-    ax.set_title("{}".format(type(cv).__name__), fontsize=LARGE)
-    fig.savefig(f"result/cv_split/{VERSION}.png")
-    plt.close('all')
+        if plot:
+            plt.show()
+        plt.savefig(filepath)
+        plt.close('all')
 
 
-class CustomTimeSeriesSplitter:
-    def __init__(self, n_splits=5, train_days=80, test_days=20, dt_col="date"):
-        self.n_splits = n_splits
-        self.train_days = train_days
-        self.test_days = test_days
-        self.dt_col = dt_col
+def train_model(df, features, target):
+    cv_param = {
+        "n_splits": 3,
+        "max_train_size": None
+    }
 
-    def split(self, X, y=None, groups=None):
-        sec = (X[self.dt_col] - X[self.dt_col][0]).dt.total_seconds()
-        duration = sec.max() - sec.min()
+    model_param = {
+        "boosting_type": "gbdt",
+        "metric": "mape",
+        "objective": "regression",
+        "n_estimators": 100000,
+        "seed": 11,
+        "learning_rate": 0.3,
+        'max_depth': 5,
+        'num_leaves': 32,
+        'min_data_in_leaf': 50,
+        "bagging_fraction": 0.8,
+        "bagging_freq": 10,
+        "feature_fraction": 0.8,
+        "verbosity": -1
+    }
 
-        train_sec = 3600 * 24 * self.train_days
-        test_sec = 3600 * 24 * self.test_days
-        total_sec = test_sec + train_sec
-        step = (duration - total_sec) / (self.n_splits - 1)
+    train_param = {
+        "num_boost_round": 100000,
+        "early_stopping_rounds": 50,
+        "verbose_eval": 100,
+    }
 
-        for idx in range(self.n_splits):
-            train_start = idx * step
-            train_end = train_start + train_sec
-            test_end = train_end + test_sec
+    print(cv_param)
+    print(model_param)
+    print(train_param)
 
-            if idx == self.n_splits - 1:
-                test_mask = sec >= train_end
-            else:
-                test_mask = (sec >= train_end) & (sec < test_end)
-
-            train_mask = (sec >= train_start) & (sec < train_end)
-            test_mask = (sec >= train_end) & (sec < test_end)
-
-            yield sec[train_mask].index.values, sec[test_mask].index.values
-
-    def get_n_splits(self):
-        return self.n_splits
-
-
-def get_feature_importance(models):
-    feature_importance = pd.DataFrame(
-        [model.feature_importance() for model in models],
-        columns=models[0].feature_name()
-    ).T
-
-    feature_importance['Agerage_Importance'] = feature_importance.iloc[:, :len(models)].mean(axis=1)
-    feature_importance['importance_std'] = feature_importance.iloc[:, :len(models)].std(axis=1)
-    feature_importance.sort_values(by='Agerage_Importance', inplace=True)
-    return feature_importance
-
-
-def plot_importance(models, max_num_features=50, figsize=(15, 20)):
-    feature_importance = get_feature_importance(models)
-    plt.figure(figsize=figsize)
-
-    feature_importance[-max_num_features:].plot(
-        kind='barh', title='Feature importance', figsize=figsize,
-        y='Agerage_Importance', xerr='importance_std',
-        grid=True, align="center"
+    lgbm_model = LGBM_Model(
+        df[features], df[target], cv_param, model_param, train_param
     )
-    plt.savefig(f'result/importance/{VERSION}.png')
-    plt.close('all')
-
-
-def rmsle(preds, actual, weight=None):
-    return np.sqrt(mean_squared_log_error(actual, preds, sample_weight=weight))
-
-
-def lgbm_rmsle(preds, data):
-    weight = data.get_weight()
-    actual = data.get_label()
-    metric_name = 'RMSLE' if weight is None else 'WRMSLE'
-    return metric_name, rmsle(preds, actual), False
-
-
-def train_lgb(bst_params, fit_params, X, y, cv, features=[]):
-    models = []
-    for idx_fold, (idx_trn, idx_val) in enumerate(cv.split(X, y)):
-        print(f"\n{idx_fold + 1} of {cv.get_n_splits()} Fold:\n")
-
-        X_trn, X_val = X.iloc[idx_trn], X.iloc[idx_val]
-        y_trn, y_val = y.iloc[idx_trn], y.iloc[idx_val]
-        train_set = lgb.Dataset(X_trn[features], label=y_trn)
-        val_set = lgb.Dataset(X_val[features], label=y_val)
-        model = lgb.train(
-            bst_params,
-            train_set,
-            valid_sets=[train_set, val_set],
-            valid_names=["train", "valid"],
-            **fit_params,
-            feval=lgbm_rmsle,
-        )
-        models.append(model)
-
-        del idx_trn, idx_val, X_trn, X_val, y_trn, y_val
-        gc.collect()
-
-    plot_importance(models)
-    return models
+    lgbm_model.save_importance(filepath=f'result/importance/{VERSION}.png')
+    dump_pickle(lgbm_model.get_models(), f'result/model/{VERSION}.pkl')
 
 
 ''' Evaluation Model
@@ -736,7 +704,7 @@ def main():
     _ = parse_sell_price(filename='encoded_sell_price', use_cache=True)
     _ = encode_calendar(filename='encoded_calendar', use_cache=True)
 
-    train = melt_data(is_test=False, filename='melted_train', use_cache=False)
+    train = melt_data(is_test=False, filename='melted_train', use_cache=True)
     print('\nTrain DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())
@@ -748,55 +716,12 @@ def main():
     print(train.head())
 
     print('\n--- Train Model ---\n')
-    # TODO: train のコードをもう少しきれいにしたい。
-    cv_params = {
-        "n_splits": 5,
-        "train_days": 365 * 2,
-        "test_days": 28,
-        "dt_col": 'date',
-    }
-    print('Cross Validation Parameters:')
-    print(cv_params, '\n')
-    cv = CustomTimeSeriesSplitter(**cv_params)
-    # Plotting all the points takes long time.
-    plot_cv_indices(cv, train.iloc[::1000][['date']].reset_index(drop=True), None, 'date')
-    # Split train, eval, submit data.
-    target_col = 'sales'
+    target = 'sales'
+    cols_to_drop = ['id', 'wm_yr_wk', 'd', 'date'] + [target]
     features = train.columns.tolist()
-    cols_to_drop = ['id', 'wm_yr_wk', 'd', 'date'] + [target_col]
     features = [f for f in features if f not in cols_to_drop]
-
     train_data, eval_data, submit_data = split_train_eval_submit(train)
-    del train; gc.collect()
-
-    bst_params = {
-        "boosting_type": "gbdt",
-        "metric": "None",  # "rmse",
-        "objective": "poisson",
-        "seed": 11,
-        "learning_rate": 0.3,
-        'max_depth': 5,
-        'num_leaves': 32,
-        'min_data_in_leaf': 50,
-        "bagging_fraction": 0.8,
-        "bagging_freq": 10,
-        "feature_fraction": 0.8,
-        "verbosity": -1,
-    }
-
-    fit_params = {
-        "num_boost_round": 100000,
-        "early_stopping_rounds": 50,
-        "verbose_eval": 100,
-    }
-    print('Model Parameters:')
-    print(bst_params)
-    models = train_lgb(
-        bst_params, fit_params,
-        train_data[['date'] + features], train_data[target_col],
-        cv, features=features
-    )
-    dump_pickle(models, f'result/model/{VERSION}.pkl')
+    train_model(train_data, features, target)
 
     print('\n--- Evaluation ---\n')
     metric_scores = evaluation_model(eval_data, features)
