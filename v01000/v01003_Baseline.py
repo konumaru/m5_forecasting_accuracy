@@ -392,8 +392,9 @@ def split_train_eval_submit(df, pred_interval=28):
 
 
 class LGBM_Model():
-    def __init__(self, X, y, cv_param, model_param, train_param, groups=None):
+    def __init__(self, X, y, cv_param, model_param, train_param, groups=None, custom_metric=None):
         self.cv = self.set_cv(cv_param)
+        self.custom_metric = custom_metric
         self.models = self.fit(X, y, model_param, train_param, groups)
 
     def set_cv(self, cv_param):
@@ -451,6 +452,14 @@ class LGBM_Model():
         plt.close('all')
 
 
+def estimate_rmsle(actual, preds):
+    return mean_squared_error(np.log1p(actual), np.log1p(preds), squared=False)
+
+
+def lgbm_rmsle(preds, data):
+    return 'RMSLE', estimate_rmsle(preds, data.get_label()), False
+
+
 def train_model(df, features, target):
     cv_param = {
         "n_splits": 3,
@@ -459,9 +468,8 @@ def train_model(df, features, target):
 
     model_param = {
         "boosting_type": "gbdt",
-        "metric": "mape",
-        "objective": "regression",
-        "n_estimators": 100000,
+        "metric": "None",
+        "objective": "poisson",
         "seed": 11,
         "learning_rate": 0.3,
         'max_depth': 5,
@@ -477,15 +485,14 @@ def train_model(df, features, target):
         "num_boost_round": 100000,
         "early_stopping_rounds": 50,
         "verbose_eval": 100,
+        "feval": lgbm_rmsle
     }
 
     print(cv_param)
     print(model_param)
     print(train_param)
 
-    lgbm_model = LGBM_Model(
-        df[features], df[target], cv_param, model_param, train_param
-    )
+    lgbm_model = LGBM_Model(df[features], df[target], cv_param, model_param, train_param)
     lgbm_model.save_importance(filepath=f'result/importance/{VERSION}.png')
     dump_pickle(lgbm_model.get_models(), f'result/model/{VERSION}.pkl')
 
@@ -659,7 +666,6 @@ def evaluation_model(eval_data, features):
     preds = np.mean(preds, axis=0)
     metric_scores = {}
     metric_scores['RMSE'] = mean_squared_error(eval_data['sales'].values, preds, squared=False)
-    metric_scores['RMSLE'] = rmsle(preds, eval_data['sales'].values)
     metric_scores['WRMSSE'] = estimate_wrmsse(eval_data, preds)
     for metric, score in metric_scores.items():
         print(f'{metric}: {score}')
@@ -710,7 +716,7 @@ def main():
     print(train.head())
 
     print('\n--- Feature Engineering ---\n')
-    train = create_features(train, is_use_cache=False)
+    train = create_features(train, is_use_cache=True)
     print('Train DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())
@@ -720,6 +726,7 @@ def main():
     cols_to_drop = ['id', 'wm_yr_wk', 'd', 'date'] + [target]
     features = train.columns.tolist()
     features = [f for f in features if f not in cols_to_drop]
+
     train_data, eval_data, submit_data = split_train_eval_submit(train)
     train_model(train_data, features, target)
 
