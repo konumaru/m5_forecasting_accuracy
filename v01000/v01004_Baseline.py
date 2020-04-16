@@ -123,34 +123,18 @@ def parse_sell_price(filename='encoded_sell_price', use_cache=True):
     filepath = f'features/{filename}.pkl'
     if use_cache and os.path.exists(filepath):
         return pd.read_pickle(filepath)
-
+    # Load Data
     df = pd.read_pickle('../data/reduced/sell_prices.pkl')
-    calendar = pd.read_pickle('../data/reduced/calendar.pkl')[['wm_yr_wk', 'month', 'year']]
-
-    df['month'] = df['wm_yr_wk'].map({
-        row[0]: row[1] for index, row in calendar[['wm_yr_wk', 'month']].iterrows()})
-    df['year'] = df['wm_yr_wk'].map({
-        row[0]: row[1] for index, row in calendar[['wm_yr_wk', 'year']].iterrows()})
-    del calendar; gc.collect()
-
-    df['release'] = df.groupby(['store_id', 'item_id'])['wm_yr_wk'].transform('min')
-    df['price_MAX'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('max')
-    df['price_MIN'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('min')
-    df['price_STD'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('std')
-    df['price_MEAN'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('mean')
-
-    df['price_NORM'] = df['sell_price'] / df['price_MAX']
-
-    df['price_NUNIQUE'] = df.groupby(['store_id', 'item_id'])['sell_price'].transform('nunique')
-    df['item_NUNIQUE'] = df.groupby(['store_id', 'sell_price'])['item_id'].transform('nunique')
-
-    df['price_momentum'] = df['sell_price'] / df.groupby(
-        ['store_id', 'item_id'])['sell_price'].transform(lambda x: x.shift(1))
-    # df['price_momentum_month'] = df['sell_price'] / df.groupby(['store_id', 'item_id', 'month'])[
-    #     'sell_price'].transform('mean')
-    # df['price_momentum_year'] = df['sell_price'] / df.groupby(['store_id', 'item_id', 'year'])[
-    #     'sell_price'].transform('mean')
-    df.drop(['month', 'year'], axis=1, inplace=True)
+    # Initial Processing And Feature Engineearing
+    df['area_id'] = df['store_id'].str.extract('(\w+)_\d+')
+    df['sell_price_rate_by_wm_yr_wk__item_id'] = df['sell_price'] / \
+        df.groupby(['wm_yr_wk', 'item_id'])['sell_price'].transform('mean')
+    df['sell_price_rate_by_wm_yr_wk__area__item_id'] = df['sell_price'] / \
+        df.groupby(['wm_yr_wk', 'area_id', 'item_id'])['sell_price'].transform('mean')
+    df['sell_price_momentum'] = df['sell_price'] / \
+        df.groupby(['store_id', 'item_id'])['sell_price'].transform(lambda x: x.shift(1))
+    # Export DataFrame
+    df.drop(['area_id'], axis=1, inplace=True)
     df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
     return df
@@ -161,30 +145,23 @@ def encode_calendar(filename='encoded_calendar', use_cache=True):
     filepath = f'features/{filename}.pkl'
     if use_cache and os.path.exists(filepath):
         return pd.read_pickle(filepath)
-
+    # Load Data
     df = pd.read_pickle('../data/reduced/calendar.pkl')
-    # Drop Columns
-    cols_to_drop = ['weekday', 'wday', 'year']
-    df.drop(cols_to_drop, axis=1, inplace=True)
-    # Parse Date Feature
-    dt_col = 'date'
-    df[dt_col] = pd.to_datetime(df[dt_col])
+    # Initial Processing And Feature Engineearing
+    df['date'] = pd.to_datetime(df['date'])
     attrs = [
         "quarter",
         "month",
-        "week",
+        "weekofyear",
         "day",
         "dayofweek",
-        "is_year_end",
-        "is_year_start",
         "is_quarter_end",
         "is_quarter_start",
         "is_month_end",
         "is_month_start",
     ]
     for attr in attrs:
-        dtype = np.int16 if attr == "year" else np.int8
-        df[attr] = getattr(df[dt_col].dt, attr).astype(dtype)
+        df[attr] = getattr(df['date'].dt, attr).astype(np.int8)
 
     df["is_weekend"] = df["dayofweek"].isin([5, 6]).astype(np.int8)
     # MEMO: N_Unique of event_name_1 == 31 and event_name_2 == 5.
@@ -194,9 +171,13 @@ def encode_calendar(filename='encoded_calendar', use_cache=True):
         le = preprocessing.LabelEncoder()
         df[c] = le.fit_transform(df[c].values).astype('int8')
 
-    for c in event_cols:
-        for diff in [1, 2]:
-            df[f"{c}_lag_t{diff}"] = df[c].shift(diff)
+    # for c in event_cols:
+    #     for diff in [1, 2]:
+    #         df[f"{c}_lag_t{diff}"] = df[c].shift(diff)
+    # Drop columns.
+    cols_to_drop = ['weekday', 'wday', 'year']
+    df.drop(cols_to_drop, axis=1, inplace=True)
+    # Export DataFrame
     df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
     return df
@@ -209,38 +190,32 @@ def hstack_sales_colums(df, latest_d, stack_days=28):
     return pd.concat([df, add_df], axis=1)
 
 
-def melt_data(is_test=False, filename='melted_train', use_cache=True):
+def melt_data(filename='melted_train', use_cache=True):
     print('processing melt_data.')
     filepath = f'features/{filename}.pkl'
     # check is exist cached file.
     if use_cache and os.path.exists(filepath):
         return pd.read_pickle(filepath)
     # Load Data
-    if is_test:
-        df = pd.read_pickle('../data/reduced/sales_train_evaluation.pkl')
-        latest_d = 1913  # 1941
-    else:
-        df = pd.read_pickle('../data/reduced/sales_train_validation.pkl')
-        latest_d = 1913
+    latest_d = 1913  # latest_d of evaluation data is 1941
+    df = pd.read_pickle('../data/reduced/sales_train_validation.pkl')
     df = hstack_sales_colums(df, latest_d)
-    sell_price = pd.read_pickle('features/encoded_sell_price.pkl')
-    calendar = pd.read_pickle('features/encoded_calendar.pkl')
-    with open('features/encode_map.pkl', 'rb') as file:
-        encode_map = pickle.load(file)
-    # Label encoding main dataframe.
-    for label, encode_map in encode_map.items():
-        df[label] = df[label].map(encode_map)
-        if label in ['item_id', 'store_id']:
-            sell_price[label] = sell_price[label].map(encode_map)
     # Melt Main Data and Join Optinal Data.
     id_columns = ['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
     df = pd.melt(df, id_vars=id_columns, var_name='d', value_name='sales')
+    # Join calendar.
+    calendar = pd.read_pickle('features/encoded_calendar.pkl')
     df = pd.merge(df, calendar, how='left', on='d')
+    # Join sell_price.
+    sell_price = pd.read_pickle('features/encoded_sell_price.pkl')
     df = pd.merge(df, sell_price, how='left', on=['store_id', 'item_id', 'wm_yr_wk'])
-    # Drop before released data.
-    is_released = (df['wm_yr_wk'] >= df['release'])
-    df = df[is_released].reset_index(drop=True)
-    df.drop('release', axis=1, inplace=True)
+    # Label encoding main dataframe.
+    with open('features/encode_map.pkl', 'rb') as file:
+        encode_map = pickle.load(file)
+    for label, encode_map in encode_map.items():
+        df[label] = df[label].map(encode_map)
+    # Drop Null Records.
+    df.dropna(subset=['sell_price', 'sell_price_momentum'], axis=0, inplace=True)
     # Cache DataFrame.
     df = df.pipe(reduce_mem_usage)
     df.to_pickle(filepath)
@@ -290,8 +265,9 @@ class BaseFeature():
         raise NotImplementedError
 
 
-class AddSalesFeature(BaseFeature):
+class AddBaseSalesFeature(BaseFeature):
     def create_feature(self, df):
+        print('Create Sales Feature.')
         DAYS_PRED = 28
         col = 'sales'
         grouped_df = df.groupby(["id"])[col]
@@ -316,8 +292,16 @@ class AddSalesFeature(BaseFeature):
             df[f"{col}_rolling_MAX_t{window}"] = grouped_df.transform(
                 lambda x: x.shift(DAYS_PRED).rolling(window).max())
 
-        df[f"{col}_rolling_SKEW_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).skew())
-        df[f"{col}_rolling_KURT_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).kurt())
+        for window in [7, 14, 30, 60]:
+            df[f"{col}_rolling_ZeroRatio_t{window}"] = grouped_df.transform(
+                lambda x: 1 - (x == 0).shift(DAYS_PRED).rolling(window).mean())
+            df[f"{col}_rolling_ZeroCount_t{window}"] = grouped_df.transform(
+                lambda x: (x == 0).shift(DAYS_PRED).rolling(window).sum())
+
+        df[f"{col}_rolling_SKEW_t30"] = grouped_df.transform(
+            lambda x: x.shift(DAYS_PRED).rolling(30).skew())
+        df[f"{col}_rolling_KURT_t30"] = grouped_df.transform(
+            lambda x: x.shift(DAYS_PRED).rolling(30).kurt())
         return df.pipe(reduce_mem_usage)
 
 
@@ -331,21 +315,15 @@ class AddPriceFeature(BaseFeature):
             shift = DAYS_PRED + diff
             df[f"{col}_lag_t{shift}"] = grouped_df.transform(lambda x: x.shift(shift))
 
-        df[f"{col}_rolling_price_MAX_t365"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(365).max())
+        df[f"{col}_rolling_price_MAX_t365"] = grouped_df.transform(
+            lambda x: x.shift(DAYS_PRED).rolling(365).max())
         df[f"{col}_price_change_t365"] = \
             (df[f"{col}_rolling_price_MAX_t365"] - df["sell_price"]) / (df[f"{col}_rolling_price_MAX_t365"])
 
-        df[f"{col}_rolling_price_std_t7"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(7).std())
+        df[f"{col}_rolling_price_std_t7"] = grouped_df.transform(
+            lambda x: x.shift(DAYS_PRED).rolling(7).std())
         df[f"{col}_rolling_price_std_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).std())
         return df.drop([f"{col}_rolling_price_MAX_t365"], axis=1).pipe(reduce_mem_usage)
-
-
-class AddWeight(BaseFeature):
-    def create_feature(self, df):
-        grouped_df = df.groupby(["id"])['sales']
-        df['weight'] = grouped_df.transform(lambda x: 1 - (x == 0).shift(28).rolling(28).mean())
-        df.dropna(subset=['weight'], axis=0, inplace=True)
-        return df.pipe(reduce_mem_usage)
 
 
 def create_features(df, is_use_cache=True):
@@ -357,19 +335,18 @@ def create_features(df, is_use_cache=True):
         - 過去１ヶ月間の（特定item_idの売上 / スーパー全体の売上）
             - （特定item_idの売上個数 / スーパー全体の売上個数）
             - （特定item_idの売上個数 / スーパー全体の売上個数）
-        - 過去N日で、0を連続で取る数の統計量
-        - 移動平均のshift
+        - pd.DataFrame().shift(DAYS_PRED).diff(n) これつかっていきたい。
+            - nがn日前のデータとの差という意味
+            - pct_change()もあるらしい
+                - (A - B) / B
+                - 過去のデータから何倍変化があったかわかる。
     '''
-    print('Add Sales Feature.')
-    with AddSalesFeature(filename='add_sales_train', use_cache=is_use_cache) as feat:
+
+    with AddBaseSalesFeature(filename='add_sales_train', use_cache=is_use_cache) as feat:
         df = feat.get_feature(df)
 
-    print('Add Price Feature.')
-    with AddPriceFeature(filename='add_price_train', use_cache=is_use_cache) as feat:
-        df = feat.get_feature(df)
-
-    # print('Add Weight.')
-    # with AddWeight(filename='add_weight', use_cache=is_use_cache) as feat:
+    # print('Add Price Feature.')
+    # with AddPriceFeature(filename='add_price_train', use_cache=is_use_cache) as feat:
     #     df = feat.get_feature(df)
 
     return df.reset_index(drop=True)
@@ -453,7 +430,7 @@ class LGBM_Model():
 
 
 def estimate_rmsle(actual, preds):
-    return mean_squared_error(np.log1p(actual), np.log1p(preds), squared=False)
+    return np.sqrt(mean_squared_log_error(actual, preds))
 
 
 def lgbm_rmsle(preds, data):
@@ -699,7 +676,7 @@ def create_submission_file(submit_data, features, score):
 
 def main():
     now = str(datetime.datetime.now())
-    print('\n\n' + '=' * 100, '\n\n')
+    print('\n\n' + '=' * 80, '\n\n')
     print(f'RUNNING at {now}\n')
 
     print('\n--- Load Data ---\n')
@@ -710,13 +687,13 @@ def main():
     _ = parse_sell_price(filename='encoded_sell_price', use_cache=True)
     _ = encode_calendar(filename='encoded_calendar', use_cache=True)
 
-    train = melt_data(is_test=False, filename='melted_train', use_cache=True)
+    train = melt_data(filename='melted_train', use_cache=False)
     print('\nTrain DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())
 
     print('\n--- Feature Engineering ---\n')
-    train = create_features(train, is_use_cache=True)
+    train = create_features(train, is_use_cache=False)
     print('Train DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())
