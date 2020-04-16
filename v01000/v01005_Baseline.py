@@ -407,7 +407,7 @@ class LGBM_Model():
         models = self.get_models()
         return [m.predict(data.values, num_iteration=m.best_iteration) for m in models]
 
-    def save_importance(self, filepath, max_num_features=50, figsize=(15, 20), plot=False):
+    def save_importance(self, filepath, max_num_features=50, figsize=(20, 25), plot=False):
         models = self.get_models()
         # Define Feature Importance DataFrame.
         imp_df = pd.DataFrame(
