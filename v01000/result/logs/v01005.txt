@@ -1,0 +1,265 @@
+
+
+================================================================================ 
+
+
+RUNNING at 2020-04-17 02:30:47.282336
+
+
+--- Load Data ---
+
+Loading and initial processing have already been completed.
+
+--- Transfrom Data ---
+
+processing encode_map.
+processing parse_sell_price.
+processing encode_calendar.
+processing melt_data.
+Mem. usage decreased to 2981.92 Mb (37.4% reduction)
+
+Train DataFrame: (46668247, 31)
+Memory Usage: 2981.922673225403 Mb
+                                   id  ...  sell_price_momentum
+213437  HOBBIES_1_008_CA_1_validation  ...                  1.0
+213438  HOBBIES_1_009_CA_1_validation  ...                  1.0
+213439  HOBBIES_1_010_CA_1_validation  ...                  1.0
+213441  HOBBIES_1_012_CA_1_validation  ...                  1.0
+213444  HOBBIES_1_015_CA_1_validation  ...                  1.0
+
+[5 rows x 31 columns]
+
+--- Feature Engineering ---
+
+Create Sales Feature.
+Mem. usage decreased to 5830.33 Mb (59.4% reduction)
+Train DataFrame: (46668247, 63)
+Memory Usage: 5474.276074409485 Mb
+                              id  ...  sales_rolling_KURT_t30
+0  HOBBIES_1_008_CA_1_validation  ...                     NaN
+1  HOBBIES_1_009_CA_1_validation  ...                     NaN
+2  HOBBIES_1_010_CA_1_validation  ...                     NaN
+3  HOBBIES_1_012_CA_1_validation  ...                     NaN
+4  HOBBIES_1_015_CA_1_validation  ...                     NaN
+
+[5 rows x 63 columns]
+
+--- Train Model ---
+
+{'n_splits': 3, 'max_train_size': None}
+{'boosting_type': 'gbdt', 'metric': 'mape', 'objective': 'mape', 'seed': 11, 'learning_rate': 0.3, 'max_depth': 5, 'num_leaves': 32, 'min_data_in_leaf': 50, 'bagging_fraction': 0.8, 'bagging_freq': 10, 'feature_fraction': 0.8, 'verbosity': -1}
+{'num_boost_round': 100000, 'early_stopping_rounds': 50, 'verbose_eval': 100, 'feval': <function lgbm_rmsle at 0x12221eb80>}
+
+1 of 3 Fold:
+
+Train DataFrame Size: (11240204, 58)
+Valid DataFrame Size: (11240201, 58)
+Training until validation scores don't improve for 50 rounds
+Traceback (most recent call last):
+  File "v01005_Baseline.py", line 718, in <module>
+    main()
+  File "v01005_Baseline.py", line 708, in main
+    train_model(train_data, features, target)
+  File "v01005_Baseline.py", line 472, in train_model
+    lgbm_model = LGBM_Model(df[features], df[target], cv_param, model_param, train_param)
+  File "v01005_Baseline.py", line 375, in __init__
+    self.models = self.fit(X, y, model_param, train_param, groups)
+  File "v01005_Baseline.py", line 392, in fit
+    model = lgb.train(
+  File "/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/engine.py", line 255, in train
+    evaluation_result_list.extend(booster.eval_train(feval))
+  File "/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py", line 2156, in eval_train
+    return self.__inner_eval(self._train_data_name, 0, feval)
+  File "/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py", line 2658, in __inner_eval
+    feval_ret = feval(self.__inner_predict(data_idx), cur_data)
+  File "v01005_Baseline.py", line 437, in lgbm_rmsle
+    return 'RMSLE', estimate_rmsle(preds, data.get_label()), False
+  File "v01005_Baseline.py", line 433, in estimate_rmsle
+    return np.sqrt(mean_squared_log_error(actual, preds))
+  File "/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/sklearn/metrics/_regression.py", line 326, in mean_squared_log_error
+    raise ValueError("Mean Squared Logarithmic Error cannot be used when "
+ValueError: Mean Squared Logarithmic Error cannot be used when targets contain negative values.
+
+
+================================================================================ 
+
+
+RUNNING at 2020-04-17 11:17:26.227159
+
+
+--- Load Data ---
+
+Loading and initial processing have already been completed.
+
+--- Transfrom Data ---
+
+processing encode_map.
+processing parse_sell_price.
+processing encode_calendar.
+processing melt_data.
+Mem. usage decreased to 2981.92 Mb (37.4% reduction)
+
+Train DataFrame: (46668247, 31)
+Memory Usage: 2981.922673225403 Mb
+                                   id  ...  sell_price_momentum
+213437  HOBBIES_1_008_CA_1_validation  ...                  1.0
+213438  HOBBIES_1_009_CA_1_validation  ...                  1.0
+213439  HOBBIES_1_010_CA_1_validation  ...                  1.0
+213441  HOBBIES_1_012_CA_1_validation  ...                  1.0
+213444  HOBBIES_1_015_CA_1_validation  ...                  1.0
+
+[5 rows x 31 columns]
+
+--- Feature Engineering ---
+
+Create Sales Feature.
+Mem. usage decreased to 5830.33 Mb (59.4% reduction)
+Train DataFrame: (46668247, 63)
+Memory Usage: 5474.276074409485 Mb
+                              id  ...  sales_rolling_KURT_t30
+0  HOBBIES_1_008_CA_1_validation  ...                     NaN
+1  HOBBIES_1_009_CA_1_validation  ...                     NaN
+2  HOBBIES_1_010_CA_1_validation  ...                     NaN
+3  HOBBIES_1_012_CA_1_validation  ...                     NaN
+4  HOBBIES_1_015_CA_1_validation  ...                     NaN
+
+[5 rows x 63 columns]
+
+--- Train Model ---
+
+{'n_splits': 3, 'max_train_size': None}
+{'boosting_type': 'gbdt', 'metric': 'mape', 'objective': 'mape', 'seed': 11, 'learning_rate': 0.3, 'max_depth': 5, 'num_leaves': 32, 'min_data_in_leaf': 50, 'bagging_fraction': 0.8, 'bagging_freq': 10, 'feature_fraction': 0.8, 'verbosity': -1}
+{'num_boost_round': 100000, 'early_stopping_rounds': 50, 'verbose_eval': 100}
+
+1 of 3 Fold:
+
+Train DataFrame Size: (11240204, 58)
+Valid DataFrame Size: (11240201, 58)
+Training until validation scores don't improve for 50 rounds
+[100]	train's mape: 0.404099	valid's mape: 0.370902
+[200]	train's mape: 0.403562	valid's mape: 0.370595
+[300]	train's mape: 0.403276	valid's mape: 0.370402
+[400]	train's mape: 0.40298	valid's mape: 0.370288
+[500]	train's mape: 0.402777	valid's mape: 0.370199
+Early stopping, best iteration is:
+[529]	train's mape: 0.402724	valid's mape: 0.370176
+
+2 of 3 Fold:
+
+Train DataFrame Size: (22480405, 58)
+Valid DataFrame Size: (11240201, 58)
+Training until validation scores don't improve for 50 rounds
+[100]	train's mape: 0.386942	valid's mape: 0.357774
+[200]	train's mape: 0.386526	valid's mape: 0.357365
+[300]	train's mape: 0.386424	valid's mape: 0.357275
+[400]	train's mape: 0.386318	valid's mape: 0.357225
+[500]	train's mape: 0.386177	valid's mape: 0.357101
+[600]	train's mape: 0.385774	valid's mape: 0.357132
+Early stopping, best iteration is:
+[550]	train's mape: 0.386148	valid's mape: 0.357095
+
+3 of 3 Fold:
+
+Train DataFrame Size: (33720606, 58)
+Valid DataFrame Size: (11240201, 58)
+Training until validation scores don't improve for 50 rounds
+[100]	train's mape: 0.377147	valid's mape: 0.372769
+[200]	train's mape: 0.376679	valid's mape: 0.372307
+[300]	train's mape: 0.376484	valid's mape: 0.372113
+[400]	train's mape: 0.376239	valid's mape: 0.37192
+[500]	train's mape: 0.376167	valid's mape: 0.37185
+[600]	train's mape: 0.376014	valid's mape: 0.371742
+[700]	train's mape: 0.375922	valid's mape: 0.371682
+[800]	train's mape: 0.375853	valid's mape: 0.371633
+[900]	train's mape: 0.375801	valid's mape: 0.371605
+[1000]	train's mape: 0.375756	valid's mape: 0.3716
+Early stopping, best iteration is:
+[953]	train's mape: 0.375791	valid's mape: 0.371597
+
+--- Evaluation ---
+
+v01005_Baseline.py:628: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  eval_data['pred'] = preds
+RMSE: 3.3881378434386242
+WRMSSE: 4.245241881112039
+
+--- Submission ---
+
+v01005_Baseline.py:664: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  submit_data['pred'] = np.mean(preds, axis=0)
+Submit DataFrame: (60980, 29)
+                              id        F1  ...       F27       F28
+0  HOBBIES_1_001_CA_1_validation  0.013442  ...  0.992223  0.994219
+1  HOBBIES_1_002_CA_1_validation  0.000000  ...  0.000000  0.000000
+2  HOBBIES_1_003_CA_1_validation  0.000000  ...  0.000000  0.000000
+3  HOBBIES_1_004_CA_1_validation  0.924074  ...  1.017375  1.002729
+4  HOBBIES_1_005_CA_1_validation  0.004081  ...  0.995787  0.995365
+
+[5 rows x 29 columns]
+
+
+================================================================================ 
+
+
+RUNNING at 2020-04-18 03:16:28.288310
+
+
+--- Load Data ---
+
+Loading and initial processing have already been completed.
+
+--- Transfrom Data ---
+
+processing encode_map.
+processing parse_sell_price.
+processing encode_calendar.
+processing melt_data.
+
+Train DataFrame: (46668247, 31)
+Memory Usage: 2981.922673225403 Mb
+                                   id  ...  sell_price_momentum
+213437  HOBBIES_1_008_CA_1_validation  ...                  1.0
+213438  HOBBIES_1_009_CA_1_validation  ...                  1.0
+213439  HOBBIES_1_010_CA_1_validation  ...                  1.0
+213441  HOBBIES_1_012_CA_1_validation  ...                  1.0
+213444  HOBBIES_1_015_CA_1_validation  ...                  1.0
+
+[5 rows x 31 columns]
+
+--- Feature Engineering ---
+
+Train DataFrame: (35605264, 63)
+Memory Usage: 4176.566696166992 Mb
+                              id  ...  sales_rolling_KURT_t30
+0  HOBBIES_1_008_CA_1_validation  ...                2.142578
+1  HOBBIES_1_009_CA_1_validation  ...               12.648438
+2  HOBBIES_1_010_CA_1_validation  ...                3.664062
+3  HOBBIES_1_012_CA_1_validation  ...               -0.972168
+4  HOBBIES_1_015_CA_1_validation  ...                9.992188
+
+[5 rows x 63 columns]
+
+--- Train Model ---
+
+n_fold: 3
+max_train_days: 730
+test_days: 180
+{'boosting_type': 'gbdt', 'metric': 'None', 'objective': 'poisson', 'seed': 42, 'force_row_wise': True, 'learning_rate': 0.3, 'max_depth': 5, 'num_leaves': 32, 'min_data_in_leaf': 50, 'bagging_fraction': 0.8, 'bagging_freq': 10, 'feature_fraction': 0.8, 'verbosity': -1}
+{'num_boost_round': 100000, 'early_stopping_rounds': 50, 'verbose_eval': 100, 'feval': <function lgbm_rmsle at 0x123422940>}
+Train DataFrame Size: 17190443
+Valid DataFrame Size: 4900904
+
+1 of 3 Fold:
+
+[LightGBM] [Warning] Unknown parameter: force_row_wise
+Training until validation scores don't improve for 50 rounds
+[100]	train's RMSLE: 0.545313	valid's RMSLE: 0.535626
+[200]	train's RMSLE: 0.541687	valid's RMSLE: 0.53256

@@ -19,14 +19,16 @@ from scipy.stats import linregress
 
 from sklearn import preprocessing
 from sklearn.model_selection import TimeSeriesSplit
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_squared_log_error
 
 import lightgbm as lgb
 
-
-VERSION = str(__file__).split('_')[0]
 IS_TEST = True
+SEED = 42
+VERSION = str(__file__).split('_')[0]
+
 
 ''' Load Data
 MEMO:
@@ -326,6 +328,16 @@ class AddPriceFeature(BaseFeature):
         return df.drop([f"{col}_rolling_price_MAX_t365"], axis=1).pipe(reduce_mem_usage)
 
 
+class DropNullRows(BaseFeature):
+    def create_feature(self, df):
+        print('Drop Null Rows.')
+        check_cols = ['lag', 'rolling']
+        cheked_regex = '|'.join(check_cols)
+        target_cols = df.columns[df.columns.str.contains(cheked_regex)]
+        is_contain_null_rows = df[target_cols].isnull().any(axis=1)
+        return df.loc[~(is_contain_null_rows), :]
+
+
 def create_features(df, is_use_cache=True):
     '''
     TODO:
@@ -342,12 +354,15 @@ def create_features(df, is_use_cache=True):
                 - 過去のデータから何倍変化があったかわかる。
     '''
 
-    with AddBaseSalesFeature(filename='add_sales_train', use_cache=is_use_cache) as feat:
+    with AddBaseSalesFeature(filename='add_sales_train', use_cache=True) as feat:
         df = feat.get_feature(df)
 
     # print('Add Price Feature.')
     # with AddPriceFeature(filename='add_price_train', use_cache=is_use_cache) as feat:
     #     df = feat.get_feature(df)
+
+    with DropNullRows(filename='drop_null_rows', use_cache=is_use_cache) as feat:
+        df = feat.get_feature(df)
 
     return df.reset_index(drop=True)
 
@@ -366,6 +381,31 @@ def split_train_eval_submit(df, pred_interval=28):
 
     train_mask = ((~eval_mask) & (~submit_mask))
     return df[train_mask], df[eval_mask], df[submit_mask]
+
+
+def estimate_rmsle(actual, preds):
+    return np.sqrt(mean_squared_log_error(actual, preds))
+
+
+def lgbm_rmsle(preds, data):
+    return 'RMSLE', estimate_rmsle(preds, data.get_label()), False
+
+
+def custom_asymmetric_train(y_pred, y_true):
+    ''' define custom loss function. '''
+    y_true = y_true.get_label()
+    residual = (y_true - y_pred).astype("float")
+    grad = np.where(residual < 0, -2 * residual, -2 * residual * 1.15)
+    hess = np.where(residual < 0, 2, 2 * 1.15)
+    return grad, hess
+
+
+def custom_asymmetric_valid(y_pred, y_true):
+    ''' define custom evaluation metric. '''
+    y_true = y_true.get_label()
+    residual = (y_true - y_pred).astype("float")
+    loss = np.where(residual < 0, (residual ** 2), (residual ** 2) * 1.15)
+    return "custom_asymmetric_eval", np.mean(loss), False
 
 
 class LGBM_Model():
@@ -429,25 +469,89 @@ class LGBM_Model():
         plt.close('all')
 
 
-def estimate_rmsle(actual, preds):
-    return np.sqrt(mean_squared_log_error(actual, preds))
+class RondomSeed_LGBM_Model():
+    def __init__(self, data, feature, target,
+                 n_fold, test_days, max_train_days, model_param, train_param, weight_col=None):
+        self.n_fold = n_fold
+        train_dataset, valid_dataset = self.split_data(data, feature, target, test_days, max_train_days, weight_col)
+        self.models = self.fit(train_dataset, valid_dataset, model_param, train_param)
+
+    def split_data(self, data, features, target, test_days, max_train_days, weight_col):
+        latest_date = data['date'].max()
+        oldest_valid_date = latest_date - datetime.timedelta(days=test_days)
+        valid_mask = (data["date"] > oldest_valid_date)
+        oldest_train_date = oldest_valid_date - datetime.timedelta(days=max_train_days)
+        train_mask = (data["date"] > oldest_train_date) & (data["date"] <= oldest_valid_date)
+
+        train_X, train_y = data.loc[train_mask, features], data.loc[train_mask, target]
+        valid_X, valid_y = data.loc[valid_mask, features], data.loc[valid_mask, target]
+
+        train_dataset = lgb.Dataset(train_X, label=train_y)
+        valid_dataset = lgb.Dataset(valid_X, label=valid_y, reference=train_dataset)
+
+        if weight_col:
+            train_dataset.set_weight(data.loc[train_mask, weight_col])
+            valid_dataset.set_weight(data.loc[valid_mask, weight_col])
+
+        print('Train DataFrame Size:', train_mask.sum())
+        print('Valid DataFrame Size:', valid_mask.sum())
+        return train_dataset, valid_dataset
+
+    def fit(self, train_dataset, valid_dataset, model_param, train_param):
+        models = []
+        for n in range(self.n_fold):
+            print(f"\n{n + 1} of {self.n_fold} Fold:\n")
+            model_param['seed'] = model_param['seed'] + 1
+            model = lgb.train(
+                model_param,
+                train_dataset,
+                valid_sets=[train_dataset, valid_dataset],
+                valid_names=["train", "valid"],
+                **train_param
+            )
+            models.append(model)
+        return models
+
+    def get_models(self):
+        return self.models
+
+    def predict(self, data):
+        models = self.get_models()
+        return [m.predict(data.values, num_iteration=m.best_iteration) for m in models]
+
+    def save_importance(self, filepath, max_num_features=50, figsize=(20, 25), plot=False):
+        models = self.get_models()
+        # Define Feature Importance DataFrame.
+        imp_df = pd.DataFrame(
+            [m.feature_importance() for m in models],
+            columns=models[0].feature_name()
+        ).T
+        imp_df['AVG_Importance'] = imp_df.iloc[:, :len(models)].mean(axis=1)
+        imp_df['STD_Importance'] = imp_df.iloc[:, :len(models)].std(axis=1)
+        imp_df.sort_values(by='AVG_Importance', inplace=True)
+        # Plot Importance DataFrame.
+        plt.figure(figsize=figsize)
+        imp_df[-max_num_features:].plot(
+            kind='barh', title='Feature importance', figsize=figsize,
+            y='AVG_Importance', xerr='STD_Importance', align="center"
+        )
+        if plot:
+            plt.show()
+        plt.savefig(filepath)
+        plt.close('all')
 
 
-def lgbm_rmsle(preds, data):
-    return 'RMSLE', estimate_rmsle(preds, data.get_label()), False
-
-
-def train_model(df, features, target):
-    cv_param = {
-        "n_splits": 3,
-        "max_train_size": None
-    }
+def train_model(df, feature, target):
+    n_fold = 3
+    max_train_days = 2 * 365
+    test_days = 180
 
     model_param = {
         "boosting_type": "gbdt",
         "metric": "None",
         "objective": "poisson",
-        "seed": 11,
+        "seed": SEED,
+        "force_row_wise": True,
         "learning_rate": 0.3,
         'max_depth': 5,
         'num_leaves': 32,
@@ -465,11 +569,14 @@ def train_model(df, features, target):
         "feval": lgbm_rmsle
     }
 
-    print(cv_param)
+    print(f'n_fold: {n_fold}')
+    print(f'max_train_days: {max_train_days}')
+    print(f'test_days: {test_days}')
     print(model_param)
     print(train_param)
 
-    lgbm_model = LGBM_Model(df[features], df[target], cv_param, model_param, train_param)
+    lgbm_model = RondomSeed_LGBM_Model(df, feature, target,
+                                       n_fold, test_days, max_train_days, model_param, train_param)
     lgbm_model.save_importance(filepath=f'result/importance/{VERSION}.png')
     dump_pickle(lgbm_model.get_models(), f'result/model/{VERSION}.pkl')
 
@@ -687,13 +794,13 @@ def main():
     _ = parse_sell_price(filename='encoded_sell_price', use_cache=True)
     _ = encode_calendar(filename='encoded_calendar', use_cache=True)
 
-    train = melt_data(filename='melted_train', use_cache=False)
+    train = melt_data(filename='melted_train', use_cache=True)
     print('\nTrain DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())
 
     print('\n--- Feature Engineering ---\n')
-    train = create_features(train, is_use_cache=False)
+    train = create_features(train, is_use_cache=True)
     print('Train DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())
