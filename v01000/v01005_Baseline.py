@@ -307,37 +307,6 @@ class AddBaseSalesFeature(BaseFeature):
         return df.pipe(reduce_mem_usage)
 
 
-class AddPriceFeature(BaseFeature):
-    def create_feature(self, df):
-        DAYS_PRED = 28
-        col = 'sell_price'
-        grouped_df = df.groupby(["id"])[col]
-
-        for diff in [0]:
-            shift = DAYS_PRED + diff
-            df[f"{col}_lag_t{shift}"] = grouped_df.transform(lambda x: x.shift(shift))
-
-        df[f"{col}_rolling_price_MAX_t365"] = grouped_df.transform(
-            lambda x: x.shift(DAYS_PRED).rolling(365).max())
-        df[f"{col}_price_change_t365"] = \
-            (df[f"{col}_rolling_price_MAX_t365"] - df["sell_price"]) / (df[f"{col}_rolling_price_MAX_t365"])
-
-        df[f"{col}_rolling_price_std_t7"] = grouped_df.transform(
-            lambda x: x.shift(DAYS_PRED).rolling(7).std())
-        df[f"{col}_rolling_price_std_t30"] = grouped_df.transform(lambda x: x.shift(DAYS_PRED).rolling(30).std())
-        return df.drop([f"{col}_rolling_price_MAX_t365"], axis=1).pipe(reduce_mem_usage)
-
-
-class DropNullRows(BaseFeature):
-    def create_feature(self, df):
-        print('Drop Null Rows.')
-        check_cols = ['lag', 'rolling']
-        cheked_regex = '|'.join(check_cols)
-        target_cols = df.columns[df.columns.str.contains(cheked_regex)]
-        is_contain_null_rows = df[target_cols].isnull().any(axis=1)
-        return df.loc[~(is_contain_null_rows), :]
-
-
 def create_features(df, is_use_cache=True):
     '''
     TODO:
@@ -355,13 +324,6 @@ def create_features(df, is_use_cache=True):
     '''
 
     with AddBaseSalesFeature(filename='add_sales_train', use_cache=True) as feat:
-        df = feat.get_feature(df)
-
-    # print('Add Price Feature.')
-    # with AddPriceFeature(filename='add_price_train', use_cache=is_use_cache) as feat:
-    #     df = feat.get_feature(df)
-
-    with DropNullRows(filename='drop_null_rows', use_cache=is_use_cache) as feat:
         df = feat.get_feature(df)
 
     return df.reset_index(drop=True)
@@ -383,29 +345,21 @@ def split_train_eval_submit(df, pred_interval=28):
     return df[train_mask], df[eval_mask], df[submit_mask]
 
 
+def drop_null_rows(df):
+    print('Drop Null Rows.')
+    check_cols = ['lag', 'rolling']
+    cheked_regex = '|'.join(check_cols)
+    target_cols = df.columns[df.columns.str.contains(cheked_regex)]
+    is_contain_null_rows = df[target_cols].isnull().any(axis=1)
+    return df.loc[~(is_contain_null_rows), :]
+
+
 def estimate_rmsle(actual, preds):
     return np.sqrt(mean_squared_log_error(actual, preds))
 
 
 def lgbm_rmsle(preds, data):
     return 'RMSLE', estimate_rmsle(preds, data.get_label()), False
-
-
-def custom_asymmetric_train(y_pred, y_true):
-    ''' define custom loss function. '''
-    y_true = y_true.get_label()
-    residual = (y_true - y_pred).astype("float")
-    grad = np.where(residual < 0, -2 * residual, -2 * residual * 1.15)
-    hess = np.where(residual < 0, 2, 2 * 1.15)
-    return grad, hess
-
-
-def custom_asymmetric_valid(y_pred, y_true):
-    ''' define custom evaluation metric. '''
-    y_true = y_true.get_label()
-    residual = (y_true - y_pred).astype("float")
-    loss = np.where(residual < 0, (residual ** 2), (residual ** 2) * 1.15)
-    return "custom_asymmetric_eval", np.mean(loss), False
 
 
 class LGBM_Model():
@@ -575,6 +529,7 @@ def train_model(df, feature, target):
     print(model_param)
     print(train_param)
 
+    df = drop_null_rows(df)
     lgbm_model = RondomSeed_LGBM_Model(df, feature, target,
                                        n_fold, test_days, max_train_days, model_param, train_param)
     lgbm_model.save_importance(filepath=f'result/importance/{VERSION}.png')
@@ -812,6 +767,7 @@ def main():
     features = [f for f in features if f not in cols_to_drop]
 
     train_data, eval_data, submit_data = split_train_eval_submit(train)
+    del train; gc.collect()
     train_model(train_data, features, target)
 
     print('\n--- Evaluation ---\n')

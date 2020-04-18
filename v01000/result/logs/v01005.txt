@@ -1,6 +1,6 @@
 
 
-================================================================================ 
+================================================================================
 
 
 RUNNING at 2020-04-17 02:30:47.282336
@@ -81,7 +81,7 @@ Traceback (most recent call last):
 ValueError: Mean Squared Logarithmic Error cannot be used when targets contain negative values.
 
 
-================================================================================ 
+================================================================================
 
 
 RUNNING at 2020-04-17 11:17:26.227159
@@ -178,7 +178,7 @@ Early stopping, best iteration is:
 
 --- Evaluation ---
 
-v01005_Baseline.py:628: SettingWithCopyWarning: 
+v01005_Baseline.py:628: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame.
 Try using .loc[row_indexer,col_indexer] = value instead
 
@@ -189,7 +189,7 @@ WRMSSE: 4.245241881112039
 
 --- Submission ---
 
-v01005_Baseline.py:664: SettingWithCopyWarning: 
+v01005_Baseline.py:664: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame.
 Try using .loc[row_indexer,col_indexer] = value instead
 
@@ -206,7 +206,7 @@ Submit DataFrame: (60980, 29)
 [5 rows x 29 columns]
 
 
-================================================================================ 
+================================================================================
 
 
 RUNNING at 2020-04-18 03:16:28.288310
@@ -263,3 +263,163 @@ Valid DataFrame Size: 4900904
 Training until validation scores don't improve for 50 rounds
 [100]	train's RMSLE: 0.545313	valid's RMSLE: 0.535626
 [200]	train's RMSLE: 0.541687	valid's RMSLE: 0.53256
+[300]	train's RMSLE: 0.53934	valid's RMSLE: 0.531699
+Early stopping, best iteration is:
+[270]	train's RMSLE: 0.539884	valid's RMSLE: 0.531628
+
+2 of 3 Fold:
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's RMSLE: 0.544884	valid's RMSLE: 0.534812
+[200]	train's RMSLE: 0.541771	valid's RMSLE: 0.532768
+[300]	train's RMSLE: 0.539521	valid's RMSLE: 0.531746
+[400]	train's RMSLE: 0.53798	valid's RMSLE: 0.531179
+[500]	train's RMSLE: 0.536838	valid's RMSLE: 0.530814
+[600]	train's RMSLE: 0.535666	valid's RMSLE: 0.530741
+[700]	train's RMSLE: 0.534528	valid's RMSLE: 0.530102
+[800]	train's RMSLE: 0.533563	valid's RMSLE: 0.529912
+[900]	train's RMSLE: 0.532836	valid's RMSLE: 0.529746
+Early stopping, best iteration is:
+[881]	train's RMSLE: 0.53292	valid's RMSLE: 0.529677
+
+3 of 3 Fold:
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's RMSLE: 0.545081	valid's RMSLE: 0.5358
+[200]	train's RMSLE: 0.541608	valid's RMSLE: 0.533082
+[300]	train's RMSLE: 0.539411	valid's RMSLE: 0.531939
+[400]	train's RMSLE: 0.538015	valid's RMSLE: 0.531227
+[500]	train's RMSLE: 0.536449	valid's RMSLE: 0.53074
+[600]	train's RMSLE: 0.53546	valid's RMSLE: 0.530555
+[700]	train's RMSLE: 0.534534	valid's RMSLE: 0.530454
+Early stopping, best iteration is:
+[718]	train's RMSLE: 0.534361	valid's RMSLE: 0.530372
+
+--- Evaluation ---
+
+v01005_Baseline.py:735: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  eval_data['pred'] = preds
+Traceback (most recent call last):
+  File "v01005_Baseline.py", line 825, in <module>
+    main()
+  File "v01005_Baseline.py", line 818, in main
+    metric_scores = evaluation_model(eval_data, features)
+  File "v01005_Baseline.py", line 753, in evaluation_model
+    metric_scores['WRMSSE'] = estimate_wrmsse(eval_data, preds)
+  File "v01005_Baseline.py", line 743, in estimate_wrmsse
+    score = e.score(pred_labels)
+  File "v01005_Baseline.py", line 705, in score
+    assert self.valid_df[self.valid_target_columns].shape == valid_preds.shape
+AssertionError
+
+
+================================================================================ 
+
+
+RUNNING at 2020-04-18 14:27:06.211401
+
+
+--- Load Data ---
+
+Loading and initial processing have already been completed.
+
+--- Transfrom Data ---
+
+processing encode_map.
+processing parse_sell_price.
+processing encode_calendar.
+processing melt_data.
+
+Train DataFrame: (46668247, 31)
+Memory Usage: 2981.922673225403 Mb
+                                   id  ...  sell_price_momentum
+213437  HOBBIES_1_008_CA_1_validation  ...                  1.0
+213438  HOBBIES_1_009_CA_1_validation  ...                  1.0
+213439  HOBBIES_1_010_CA_1_validation  ...                  1.0
+213441  HOBBIES_1_012_CA_1_validation  ...                  1.0
+213444  HOBBIES_1_015_CA_1_validation  ...                  1.0
+
+[5 rows x 31 columns]
+
+--- Feature Engineering ---
+
+Train DataFrame: (46668247, 63)
+Memory Usage: 5474.276074409485 Mb
+                              id  ...  sales_rolling_KURT_t30
+0  HOBBIES_1_008_CA_1_validation  ...                     NaN
+1  HOBBIES_1_009_CA_1_validation  ...                     NaN
+2  HOBBIES_1_010_CA_1_validation  ...                     NaN
+3  HOBBIES_1_012_CA_1_validation  ...                     NaN
+4  HOBBIES_1_015_CA_1_validation  ...                     NaN
+
+[5 rows x 63 columns]
+
+--- Train Model ---
+
+n_fold: 3
+max_train_days: 730
+test_days: 180
+{'boosting_type': 'gbdt', 'metric': 'None', 'objective': 'poisson', 'seed': 42, 'force_row_wise': True, 'learning_rate': 0.3, 'max_depth': 5, 'num_leaves': 32, 'min_data_in_leaf': 50, 'bagging_fraction': 0.8, 'bagging_freq': 10, 'feature_fraction': 0.8, 'verbosity': -1}
+{'num_boost_round': 100000, 'early_stopping_rounds': 50, 'verbose_eval': 100, 'feval': <function lgbm_rmsle at 0x11db0d940>}
+Drop Null Rows.
+Train DataFrame Size: 17190443
+Valid DataFrame Size: 4900904
+
+1 of 3 Fold:
+
+[LightGBM] [Warning] Unknown parameter: force_row_wise
+Training until validation scores don't improve for 50 rounds
+[100]	train's RMSLE: 0.545313	valid's RMSLE: 0.535626
+[200]	train's RMSLE: 0.541687	valid's RMSLE: 0.53258
+[300]	train's RMSLE: 0.53934	valid's RMSLE: 0.531719
+Early stopping, best iteration is:
+[270]	train's RMSLE: 0.539884	valid's RMSLE: 0.531648
+
+2 of 3 Fold:
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's RMSLE: 0.544884	valid's RMSLE: 0.534812
+[200]	train's RMSLE: 0.541771	valid's RMSLE: 0.532768
+[300]	train's RMSLE: 0.539521	valid's RMSLE: 0.531746
+[400]	train's RMSLE: 0.53798	valid's RMSLE: 0.531179
+[500]	train's RMSLE: 0.536838	valid's RMSLE: 0.530814
+[600]	train's RMSLE: 0.535666	valid's RMSLE: 0.530741
+[700]	train's RMSLE: 0.534528	valid's RMSLE: 0.530102
+[800]	train's RMSLE: 0.533563	valid's RMSLE: 0.529912
+[900]	train's RMSLE: 0.532836	valid's RMSLE: 0.529746
+Early stopping, best iteration is:
+[881]	train's RMSLE: 0.53292	valid's RMSLE: 0.529677
+
+3 of 3 Fold:
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's RMSLE: 0.545081	valid's RMSLE: 0.5358
+[200]	train's RMSLE: 0.541608	valid's RMSLE: 0.533082
+[300]	train's RMSLE: 0.539411	valid's RMSLE: 0.531939
+[400]	train's RMSLE: 0.538015	valid's RMSLE: 0.531227
+[500]	train's RMSLE: 0.536449	valid's RMSLE: 0.53074
+[600]	train's RMSLE: 0.53546	valid's RMSLE: 0.530555
+[700]	train's RMSLE: 0.534534	valid's RMSLE: 0.530454
+Early stopping, best iteration is:
+[718]	train's RMSLE: 0.534361	valid's RMSLE: 0.530372
+
+--- Evaluation ---
+
+RMSE: 2.1968742291802132
+WRMSSE: 0.4894050645107007
+
+--- Submission ---
+
+Submit DataFrame: (60980, 29)
+                              id        F1  ...       F27       F28
+0  HOBBIES_1_001_CA_1_validation  0.845258  ...  1.144420  1.191232
+1  HOBBIES_1_002_CA_1_validation  0.410136  ...  0.364742  0.359816
+2  HOBBIES_1_003_CA_1_validation  0.455901  ...  0.902250  0.915550
+3  HOBBIES_1_004_CA_1_validation  1.936398  ...  2.617451  2.514720
+4  HOBBIES_1_005_CA_1_validation  0.926599  ...  1.385668  1.534940
+
+[5 rows x 29 columns]
