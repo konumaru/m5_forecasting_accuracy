@@ -354,12 +354,15 @@ def drop_null_rows(df):
     return df.loc[~(is_contain_null_rows), :]
 
 
-def estimate_rmsle(actual, preds):
-    return np.sqrt(mean_squared_log_error(actual, preds))
+def estimate_rmsle(actual, preds, weight=None):
+    preds = np.clip(preds, 0, None)  # TODO: temporary process
+    return np.sqrt(mean_squared_log_error(actual, preds, sample_weight=weight))
 
 
 def lgbm_rmsle(preds, data):
-    return 'RMSLE', estimate_rmsle(preds, data.get_label()), False
+    weight = data.get_weight()
+    metric_name = 'RMSLE' if weight is None else 'WRMSLE'
+    return metric_name, estimate_rmsle(data.get_label(), preds, weight), False
 
 
 class LGBM_Model():
@@ -425,12 +428,12 @@ class LGBM_Model():
 
 class RondomSeed_LGBM_Model():
     def __init__(self, data, feature, target,
-                 n_fold, test_days, max_train_days, model_param, train_param, weight_col=None):
+                 n_fold, test_days, max_train_days, model_param, train_param, weight=None):
         self.n_fold = n_fold
-        train_dataset, valid_dataset = self.split_data(data, feature, target, test_days, max_train_days, weight_col)
+        train_dataset, valid_dataset = self.split_data(data, feature, target, test_days, max_train_days, weight)
         self.models = self.fit(train_dataset, valid_dataset, model_param, train_param)
 
-    def split_data(self, data, features, target, test_days, max_train_days, weight_col):
+    def split_data(self, data, features, target, test_days, max_train_days, weight):
         latest_date = data['date'].max()
         oldest_valid_date = latest_date - datetime.timedelta(days=test_days)
         valid_mask = (data["date"] > oldest_valid_date)
@@ -443,9 +446,9 @@ class RondomSeed_LGBM_Model():
         train_dataset = lgb.Dataset(train_X, label=train_y)
         valid_dataset = lgb.Dataset(valid_X, label=valid_y, reference=train_dataset)
 
-        if weight_col:
-            train_dataset.set_weight(data.loc[train_mask, weight_col])
-            valid_dataset.set_weight(data.loc[valid_mask, weight_col])
+        if weight is not None:
+            train_dataset.set_weight(weight.loc[train_mask])
+            valid_dataset.set_weight(weight.loc[valid_mask])
 
         print('Train DataFrame Size:', train_mask.sum())
         print('Valid DataFrame Size:', valid_mask.sum())
@@ -469,9 +472,13 @@ class RondomSeed_LGBM_Model():
     def get_models(self):
         return self.models
 
-    def predict(self, data):
+    def predict(self, data, expm1=False):
         models = self.get_models()
-        return [m.predict(data.values, num_iteration=m.best_iteration) for m in models]
+        preds = [m.predict(data, num_iteration=m.best_iteration) for m in models]
+        avg_pred = np.mean(preds, axis=0)
+        if expm1:
+            avg_pred = np.expm1(avg_pred)
+        return avg_pred
 
     def save_importance(self, filepath, max_num_features=50, figsize=(20, 25), plot=False):
         models = self.get_models()
@@ -503,12 +510,10 @@ def train_model(df, feature, target):
     model_param = {
         "boosting_type": "gbdt",
         "metric": "None",
-        "objective": "poisson",
+        "objective": "regression",
         "seed": SEED,
-        "force_row_wise": True,
         "learning_rate": 0.3,
-        'max_depth': 5,
-        'num_leaves': 32,
+        'num_leaves': 80,
         'min_data_in_leaf': 50,
         "bagging_fraction": 0.8,
         "bagging_freq": 10,
@@ -530,10 +535,10 @@ def train_model(df, feature, target):
     print(train_param)
 
     df = drop_null_rows(df)
-    lgbm_model = RondomSeed_LGBM_Model(df, feature, target,
-                                       n_fold, test_days, max_train_days, model_param, train_param)
+    lgbm_model = RondomSeed_LGBM_Model(
+        df, feature, target, n_fold, test_days, max_train_days, model_param, train_param,)
     lgbm_model.save_importance(filepath=f'result/importance/{VERSION}.png')
-    dump_pickle(lgbm_model.get_models(), f'result/model/{VERSION}.pkl')
+    dump_pickle(lgbm_model, f'result/model/{VERSION}.pkl')
 
 
 ''' Evaluation Model
@@ -699,10 +704,9 @@ def estimate_wrmsse(eval_data, preds, eval_days=28):
     return score
 
 
-def evaluation_model(eval_data, features):
-    models = load_pickle(f'result/model/{VERSION}.pkl')
-    preds = [m.predict(eval_data[features].values, num_iteration=m.best_iteration) for m in models]
-    preds = np.mean(preds, axis=0)
+def evaluation_model(eval_data, feature):
+    lgbm_model = load_pickle(f'result/model/{VERSION}.pkl')
+    preds = lgbm_model.predict(eval_data[feature].values, expm1=False)
     metric_scores = {}
     metric_scores['RMSE'] = mean_squared_error(eval_data['sales'].values, preds, squared=False)
     metric_scores['WRMSSE'] = estimate_wrmsse(eval_data, preds)
@@ -718,18 +722,16 @@ def evaluation_model(eval_data, features):
 '''
 
 
-def create_submission_file(submit_data, features, score):
+def create_submission_file(submit_data, feature, score):
     submission = pd.read_pickle('../data/reduced/sample_submission.pkl')['id'].to_frame()
-    models = load_pickle(f'result/model/{VERSION}.pkl')
+    lgbm_model = load_pickle(f'result/model/{VERSION}.pkl')
 
-    preds = [m.predict(submit_data[features].values, num_iteration=m.best_iteration) for m in models]
-    submit_data['pred'] = np.mean(preds, axis=0)
+    submit_data['pred'] = lgbm_model.predict(submit_data[feature].values, expm1=False)
     sub_validation = pd.pivot(submit_data, index='id', columns='date', values='pred').reset_index()
     sub_validation.columns = ['id'] + ['F' + str(i + 1) for i in range(28)]
 
     submission = pd.merge(submission, sub_validation, how='left', on='id')
     submission.fillna(0, inplace=True)
-
     submission.to_csv(f'submit/{VERSION}_{score:.04f}.csv.gz', index=False, compression='gzip')
 
     print('Submit DataFrame:', submission.shape)
@@ -763,18 +765,18 @@ def main():
     print('\n--- Train Model ---\n')
     target = 'sales'
     cols_to_drop = ['id', 'wm_yr_wk', 'd', 'date'] + [target]
-    features = train.columns.tolist()
-    features = [f for f in features if f not in cols_to_drop]
+    feature = train.columns.tolist()
+    feature = [f for f in feature if f not in cols_to_drop]
 
     train_data, eval_data, submit_data = split_train_eval_submit(train)
     del train; gc.collect()
-    train_model(train_data, features, target)
+    train_model(train_data, feature, target)
 
     print('\n--- Evaluation ---\n')
-    metric_scores = evaluation_model(eval_data, features)
+    metric_scores = evaluation_model(eval_data, feature)
 
     print('\n--- Submission ---\n')
-    create_submission_file(submit_data, features, metric_scores['WRMSSE'])
+    create_submission_file(submit_data, feature, metric_scores['WRMSSE'])
 
 
 if __name__ == '__main__':
