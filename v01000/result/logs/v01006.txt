@@ -1,0 +1,71 @@
+
+
+================================================================================ 
+
+
+RUNNING at 2020-04-21 02:39:17.279618
+
+
+--- Load Data ---
+
+Loading and initial processing have already been completed.
+
+--- Transfrom Data ---
+
+processing encode_map.
+processing parse_sell_price.
+processing encode_calendar.
+processing melt_data.
+
+Train DataFrame: (46668247, 31)
+Memory Usage: 2981.922673225403 Mb
+                                   id  ...  sell_price_momentum
+213437  HOBBIES_1_008_CA_1_validation  ...                  1.0
+213438  HOBBIES_1_009_CA_1_validation  ...                  1.0
+213439  HOBBIES_1_010_CA_1_validation  ...                  1.0
+213441  HOBBIES_1_012_CA_1_validation  ...                  1.0
+213444  HOBBIES_1_015_CA_1_validation  ...                  1.0
+
+[5 rows x 31 columns]
+
+--- Feature Engineering ---
+
+Train DataFrame: (46668247, 63)
+Memory Usage: 5474.276074409485 Mb
+                              id  ...  sales_rolling_KURT_t30
+0  HOBBIES_1_008_CA_1_validation  ...                     NaN
+1  HOBBIES_1_009_CA_1_validation  ...                     NaN
+2  HOBBIES_1_010_CA_1_validation  ...                     NaN
+3  HOBBIES_1_012_CA_1_validation  ...                     NaN
+4  HOBBIES_1_015_CA_1_validation  ...                     NaN
+
+[5 rows x 63 columns]
+
+--- Train Model ---
+
+n_fold: 3
+max_train_days: 730
+test_days: 180
+{'boosting_type': 'gbdt', 'metric': 'None', 'objective': 'poisson', 'seed': 42, 'force_row_wise': True, 'learning_rate': 0.3, 'max_depth': 5, 'num_leaves': 32, 'min_data_in_leaf': 50, 'bagging_fraction': 0.8, 'bagging_freq': 10, 'feature_fraction': 0.8, 'verbosity': -1}
+{'num_boost_round': 100000, 'early_stopping_rounds': 50, 'verbose_eval': 100, 'feval': <function lgbm_rmsle at 0x1147a3940>}
+Drop Null Rows.
+Train DataFrame Size: 17190443
+Valid DataFrame Size: 4900904
+
+1 of 3 Fold:
+
+[LightGBM] [Warning] Unknown parameter: force_row_wise
+Training until validation scores don't improve for 50 rounds
+[100]	train's RMSLE: 0.545313	valid's RMSLE: 0.535626
+[200]	train's RMSLE: 0.541687	valid's RMSLE: 0.53258
+[300]	train's RMSLE: 0.53934	valid's RMSLE: 0.531719
+Early stopping, best iteration is:
+[270]	train's RMSLE: 0.539884	valid's RMSLE: 0.531648
+
+2 of 3 Fold:
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's RMSLE: 0.544884	valid's RMSLE: 0.534812
+[200]	train's RMSLE: 0.541771	valid's RMSLE: 0.532768
+[300]	train's RMSLE: 0.539521	valid's RMSLE: 0.531746
+[400]	train's RMSLE: 0.53798	valid's RMSLE: 0.531179

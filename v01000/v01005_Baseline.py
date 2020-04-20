@@ -5,6 +5,7 @@ import json
 import pickle
 import datetime
 from tqdm import tqdm
+from numba import jit
 
 import numpy as np
 import pandas as pd
@@ -157,6 +158,8 @@ def encode_calendar(filename='encoded_calendar', use_cache=True):
         "weekofyear",
         "day",
         "dayofweek",
+        "is_year_end",
+        "is_year_start",
         "is_quarter_end",
         "is_quarter_start",
         "is_month_end",
@@ -296,7 +299,7 @@ class AddBaseSalesFeature(BaseFeature):
 
         for window in [7, 14, 30, 60]:
             df[f"{col}_rolling_ZeroRatio_t{window}"] = grouped_df.transform(
-                lambda x: 1 - (x == 0).shift(DAYS_PRED).rolling(window).mean())
+                lambda x: (x == 0).shift(DAYS_PRED).rolling(window).mean())
             df[f"{col}_rolling_ZeroCount_t{window}"] = grouped_df.transform(
                 lambda x: (x == 0).shift(DAYS_PRED).rolling(window).sum())
 
@@ -354,15 +357,33 @@ def drop_null_rows(df):
     return df.loc[~(is_contain_null_rows), :]
 
 
+@jit
 def estimate_rmsle(actual, preds, weight=None):
     preds = np.clip(preds, 0, None)  # TODO: temporary process
+    if weight is not None:
+        weight = np.clip(weight, 0, None)
     return np.sqrt(mean_squared_log_error(actual, preds, sample_weight=weight))
 
 
+@jit
 def lgbm_rmsle(preds, data):
     weight = data.get_weight()
     metric_name = 'RMSLE' if weight is None else 'WRMSLE'
     return metric_name, estimate_rmsle(data.get_label(), preds, weight), False
+
+
+@jit
+def estimate_rmse(actual, pred, weight=None):
+    if weight is not None:
+        weight = np.clip(weight, 0, None)
+    return mean_squared_error(actual, pred, squared=False, sample_weight=weight)
+
+
+@jit
+def lgbm_rmse(preds, data):
+    weight = data.get_weight()
+    metric_name = 'RMSE' if weight is None else 'WRMSE'
+    return metric_name, estimate_rmse(data.get_label(), preds, weight), False
 
 
 class LGBM_Model():
@@ -430,10 +451,11 @@ class RondomSeed_LGBM_Model():
     def __init__(self, data, feature, target,
                  n_fold, test_days, max_train_days, model_param, train_param, weight=None):
         self.n_fold = n_fold
-        train_dataset, valid_dataset = self.split_data(data, feature, target, test_days, max_train_days, weight)
+        self.weight = weight
+        train_dataset, valid_dataset = self.split_data(data, feature, target, test_days, max_train_days)
         self.models = self.fit(train_dataset, valid_dataset, model_param, train_param)
 
-    def split_data(self, data, features, target, test_days, max_train_days, weight):
+    def split_data(self, data, features, target, test_days, max_train_days):
         latest_date = data['date'].max()
         oldest_valid_date = latest_date - datetime.timedelta(days=test_days)
         valid_mask = (data["date"] > oldest_valid_date)
@@ -446,9 +468,9 @@ class RondomSeed_LGBM_Model():
         train_dataset = lgb.Dataset(train_X, label=train_y)
         valid_dataset = lgb.Dataset(valid_X, label=valid_y, reference=train_dataset)
 
-        if weight is not None:
-            train_dataset.set_weight(weight.loc[train_mask])
-            valid_dataset.set_weight(weight.loc[valid_mask])
+        if self.weight is not None:
+            train_dataset.set_weight(self.weight.loc[train_mask])
+            valid_dataset.set_weight(self.weight.loc[valid_mask])
 
         print('Train DataFrame Size:', train_mask.sum())
         print('Valid DataFrame Size:', valid_mask.sum())
@@ -472,12 +494,10 @@ class RondomSeed_LGBM_Model():
     def get_models(self):
         return self.models
 
-    def predict(self, data, expm1=False):
+    def predict(self, data):
         models = self.get_models()
         preds = [m.predict(data, num_iteration=m.best_iteration) for m in models]
         avg_pred = np.mean(preds, axis=0)
-        if expm1:
-            avg_pred = np.expm1(avg_pred)
         return avg_pred
 
     def save_importance(self, filepath, max_num_features=50, figsize=(20, 25), plot=False):
@@ -505,27 +525,28 @@ class RondomSeed_LGBM_Model():
 def train_model(df, feature, target):
     n_fold = 3
     max_train_days = 2 * 365
-    test_days = 180
+    test_days = 90
 
     model_param = {
         "boosting_type": "gbdt",
-        "metric": "None",
+        "metric": "rmse",
         "objective": "regression",
         "seed": SEED,
-        "learning_rate": 0.3,
-        'num_leaves': 80,
+        "learning_rate": 0.1,
+        'num_leaves': 2**5,
         'min_data_in_leaf': 50,
         "bagging_fraction": 0.8,
-        "bagging_freq": 10,
-        "feature_fraction": 0.8,
+        "bagging_freq": 1,
+        "feature_fraction": 1.0,
+        "lambda_l2": 0.1,
         "verbosity": -1
     }
 
     train_param = {
         "num_boost_round": 100000,
         "early_stopping_rounds": 50,
-        "verbose_eval": 100,
-        "feval": lgbm_rmsle
+        "verbose_eval": 100
+        # "feval": lgbm_rmsle
     }
 
     print(f'n_fold: {n_fold}')
@@ -534,9 +555,11 @@ def train_model(df, feature, target):
     print(model_param)
     print(train_param)
 
-    df = drop_null_rows(df)
     lgbm_model = RondomSeed_LGBM_Model(
-        df, feature, target, n_fold, test_days, max_train_days, model_param, train_param,)
+        df, feature, target, n_fold,
+        test_days, max_train_days, model_param, train_param,
+        weight=(np.log1p(df['sales'] * df['sell_price']) * 0.25) + 1
+    )
     lgbm_model.save_importance(filepath=f'result/importance/{VERSION}.png')
     dump_pickle(lgbm_model, f'result/model/{VERSION}.pkl')
 
@@ -706,7 +729,7 @@ def estimate_wrmsse(eval_data, preds, eval_days=28):
 
 def evaluation_model(eval_data, feature):
     lgbm_model = load_pickle(f'result/model/{VERSION}.pkl')
-    preds = lgbm_model.predict(eval_data[feature].values, expm1=False)
+    preds = np.expm1(lgbm_model.predict(eval_data[feature].values))
     metric_scores = {}
     metric_scores['RMSE'] = mean_squared_error(eval_data['sales'].values, preds, squared=False)
     metric_scores['WRMSSE'] = estimate_wrmsse(eval_data, preds)
@@ -726,7 +749,7 @@ def create_submission_file(submit_data, feature, score):
     submission = pd.read_pickle('../data/reduced/sample_submission.pkl')['id'].to_frame()
     lgbm_model = load_pickle(f'result/model/{VERSION}.pkl')
 
-    submit_data['pred'] = lgbm_model.predict(submit_data[feature].values, expm1=False)
+    submit_data['pred'] = np.expm1(lgbm_model.predict(submit_data[feature].values))
     sub_validation = pd.pivot(submit_data, index='id', columns='date', values='pred').reset_index()
     sub_validation.columns = ['id'] + ['F' + str(i + 1) for i in range(28)]
 
@@ -770,6 +793,7 @@ def main():
 
     train_data, eval_data, submit_data = split_train_eval_submit(train)
     del train; gc.collect()
+    train_data['sales'] = np.log1p(train_data['sales'])
     train_model(train_data, feature, target)
 
     print('\n--- Evaluation ---\n')
