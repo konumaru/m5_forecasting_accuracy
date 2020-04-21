@@ -764,11 +764,11 @@ def main():
     print('Loading and initial processing have already been completed.')
 
     print('\n--- Transfrom Data ---\n')
-    _ = encode_map(filename='encode_map', use_cache=True)
-    _ = parse_sell_price(filename='encoded_sell_price', use_cache=True)
-    _ = encode_calendar(filename='encoded_calendar', use_cache=True)
+    _ = encode_map(filename='encode_map', use_cache=False)
+    _ = parse_sell_price(filename='encoded_sell_price', use_cache=False)
+    _ = encode_calendar(filename='encoded_calendar', use_cache=False)
 
-    train = melt_data(filename='melted_train', use_cache=True)
+    train = melt_data(filename='melted_train', use_cache=False)
     print('\nTrain DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())

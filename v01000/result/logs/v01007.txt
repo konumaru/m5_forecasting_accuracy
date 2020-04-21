@@ -1,0 +1,120 @@
+/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/compat/__init__.py:117: UserWarning: Could not import the lzma module. Your installed Python is incomplete. Attempting to use lzma compression will result in a RuntimeError.
+  warnings.warn(msg)
+
+
+================================================================================ 
+
+
+RUNNING at 2020-04-21 13:02:06.728522
+
+
+--- Load Data ---
+
+Loading and initial processing have already been completed.
+
+--- Transfrom Data ---
+
+processing encode_map.
+processing parse_sell_price.
+Mem. usage decreased to 169.63 Mb (0.0% reduction)
+processing encode_calendar.
+Mem. usage decreased to  0.07 Mb (0.0% reduction)
+processing melt_data.
+Mem. usage decreased to 3070.94 Mb (36.7% reduction)
+
+Train DataFrame: (46668247, 33)
+Memory Usage: 3070.935290336609 Mb
+                                   id  ...  sell_price_momentum
+213437  HOBBIES_1_008_CA_1_validation  ...                  1.0
+213438  HOBBIES_1_009_CA_1_validation  ...                  1.0
+213439  HOBBIES_1_010_CA_1_validation  ...                  1.0
+213441  HOBBIES_1_012_CA_1_validation  ...                  1.0
+213444  HOBBIES_1_015_CA_1_validation  ...                  1.0
+
+[5 rows x 33 columns]
+
+--- Feature Engineering ---
+
+Train DataFrame: (46881677, 72)
+Memory Usage: 6214.669447898865 Mb
+                              id  ...  sales_rolling_KURT_t30
+0  HOBBIES_1_008_CA_1_validation  ...                     NaN
+1  HOBBIES_1_009_CA_1_validation  ...                     NaN
+2  HOBBIES_1_010_CA_1_validation  ...                     NaN
+3  HOBBIES_1_012_CA_1_validation  ...                     NaN
+4  HOBBIES_1_015_CA_1_validation  ...                     NaN
+
+[5 rows x 72 columns]
+
+--- Train Model ---
+
+n_fold: 3
+max_train_days: 730
+test_days: 180
+{'boosting_type': 'gbdt', 'metric': 'None', 'objective': 'poisson', 'seed': 42, 'learning_rate': 0.2, 'num_leaves': 32, 'min_data_in_leaf': 50, 'bagging_fraction': 0.8, 'bagging_freq': 10, 'feature_fraction': 0.8, 'verbosity': -1}
+{'num_boost_round': 100000, 'early_stopping_rounds': 50, 'verbose_eval': 100, 'feval': <function lgbm_rmsle at 0x7facbb451b80>}
+Drop Null Rows.
+Train DataFrame Size: 17233323
+Valid DataFrame Size: 4903869
+
+1 of 3 Fold:
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's RMSLE: 0.571766	valid's RMSLE: 0.561019
+[200]	train's RMSLE: 0.567785	valid's RMSLE: 0.557992
+[300]	train's RMSLE: 0.56571	valid's RMSLE: 0.556586
+[400]	train's RMSLE: 0.563832	valid's RMSLE: 0.555922
+[500]	train's RMSLE: 0.562293	valid's RMSLE: 0.555399
+[600]	train's RMSLE: 0.560871	valid's RMSLE: 0.554852
+[700]	train's RMSLE: 0.559567	valid's RMSLE: 0.554515
+[800]	train's RMSLE: 0.558433	valid's RMSLE: 0.554193
+Early stopping, best iteration is:
+[776]	train's RMSLE: 0.558608	valid's RMSLE: 0.554156
+
+2 of 3 Fold:
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's RMSLE: 0.571469	valid's RMSLE: 0.561471
+[200]	train's RMSLE: 0.567741	valid's RMSLE: 0.559554
+[300]	train's RMSLE: 0.565542	valid's RMSLE: 0.558364
+[400]	train's RMSLE: 0.563941	valid's RMSLE: 0.558125
+[500]	train's RMSLE: 0.562408	valid's RMSLE: 0.557524
+[600]	train's RMSLE: 0.561033	valid's RMSLE: 0.55724
+[700]	train's RMSLE: 0.559561	valid's RMSLE: 0.556572
+[800]	train's RMSLE: 0.558248	valid's RMSLE: 0.55627
+[900]	train's RMSLE: 0.557303	valid's RMSLE: 0.556134
+[1000]	train's RMSLE: 0.556386	valid's RMSLE: 0.55571
+[1100]	train's RMSLE: 0.555372	valid's RMSLE: 0.555647
+Early stopping, best iteration is:
+[1129]	train's RMSLE: 0.555146	valid's RMSLE: 0.555538
+
+3 of 3 Fold:
+
+Training until validation scores don't improve for 50 rounds
+[100]	train's RMSLE: 0.571557	valid's RMSLE: 0.560881
+[200]	train's RMSLE: 0.567966	valid's RMSLE: 0.558477
+[300]	train's RMSLE: 0.565744	valid's RMSLE: 0.557329
+[400]	train's RMSLE: 0.564018	valid's RMSLE: 0.556779
+[500]	train's RMSLE: 0.562184	valid's RMSLE: 0.556066
+[600]	train's RMSLE: 0.561026	valid's RMSLE: 0.555721
+[700]	train's RMSLE: 0.559848	valid's RMSLE: 0.555237
+[800]	train's RMSLE: 0.558775	valid's RMSLE: 0.554895
+Early stopping, best iteration is:
+[817]	train's RMSLE: 0.558603	valid's RMSLE: 0.554847
+
+--- Evaluation ---
+
+RMSE: 2.348474705962324
+WRMSSE: 0.8441914221631124
+
+--- Submission ---
+
+Submit DataFrame: (60980, 29)
+                              id        F1  ...       F27       F28
+0  HOBBIES_1_001_CA_1_validation  1.119752  ...  1.449564  1.493693
+1  HOBBIES_1_002_CA_1_validation  0.524620  ...  0.466101  0.462501
+2  HOBBIES_1_003_CA_1_validation  0.582030  ...  1.007922  1.010475
+3  HOBBIES_1_004_CA_1_validation  2.218312  ...  2.849327  2.929744
+4  HOBBIES_1_005_CA_1_validation  1.196045  ...  1.689573  1.877394
+
+[5 rows x 29 columns]
