@@ -442,14 +442,15 @@ class LGBM_Model():
 
 class RondomSeed_LGBM_Model():
     def __init__(self, data, feature, target,
-                 n_fold, test_days, max_train_days, model_param, train_param, weight=None):
+                 n_fold, test_days, max_train_days, model_param, train_param,
+                 cat_feat, weight=None):
         self.n_fold = n_fold
         self.weight = weight
         train_dataset, valid_dataset = self.split_data(
-            data, feature, target, test_days, max_train_days)
+            data, feature, target, test_days, max_train_days, cat_feat)
         self.models = self.fit(train_dataset, valid_dataset, model_param, train_param)
 
-    def split_data(self, data, features, target, test_days, max_train_days):
+    def split_data(self, data, features, target, test_days, max_train_days, cat_feat):
         latest_date = data['date'].max()
         oldest_valid_date = latest_date - datetime.timedelta(days=test_days)
         valid_mask = (data["date"] > oldest_valid_date)
@@ -459,8 +460,9 @@ class RondomSeed_LGBM_Model():
         train_X, train_y = data.loc[train_mask, features], data.loc[train_mask, target]
         valid_X, valid_y = data.loc[valid_mask, features], data.loc[valid_mask, target]
 
-        train_dataset = lgb.Dataset(train_X, label=train_y)
-        valid_dataset = lgb.Dataset(valid_X, label=valid_y, reference=train_dataset)
+        train_dataset = lgb.Dataset(train_X, label=train_y, categorical_feature=cat_feat)
+        valid_dataset = lgb.Dataset(valid_X, label=valid_y,
+                                    categorical_feature=cat_feat, reference=train_dataset)
 
         if self.weight is not None:
             train_dataset.set_weight(self.weight.loc[train_mask])
@@ -470,7 +472,7 @@ class RondomSeed_LGBM_Model():
         print('Valid DataFrame Size:', valid_mask.sum())
         return train_dataset, valid_dataset
 
-    def fit(self, train_dataset, valid_dataset, model_param, train_param):
+    def fit(self, train_dataset, valid_dataset, model_param, train_param, cat_feats):
         models = []
         for n in range(self.n_fold):
             print(f"\n{n + 1} of {self.n_fold} Fold:\n")
@@ -526,12 +528,13 @@ def train_model(df, feature, target):
         "metric": "None",
         "objective": "poisson",
         "seed": SEED,
-        "learning_rate": 0.2,
-        "num_leaves": 2**5,
+        "learning_rate": 0.1,
+        "num_leaves": 2**6,
         'min_data_in_leaf': 50,
         "bagging_fraction": 0.8,
-        "bagging_freq": 10,
-        "feature_fraction": 0.8,
+        "bagging_freq": 1,
+        "feature_fraction": 1.0,
+        "lambda_l2": 0.1,
         "verbosity": -1
     }
 
@@ -549,9 +552,11 @@ def train_model(df, feature, target):
     print(train_param)
 
     df = drop_null_rows(df)
+    cat_feats = ['item_id', 'dept_id', 'store_id', 'cat_id',
+                 'state_id', "event_name_1", "event_name_2", "event_type_1", "event_type_2"]
     lgbm_model = RondomSeed_LGBM_Model(
         df, feature, target, n_fold, test_days, max_train_days,
-        model_param, train_param,
+        model_param, train_param, cat_feats,
         weight=(np.log1p(df['sales'] * df['sell_price']) * 0.25) + 1
     )
     lgbm_model.save_importance(filepath=f'result/importance/{VERSION}.png')
@@ -774,7 +779,7 @@ def main():
     print(train.head())
 
     print('\n--- Feature Engineering ---\n')
-    train = create_features(train, is_use_cache=True)
+    train = create_features(train, is_use_cache=False)
     print('Train DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())
