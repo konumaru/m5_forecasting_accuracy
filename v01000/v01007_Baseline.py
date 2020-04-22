@@ -280,9 +280,9 @@ class AddBaseSalesFeature(BaseFeature):
             shift = DAYS_PRED + diff
             df[f"{col}_lag_t{shift}"] = grouped_df.transform(lambda x: x.shift(shift))
 
-        # for diff in [1, 2, 4, 5, 6, 7]:
-        #     df[f"{col}_lag_t{shift}"] = grouped_df.transform(
-        #         lambda x: x.shift(DAYS_PRED).diff(diff))
+        for diff in [1, 2, 4, 5, 6, 7]:
+            df[f"{col}_lag_t{shift}"] = grouped_df.transform(
+                lambda x: x.shift(DAYS_PRED).diff(diff))
 
         for window in [7, 30, 60, 90, 180]:
             df[f"{col}_rolling_STD_t{window}"] = grouped_df.transform(
@@ -365,8 +365,7 @@ def estimate_rmsle(actual, preds, weight=None):
 
 
 def lgbm_rmsle(preds, data):
-    weight = data.get_weight()
-    return 'RMSLE', estimate_rmsle(data.get_label(), preds, weight), False
+    return 'RMSLE', estimate_rmsle(data.get_label(), preds), False
 
 
 def estimate_rmse(actual, pred, weight=None):
@@ -374,9 +373,7 @@ def estimate_rmse(actual, pred, weight=None):
 
 
 def lgbm_rmse(preds, data):
-    weight = data.get_weight()
-    metric_name = 'RMSE' if weight is None else 'WRMSE'
-    return metric_name, estimate_rmse(data.get_label(), preds, weight), False
+    return 'RMSE', estimate_rmse(data.get_label(), preds), False
 
 
 class LGBM_Model():
@@ -443,14 +440,14 @@ class LGBM_Model():
 class RondomSeed_LGBM_Model():
     def __init__(self, data, feature, target,
                  n_fold, test_days, max_train_days, model_param, train_param,
-                 cat_feat, weight=None):
+                 weight=None):
         self.n_fold = n_fold
         self.weight = weight
         train_dataset, valid_dataset = self.split_data(
-            data, feature, target, test_days, max_train_days, cat_feat)
+            data, feature, target, test_days, max_train_days)
         self.models = self.fit(train_dataset, valid_dataset, model_param, train_param)
 
-    def split_data(self, data, features, target, test_days, max_train_days, cat_feat):
+    def split_data(self, data, features, target, test_days, max_train_days):
         latest_date = data['date'].max()
         oldest_valid_date = latest_date - datetime.timedelta(days=test_days)
         valid_mask = (data["date"] > oldest_valid_date)
@@ -460,9 +457,8 @@ class RondomSeed_LGBM_Model():
         train_X, train_y = data.loc[train_mask, features], data.loc[train_mask, target]
         valid_X, valid_y = data.loc[valid_mask, features], data.loc[valid_mask, target]
 
-        train_dataset = lgb.Dataset(train_X, label=train_y, categorical_feature=cat_feat)
-        valid_dataset = lgb.Dataset(valid_X, label=valid_y,
-                                    categorical_feature=cat_feat, reference=train_dataset)
+        train_dataset = lgb.Dataset(train_X, label=train_y)
+        valid_dataset = lgb.Dataset(valid_X, label=valid_y, reference=train_dataset)
 
         if self.weight is not None:
             train_dataset.set_weight(self.weight.loc[train_mask])
@@ -472,7 +468,7 @@ class RondomSeed_LGBM_Model():
         print('Valid DataFrame Size:', valid_mask.sum())
         return train_dataset, valid_dataset
 
-    def fit(self, train_dataset, valid_dataset, model_param, train_param, cat_feats):
+    def fit(self, train_dataset, valid_dataset, model_param, train_param):
         models = []
         for n in range(self.n_fold):
             print(f"\n{n + 1} of {self.n_fold} Fold:\n")
@@ -552,12 +548,12 @@ def train_model(df, feature, target):
     print(train_param)
 
     df = drop_null_rows(df)
-    cat_feats = ['item_id', 'dept_id', 'store_id', 'cat_id',
-                 'state_id', "event_name_1", "event_name_2", "event_type_1", "event_type_2"]
+    cat_feat = ['item_id', 'dept_id', 'store_id', 'cat_id',
+                'state_id', "event_name_1", "event_name_2", "event_type_1", "event_type_2"]
     lgbm_model = RondomSeed_LGBM_Model(
         df, feature, target, n_fold, test_days, max_train_days,
-        model_param, train_param, cat_feats,
-        weight=(np.log1p(df['sales'] * df['sell_price']) * 0.25) + 1
+        model_param, train_param,
+        weight=(np.log1p(df['sales']) * df['sell_price'] * 0.25) + 1
     )
     lgbm_model.save_importance(filepath=f'result/importance/{VERSION}.png')
     dump_pickle(lgbm_model, f'result/model/{VERSION}.pkl')

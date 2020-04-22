@@ -5,7 +5,7 @@
 ================================================================================ 
 
 
-RUNNING at 2020-04-21 13:02:06.728522
+RUNNING at 2020-04-21 16:23:47.251870
 
 
 --- Load Data ---
@@ -16,11 +16,8 @@ Loading and initial processing have already been completed.
 
 processing encode_map.
 processing parse_sell_price.
-Mem. usage decreased to 169.63 Mb (0.0% reduction)
 processing encode_calendar.
-Mem. usage decreased to  0.07 Mb (0.0% reduction)
 processing melt_data.
-Mem. usage decreased to 3070.94 Mb (36.7% reduction)
 
 Train DataFrame: (46668247, 33)
 Memory Usage: 3070.935290336609 Mb
@@ -51,8 +48,8 @@ Memory Usage: 6214.669447898865 Mb
 n_fold: 3
 max_train_days: 730
 test_days: 180
-{'boosting_type': 'gbdt', 'metric': 'None', 'objective': 'poisson', 'seed': 42, 'learning_rate': 0.2, 'num_leaves': 32, 'min_data_in_leaf': 50, 'bagging_fraction': 0.8, 'bagging_freq': 10, 'feature_fraction': 0.8, 'verbosity': -1}
-{'num_boost_round': 100000, 'early_stopping_rounds': 50, 'verbose_eval': 100, 'feval': <function lgbm_rmsle at 0x7facbb451b80>}
+{'boosting_type': 'gbdt', 'metric': 'None', 'objective': 'poisson', 'seed': 42, 'learning_rate': 0.1, 'num_leaves': 64, 'min_data_in_leaf': 50, 'bagging_fraction': 0.8, 'bagging_freq': 1, 'feature_fraction': 1.0, 'lambda_l2': 0.1, 'verbosity': -1}
+{'num_boost_round': 100000, 'early_stopping_rounds': 50, 'verbose_eval': 100, 'feval': <function lgbm_rmsle at 0x7fa40c126c10>}
 Drop Null Rows.
 Train DataFrame Size: 17233323
 Valid DataFrame Size: 4903869
@@ -60,61 +57,126 @@ Valid DataFrame Size: 4903869
 1 of 3 Fold:
 
 Training until validation scores don't improve for 50 rounds
-[100]	train's RMSLE: 0.571766	valid's RMSLE: 0.561019
-[200]	train's RMSLE: 0.567785	valid's RMSLE: 0.557992
-[300]	train's RMSLE: 0.56571	valid's RMSLE: 0.556586
-[400]	train's RMSLE: 0.563832	valid's RMSLE: 0.555922
-[500]	train's RMSLE: 0.562293	valid's RMSLE: 0.555399
-[600]	train's RMSLE: 0.560871	valid's RMSLE: 0.554852
-[700]	train's RMSLE: 0.559567	valid's RMSLE: 0.554515
-[800]	train's RMSLE: 0.558433	valid's RMSLE: 0.554193
+[100]	train's RMSLE: 0.577197	valid's RMSLE: 0.567037
+[200]	train's RMSLE: 0.57162	valid's RMSLE: 0.562918
+[300]	train's RMSLE: 0.569305	valid's RMSLE: 0.561826
+[400]	train's RMSLE: 0.567726	valid's RMSLE: 0.561272
+[500]	train's RMSLE: 0.566362	valid's RMSLE: 0.56064
+[600]	train's RMSLE: 0.565108	valid's RMSLE: 0.560237
+[700]	train's RMSLE: 0.564003	valid's RMSLE: 0.559899
+[800]	train's RMSLE: 0.562884	valid's RMSLE: 0.559356
+[900]	train's RMSLE: 0.561817	valid's RMSLE: 0.558929
+[1000]	train's RMSLE: 0.560898	valid's RMSLE: 0.558652
+[1100]	train's RMSLE: 0.559978	valid's RMSLE: 0.558418
+[1200]	train's RMSLE: 0.559141	valid's RMSLE: 0.55816
+[1300]	train's RMSLE: 0.558401	valid's RMSLE: 0.557958
+[1400]	train's RMSLE: 0.557815	valid's RMSLE: 0.557806
+[1500]	train's RMSLE: 0.55719	valid's RMSLE: 0.557662
+[1600]	train's RMSLE: 0.556602	valid's RMSLE: 0.557585
+[1700]	train's RMSLE: 0.555953	valid's RMSLE: 0.55747
+[1800]	train's RMSLE: 0.555372	valid's RMSLE: 0.557344
+[1900]	train's RMSLE: 0.554851	valid's RMSLE: 0.55724
+[2000]	train's RMSLE: 0.554316	valid's RMSLE: 0.557143
+[2100]	train's RMSLE: 0.553731	valid's RMSLE: 0.55697
+[2200]	train's RMSLE: 0.553198	valid's RMSLE: 0.556839
+[2300]	train's RMSLE: 0.552695	valid's RMSLE: 0.556729
+[2400]	train's RMSLE: 0.552189	valid's RMSLE: 0.556636
+[2500]	train's RMSLE: 0.551701	valid's RMSLE: 0.556514
+[2600]	train's RMSLE: 0.551185	valid's RMSLE: 0.556439
+[2700]	train's RMSLE: 0.550733	valid's RMSLE: 0.556401
+[2800]	train's RMSLE: 0.55021	valid's RMSLE: 0.556339
 Early stopping, best iteration is:
-[776]	train's RMSLE: 0.558608	valid's RMSLE: 0.554156
+[2810]	train's RMSLE: 0.550174	valid's RMSLE: 0.556328
 
 2 of 3 Fold:
 
 Training until validation scores don't improve for 50 rounds
-[100]	train's RMSLE: 0.571469	valid's RMSLE: 0.561471
-[200]	train's RMSLE: 0.567741	valid's RMSLE: 0.559554
-[300]	train's RMSLE: 0.565542	valid's RMSLE: 0.558364
-[400]	train's RMSLE: 0.563941	valid's RMSLE: 0.558125
-[500]	train's RMSLE: 0.562408	valid's RMSLE: 0.557524
-[600]	train's RMSLE: 0.561033	valid's RMSLE: 0.55724
-[700]	train's RMSLE: 0.559561	valid's RMSLE: 0.556572
-[800]	train's RMSLE: 0.558248	valid's RMSLE: 0.55627
-[900]	train's RMSLE: 0.557303	valid's RMSLE: 0.556134
-[1000]	train's RMSLE: 0.556386	valid's RMSLE: 0.55571
-[1100]	train's RMSLE: 0.555372	valid's RMSLE: 0.555647
+[100]	train's RMSLE: 0.577206	valid's RMSLE: 0.56721
+[200]	train's RMSLE: 0.571571	valid's RMSLE: 0.56244
+[300]	train's RMSLE: 0.569271	valid's RMSLE: 0.560964
+[400]	train's RMSLE: 0.567515	valid's RMSLE: 0.560616
+[500]	train's RMSLE: 0.566114	valid's RMSLE: 0.56004
+[600]	train's RMSLE: 0.564703	valid's RMSLE: 0.559561
+[700]	train's RMSLE: 0.563599	valid's RMSLE: 0.559263
+[800]	train's RMSLE: 0.562484	valid's RMSLE: 0.558806
+[900]	train's RMSLE: 0.561568	valid's RMSLE: 0.558493
+[1000]	train's RMSLE: 0.560683	valid's RMSLE: 0.558301
+[1100]	train's RMSLE: 0.559785	valid's RMSLE: 0.558123
+[1200]	train's RMSLE: 0.559034	valid's RMSLE: 0.557922
+[1300]	train's RMSLE: 0.558306	valid's RMSLE: 0.557717
+[1400]	train's RMSLE: 0.557579	valid's RMSLE: 0.557536
+[1500]	train's RMSLE: 0.556935	valid's RMSLE: 0.557248
+[1600]	train's RMSLE: 0.556279	valid's RMSLE: 0.557203
+[1700]	train's RMSLE: 0.555602	valid's RMSLE: 0.557041
+[1800]	train's RMSLE: 0.555089	valid's RMSLE: 0.556916
+[1900]	train's RMSLE: 0.554485	valid's RMSLE: 0.556784
+[2000]	train's RMSLE: 0.553971	valid's RMSLE: 0.556707
+[2100]	train's RMSLE: 0.553489	valid's RMSLE: 0.556598
+[2200]	train's RMSLE: 0.553025	valid's RMSLE: 0.55651
+[2300]	train's RMSLE: 0.552598	valid's RMSLE: 0.556438
 Early stopping, best iteration is:
-[1129]	train's RMSLE: 0.555146	valid's RMSLE: 0.555538
+[2290]	train's RMSLE: 0.552621	valid's RMSLE: 0.556425
 
 3 of 3 Fold:
 
 Training until validation scores don't improve for 50 rounds
-[100]	train's RMSLE: 0.571557	valid's RMSLE: 0.560881
-[200]	train's RMSLE: 0.567966	valid's RMSLE: 0.558477
-[300]	train's RMSLE: 0.565744	valid's RMSLE: 0.557329
-[400]	train's RMSLE: 0.564018	valid's RMSLE: 0.556779
-[500]	train's RMSLE: 0.562184	valid's RMSLE: 0.556066
-[600]	train's RMSLE: 0.561026	valid's RMSLE: 0.555721
-[700]	train's RMSLE: 0.559848	valid's RMSLE: 0.555237
-[800]	train's RMSLE: 0.558775	valid's RMSLE: 0.554895
+[100]	train's RMSLE: 0.577234	valid's RMSLE: 0.567201
+[200]	train's RMSLE: 0.571652	valid's RMSLE: 0.563024
+[300]	train's RMSLE: 0.569185	valid's RMSLE: 0.56205
+[400]	train's RMSLE: 0.567604	valid's RMSLE: 0.561531
+[500]	train's RMSLE: 0.56612	valid's RMSLE: 0.561039
+[600]	train's RMSLE: 0.564825	valid's RMSLE: 0.560521
+[700]	train's RMSLE: 0.563764	valid's RMSLE: 0.560137
+[800]	train's RMSLE: 0.562845	valid's RMSLE: 0.559799
+[900]	train's RMSLE: 0.561667	valid's RMSLE: 0.559446
+[1000]	train's RMSLE: 0.560759	valid's RMSLE: 0.559127
+[1100]	train's RMSLE: 0.559906	valid's RMSLE: 0.558777
+[1200]	train's RMSLE: 0.559131	valid's RMSLE: 0.558551
+[1300]	train's RMSLE: 0.558347	valid's RMSLE: 0.558357
+[1400]	train's RMSLE: 0.557565	valid's RMSLE: 0.558107
+[1500]	train's RMSLE: 0.55693	valid's RMSLE: 0.557894
+[1600]	train's RMSLE: 0.556384	valid's RMSLE: 0.557761
+[1700]	train's RMSLE: 0.555724	valid's RMSLE: 0.557535
+[1800]	train's RMSLE: 0.555156	valid's RMSLE: 0.557396
+[1900]	train's RMSLE: 0.554591	valid's RMSLE: 0.557217
+[2000]	train's RMSLE: 0.553987	valid's RMSLE: 0.557061
+[2100]	train's RMSLE: 0.553532	valid's RMSLE: 0.556973
+[2200]	train's RMSLE: 0.552993	valid's RMSLE: 0.55689
+[2300]	train's RMSLE: 0.552543	valid's RMSLE: 0.556801
 Early stopping, best iteration is:
-[817]	train's RMSLE: 0.558603	valid's RMSLE: 0.554847
+[2335]	train's RMSLE: 0.552373	valid's RMSLE: 0.556776
 
 --- Evaluation ---
 
-RMSE: 2.348474705962324
-WRMSSE: 0.8441914221631124
+RMSE: 2.269056436796983
+WRMSSE: 1.212962556066611
 
 --- Submission ---
 
 Submit DataFrame: (60980, 29)
                               id        F1  ...       F27       F28
-0  HOBBIES_1_001_CA_1_validation  1.119752  ...  1.449564  1.493693
-1  HOBBIES_1_002_CA_1_validation  0.524620  ...  0.466101  0.462501
-2  HOBBIES_1_003_CA_1_validation  0.582030  ...  1.007922  1.010475
-3  HOBBIES_1_004_CA_1_validation  2.218312  ...  2.849327  2.929744
-4  HOBBIES_1_005_CA_1_validation  1.196045  ...  1.689573  1.877394
+0  HOBBIES_1_001_CA_1_validation  1.291306  ...  1.573318  1.609117
+1  HOBBIES_1_002_CA_1_validation  0.669428  ...  0.572124  0.562517
+2  HOBBIES_1_003_CA_1_validation  0.700217  ...  1.123986  1.135686
+3  HOBBIES_1_004_CA_1_validation  2.296206  ...  2.978958  2.992334
+4  HOBBIES_1_005_CA_1_validation  1.310522  ...  1.764169  1.962718
 
 [5 rows x 29 columns]
+/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/compat/__init__.py:117: UserWarning: Could not import the lzma module. Your installed Python is incomplete. Attempting to use lzma compression will result in a RuntimeError.
+  warnings.warn(msg)
+
+
+================================================================================ 
+
+
+RUNNING at 2020-04-22 01:36:13.946470
+
+
+--- Load Data ---
+
+Loading and initial processing have already been completed.
+
+--- Transfrom Data ---
+
+processing encode_map.
+processing parse_sell_price.
