@@ -329,7 +329,7 @@ def create_features(df, is_use_cache=True):
                 - 過去のデータから何倍変化があったかわかる。
     '''
 
-    with AddBaseSalesFeature(filename='add_sales_train', use_cache=True) as feat:
+    with AddBaseSalesFeature(filename='add_sales_train', use_cache=is_use_cache) as feat:
         df = feat.get_feature(df)
 
     return df.reset_index(drop=True)
@@ -524,7 +524,7 @@ def train_model(df, feature, target):
         "metric": "None",
         "objective": "poisson",
         "seed": SEED,
-        "learning_rate": 0.1,
+        "learning_rate": 0.3,
         "num_leaves": 2**6,
         'min_data_in_leaf': 50,
         "bagging_fraction": 0.8,
@@ -765,17 +765,17 @@ def main():
     print('Loading and initial processing have already been completed.')
 
     print('\n--- Transfrom Data ---\n')
-    _ = encode_map(filename='encode_map', use_cache=False)
-    _ = parse_sell_price(filename='encoded_sell_price', use_cache=False)
-    _ = encode_calendar(filename='encoded_calendar', use_cache=False)
+    _ = encode_map(filename='encode_map', use_cache=True)
+    _ = parse_sell_price(filename='encoded_sell_price', use_cache=True)
+    _ = encode_calendar(filename='encoded_calendar', use_cache=True)
 
-    train = melt_data(filename='melted_train', use_cache=False)
+    train = melt_data(filename='melted_train', use_cache=True)
     print('\nTrain DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())
 
     print('\n--- Feature Engineering ---\n')
-    train = create_features(train, is_use_cache=False)
+    train = create_features(train, is_use_cache=True)
     print('Train DataFrame:', train.shape)
     print('Memory Usage:', train.memory_usage().sum() / 1024 ** 2, 'Mb')
     print(train.head())

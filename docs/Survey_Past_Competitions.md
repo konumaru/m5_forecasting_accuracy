@@ -31,13 +31,3 @@
 ### Reference
 - Related Kaggle time series competitions
     - https://www.kaggle.com/c/m5-forecasting-accuracy/discussion/133474
-
-
-
-## 調査でわかったこと
-- 性質の違う予測値を扱う場合、モデルを適切に分ける必要がある。
-  - M5でいうと、以下のようなモデルを作る。
-    - models every dept_id, cat_id
-    - models every state_id, cat_id
-    - etc
-- 時系列データでもk-Foldは有効
