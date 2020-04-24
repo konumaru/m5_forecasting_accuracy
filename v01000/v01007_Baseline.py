@@ -128,6 +128,7 @@ def parse_sell_price(filename='encoded_sell_price', use_cache=True):
     # Load Data
     df = pd.read_pickle('../data/reduced/sell_prices.pkl')
     # Initial Processing And Feature Engineearing
+    df['Log1p_sell_price'] = np.log1p(df['sell_price'])
     df['area_id'] = df['store_id'].str.extract('(\w+)_\d+')
     df['sell_price_rate_by_wm_yr_wk__item_id'] = df['sell_price'] / \
         df.groupby(['wm_yr_wk', 'item_id'])['sell_price'].transform('mean')
@@ -516,13 +517,13 @@ class RondomSeed_LGBM_Model():
 
 def train_model(df, feature, target):
     n_fold = 3
-    max_train_days = 2 * 365
-    test_days = 180
+    max_train_days = 2.5 * 365
+    test_days = 90
 
     model_param = {
         "boosting_type": "gbdt",
-        "metric": "None",
-        "objective": "poisson",
+        "metric": "rmse",
+        "objective": "regression",
         "seed": SEED,
         "learning_rate": 0.3,
         "num_leaves": 2**6,
@@ -537,8 +538,7 @@ def train_model(df, feature, target):
     train_param = {
         "num_boost_round": 100000,
         "early_stopping_rounds": 50,
-        "verbose_eval": 100,
-        "feval": lgbm_rmsle
+        "verbose_eval": 100
     }
 
     print(f'n_fold: {n_fold}')
@@ -552,8 +552,7 @@ def train_model(df, feature, target):
                 'state_id', "event_name_1", "event_name_2", "event_type_1", "event_type_2"]
     lgbm_model = RondomSeed_LGBM_Model(
         df, feature, target, n_fold, test_days, max_train_days,
-        model_param, train_param,
-        weight=(np.log1p(df['sales']) * df['sell_price'] * 0.25) + 1
+        model_param, train_param
     )
     lgbm_model.save_importance(filepath=f'result/importance/{VERSION}.png')
     dump_pickle(lgbm_model, f'result/model/{VERSION}.pkl')

@@ -166,7 +166,7 @@ Submit DataFrame: (60980, 29)
   warnings.warn(msg)
 
 
-================================================================================ 
+================================================================================
 
 
 RUNNING at 2020-04-22 03:51:22.208998
@@ -284,5 +284,93 @@ Submit DataFrame: (60980, 29)
 2  HOBBIES_1_003_CA_1_validation  0.695461  ...  1.167060  1.229831
 3  HOBBIES_1_004_CA_1_validation  2.687649  ...  3.062977  3.214902
 4  HOBBIES_1_005_CA_1_validation  1.278616  ...  1.776137  1.898488
+
+[5 rows x 29 columns]
+
+
+================================================================================ 
+
+
+RUNNING at 2020-04-24 17:15:03.949696
+
+
+--- Load Data ---
+
+Loading and initial processing have already been completed.
+
+--- Transfrom Data ---
+
+processing encode_map.
+processing parse_sell_price.
+processing encode_calendar.
+processing melt_data.
+
+Train DataFrame: (46668247, 31)
+Memory Usage: 2981.922673225403 Mb
+                                   id  ...  sell_price_momentum
+213437  HOBBIES_1_008_CA_1_validation  ...                  1.0
+213438  HOBBIES_1_009_CA_1_validation  ...                  1.0
+213439  HOBBIES_1_010_CA_1_validation  ...                  1.0
+213441  HOBBIES_1_012_CA_1_validation  ...                  1.0
+213444  HOBBIES_1_015_CA_1_validation  ...                  1.0
+
+[5 rows x 31 columns]
+
+--- Feature Engineering ---
+
+Train DataFrame: (46668247, 63)
+Memory Usage: 5474.276074409485 Mb
+                              id  ...  sales_rolling_KURT_t30
+0  HOBBIES_1_008_CA_1_validation  ...                     NaN
+1  HOBBIES_1_009_CA_1_validation  ...                     NaN
+2  HOBBIES_1_010_CA_1_validation  ...                     NaN
+3  HOBBIES_1_012_CA_1_validation  ...                     NaN
+4  HOBBIES_1_015_CA_1_validation  ...                     NaN
+
+[5 rows x 63 columns]
+
+--- Train Model ---
+
+n_fold: 3
+max_train_days: 912.5
+test_days: 90
+{'boosting_type': 'gbdt', 'metric': 'rmse', 'objective': 'regression', 'seed': 42, 'learning_rate': 0.3, 'num_leaves': 64, 'min_data_in_leaf': 50, 'bagging_fraction': 0.8, 'bagging_freq': 1, 'feature_fraction': 1.0, 'lambda_l2': 0.1, 'verbosity': -1}
+{'num_boost_round': 100000, 'early_stopping_rounds': 50, 'verbose_eval': 100}
+Drop Null Rows.
+Train DataFrame Size: 21418866
+Valid DataFrame Size: 2458580
+
+1 of 3 Fold:
+
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[16]	train's rmse: 2.565	valid's rmse: 2.33156
+
+2 of 3 Fold:
+
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[19]	train's rmse: 2.54942	valid's rmse: 2.36757
+
+3 of 3 Fold:
+
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[16]	train's rmse: 2.56304	valid's rmse: 2.37158
+
+--- Evaluation ---
+
+RMSE: 2.176461097442031
+WRMSSE: 0.6175773503777725
+
+--- Submission ---
+
+Submit DataFrame: (60980, 29)
+                              id        F1  ...       F27       F28
+0  HOBBIES_1_001_CA_1_validation  0.742203  ...  0.969874  0.969874
+1  HOBBIES_1_002_CA_1_validation  0.386927  ...  0.341424  0.341424
+2  HOBBIES_1_003_CA_1_validation  0.440930  ...  0.696911  0.688356
+3  HOBBIES_1_004_CA_1_validation  1.955272  ...  2.716475  2.450843
+4  HOBBIES_1_005_CA_1_validation  0.934373  ...  1.298463  1.576365
 
 [5 rows x 29 columns]
