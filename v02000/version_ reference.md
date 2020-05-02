@@ -14,3 +14,16 @@
     - models every store_id, cat_id
     - etc
 - 時系列データでもk-Foldは有効
+
+
+## Versions
+### v02000
+- baselineの引き直し
+- script導入
+- Evaluator を外から読み込み
+
+
+### v02001
+- WRMSSE で評価可能
+- Evaluator クラスを拡張して、現時点でスコアが改善するsample_weightを生成
+  - ひとまず使用せずに、モデルの改善を行う。
