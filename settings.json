@@ -1,0 +1,5 @@
+{
+    "python.autoComplete.extraPaths": [
+        "v02000/script/*"
+    ]
+}

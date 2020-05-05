@@ -27,3 +27,7 @@
 - WRMSSE で評価可能
 - Evaluator クラスを拡張して、現時点でスコアが改善するsample_weightを生成
   - ひとまず使用せずに、モデルの改善を行う。
+- rmse, regression よりも rmse, poisson の方がスコアがよかった。
+  - ただし学習時間がかかる
+
+### v02002
