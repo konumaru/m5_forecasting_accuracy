@@ -1,0 +1,54 @@
+/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/compat/__init__.py:117: UserWarning: Could not import the lzma module. Your installed Python is incomplete. Attempting to use lzma compression will result in a RuntimeError.
+  warnings.warn(msg)
+
+
+--- Load Data and Initial Processing ---
+
+
+Load Cached data, features/parse_calendar.pkl
+Load Cached data, features/parse_sell_prices.pkl
+Load Cached data, features/parse_sales_train.pkl
+
+
+--- Transform ---
+
+
+Load Cached data, features/melted_and_merged_train.pkl
+
+
+--- Feature Engineering ---
+
+
+Load Cached data, features/simple_fe.pkl
+
+
+--- Define Evaluation Object ---
+
+
+Cache to features/evaluator.pkl
+
+
+--- Train Model ---
+
+
+{'boosting_type': 'gbdt', 'metric': 'rmse', 'objective': 'poisson', 'learning_rate': 0.3, 'min_data_in_leaf': 50, 'bagging_fraction': 0.7, 'bagging_freq': 1, 'verbosity': -1, 'n_jobs': -1, 'seed': 42}
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[2]	training's rmse: 4.54145e+12	valid_1's rmse: 5.67217e+12
+
+
+--- Evaluation ---
+
+
+Our val RMSE score is 8611591.19341774
+Our val WRMSSE score is 196768.1372426472
+Traceback (most recent call last):
+  File "v02002_baseline.py", line 384, in <module>
+    main()
+  File "v02002_baseline.py", line 376, in main
+    run_evaluation(eval_data, features)
+  File "v02002_baseline.py", line 313, in run_evaluation
+    dump_pickle(scores, SCORE_PATH)
+  File "/home/rui/m5_forecasting_accuracy/v02000/script/tools.py", line 14, in dump_pickle
+    with open(filepath, 'wb') as file:
+FileNotFoundError: [Errno 2] No such file or directory: 'result/scores/v02002.json'

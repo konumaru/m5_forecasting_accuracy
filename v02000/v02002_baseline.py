@@ -36,8 +36,11 @@ from script import load_pickle, dump_pickle
 
 
 SEED = 42
-VERSION = 'v02002'
+VERSION = str(__file__).split('_')[0]
 TARGET = 'sales'
+
+MODEL_PATH = f'result/model/{VERSION}.pkl'
+SCORE_PATH = f'result/scores/{VERSION}.json'
 
 
 """ Load Data and Initial Processing
@@ -210,7 +213,6 @@ def get_evaluator():
         calendar=pd.read_pickle('../data/reduced/calendar.pkl'),
         prices=pd.read_pickle('../data/reduced/sell_prices.pkl')
     )
-
     return evaluator
 
 
@@ -248,13 +250,15 @@ def save_importance(model, filepath, max_num_features=50, figsize=(15, 20)):
     plt.close('all')
 
 
-def train_model(all_train_data, features, evaluator):
+def run_train(all_train_data, features):
+    evaluator = load_pickle('features/evaluator.pkl')
+
     train_data, valid_data = train_test_split(all_train_data, test_size=0.1, random_state=42)
 
     train_set = lgb.Dataset(train_data[features], train_data[TARGET])
     val_set = lgb.Dataset(valid_data[features], valid_data[TARGET], reference=train_set)
 
-    use_weight = True
+    use_weight = False
     if use_weight:
         train_set.set_weight(evaluator.get_sample_weight(train_data['id']))
         val_set.set_weight(evaluator.get_sample_weight(valid_data['id']))
@@ -264,13 +268,15 @@ def train_model(all_train_data, features, evaluator):
         'metric': 'rmse',
         'objective': 'poisson',
         'learning_rate': 0.3,
-        'num_leaves': 2**7 - 1,
         'min_data_in_leaf': 50,
         'bagging_fraction': 0.7,
         'bagging_freq': 1,
+        'verbosity': -1,
         'n_jobs': -1,
         'seed': SEED
     }
+
+    print(params)
 
     train_params = {
         'num_boost_round': 2500,
@@ -279,87 +285,42 @@ def train_model(all_train_data, features, evaluator):
         # 'feval': lgbm_rmsle
         # 'feval': evaluator.feval
     }
-
     model = lgb.train(params, train_set, valid_sets=[train_set, val_set], **train_params)
+    # Save Image of feature importance.
     save_importance(model, filepath=f'result/importance/{VERSION}.png')
-
-    return model
+    # Export Model.
+    dump_pickle(model, filepath=MODEL_PATH)
 
 
 """ Evaluation
 """
 
 
+def run_evaluation(eval_data, features):
+    model = load_pickle(MODEL_PATH)
+    evaluator = load_pickle('features/evaluator.pkl')
+    scores = {}
+
+    val_pred = model.predict(eval_data[features])
+    scores['RMSE'] = metrics.mean_squared_error(val_pred, eval_data[TARGET], squared=False)
+
+    valid_preds = val_pred.reshape(28, -1).T
+    scores['WRMSSE'] = evaluator.score(valid_preds)
+
+    for f_name, score in scores.items():
+        print(f'Our val {f_name} score is {score}')
+
+    dump_pickle(scores, SCORE_PATH)
+
+
 """ Submission
 """
 
 
-def main():
-    print('\n\n--- Load Data and Initial Processing ---\n\n')
-    _ = parse_calendar()
-    _ = parse_sell_prices()
-    _ = parse_sales_train()
+def run_submission(sub_data, features):
+    model = load_pickle(MODEL_PATH)
+    wrmsse_socre = load_pickle(SCORE_PATH)['WRMSSE']
 
-    print('\n\n--- Transform ---\n\n')
-    _ = melted_and_merged_train()
-
-    print('\n\n--- Feature Engineering ---\n\n')
-    train = simple_fe()
-    print(train.shape)
-    print(train.head())
-
-    print('\n\n--- Define Evaluation Object ---\n\n')
-    evaluator = get_evaluator()
-
-    print('\n\n--- Train Model ---\n\n')
-    features = [
-        'item_id',
-        'dept_id',
-        'cat_id',
-        'store_id',
-        'state_id',
-        'day',
-        'event_name_1',
-        'event_type_1',
-        'event_name_2',
-        'event_type_2',
-        'snap_CA',
-        'snap_TX',
-        'snap_WI',
-        'sell_price',
-        'sales_lag_t28',
-        'sales_lag_t29',
-        'sales_lag_t30',
-        'sales_rolling_mean_t7',
-        'sales_rolling_std_t7',
-        'sales_rolling_mean_t30',
-        'sales_rolling_mean_t90',
-        'sales_rolling_mean_t180',
-        'sales_rolling_std_t30',
-        'sales_rolling_skew_t30',
-        'sales_rolling_kurt_t30',
-        'price_change_t1',
-        'price_change_t365',
-        'price_rolling_std_t7',
-        'price_rolling_std_t30',
-        'year',
-        'month',
-        'week',
-        'dayofweek'
-    ]
-    all_train_data, eval_data, sub_data = train_eval_submit_split(train)
-    model = train_model(all_train_data, features, evaluator)
-
-    print('\n\n--- Evaluation ---\n\n')
-    val_pred = model.predict(eval_data[features])
-    val_rmse = metrics.mean_squared_error(val_pred, eval_data[TARGET], squared=False)
-    print(f'Our val RMSE score is {val_rmse}')
-
-    valid_preds = val_pred.reshape(28, -1).T
-    valid_wrmsse = evaluator.score(valid_preds)
-    print(f'Our val WRMSSE score is {valid_wrmsse}')
-
-    print('\n\n--- Submission ---\n\n')
     sub_pred = model.predict(sub_data[features])
 
     submission = sub_data[['id', 'd']].copy(deep=True)
@@ -378,10 +339,45 @@ def main():
 
     sample_submission = pd.read_pickle('../data/reduced/sample_submission.pkl')
     submission = sample_submission[['id']].merge(submission, how='left', on='id')
-    submission.to_csv(f'submit/{VERSION}_{valid_wrmsse:.05}.csv.gz',
-                      index=False, compression='gzip')
+    submission.to_csv(
+        f'submit/{VERSION}_{wrmsse_socre:.05}.csv.gz', index=False, compression='gzip'
+    )
+
     print(submission.shape)
-    submission.head()
+    print(submission.head())
+
+
+def main():
+    print('\n\n--- Load Data and Initial Processing ---\n\n')
+    _ = parse_calendar()
+    _ = parse_sell_prices()
+    _ = parse_sales_train()
+
+    print('\n\n--- Transform ---\n\n')
+    _ = melted_and_merged_train()
+
+    print('\n\n--- Feature Engineering ---\n\n')
+    train = simple_fe()
+
+    print('\n\n--- Define Evaluation Object ---\n\n')
+    _ = get_evaluator()
+
+    print('\n\n--- Train Model ---\n\n')
+    cols_to_drop = ['id', 'd', 'date', 'wm_yr_wk', 'weekday', 'year']
+    features = train.columns.tolist()
+    features = [f for f in features if f not in cols_to_drop]
+
+    all_train_data, eval_data, sub_data = train_eval_submit_split(train)
+    del train; gc.collect()
+    run_train(all_train_data, features)
+    del all_train_data; gc.collect()
+
+    print('\n\n--- Evaluation ---\n\n')
+    run_evaluation(eval_data, features)
+    del eval_data; gc.collect()
+
+    print('\n\n--- Submission ---\n\n')
+    run_submission(sub_data, features)
 
 
 if __name__ == "__main__":

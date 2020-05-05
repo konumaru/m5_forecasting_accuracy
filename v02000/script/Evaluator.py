@@ -55,7 +55,7 @@ class WRMSSEEvaluator(object):
         scaling factor for each series ignoring starting zeros
         '''
         scales = []
-        for i in tqdm(range(len(self.train_series))):
+        for i in range(len(self.train_series)):
             series = self.train_series.iloc[i].values
             series = series[np.argmax(series != 0):]  # MEMO: drop before released data.
             scale = ((series[1:] - series[:-1]) ** 2).mean()
@@ -98,7 +98,7 @@ class WRMSSEEvaluator(object):
             [self.train_df[self.id_columns], weight_df], axis=1, sort=False
         )
         weights_map = {}
-        for i, group_id in enumerate(tqdm(self.group_ids, leave=False)):
+        for i, group_id in enumerate(self.group_ids):
             lv_weight = weight_df.groupby(group_id)[self.weight_columns].sum().sum(axis=1)
             lv_weight = lv_weight / lv_weight.sum()
             for i in range(len(lv_weight)):
@@ -114,7 +114,7 @@ class WRMSSEEvaluator(object):
         transform 30490 sries to all 42840 series
         '''
         series_map = {}
-        for i, group_id in enumerate(tqdm(self.group_ids, leave=False, disable=dis)):
+        for i, group_id in enumerate(self.group_ids):
             tr = df.groupby(group_id)[cols].sum()
             for i in range(len(tr)):
                 series_map[self.get_name(tr.index[i])] = tr.iloc[i].values
