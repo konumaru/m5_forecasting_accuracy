@@ -36,9 +36,11 @@ def CreateNewExperiment():
                 dir_path = os.path.join(new_exp_path, path)
                 print(f'{dir_path} is not exist, so create it.')
                 os.makedirs(dir_path, exist_ok=True)
+                with open(dir_path + '/.gitkeep', 'w') as f:
+                    f.write('')
 
     check_dir_exist(dirs=[
-        'features', 'submit', 'result/importance', 'result/score', 'result/logs', 'result/model'
+        'features', 'submit', 'result/importance', 'result/score', 'result/log', 'result/model'
     ])
 
 

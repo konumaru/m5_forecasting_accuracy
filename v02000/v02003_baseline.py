@@ -38,7 +38,7 @@ VERSION = str(__file__).split('_')[0]
 TARGET = 'sales'
 
 MODEL_PATH = f'result/model/{VERSION}.pkl'
-SCORE_PATH = f'result/score/{VERSION}.json'
+SCORE_PATH = f'result/score/{VERSION}.pkl'
 
 
 """ Load Data and Initial Processing
@@ -59,18 +59,18 @@ def parse_calendar():
     calendar['date'] = pd.to_datetime(calendar['date'])
     attrs = [
         "year",
-        # "quarter",
+        "quarter",
         "month",
         "week",
-        # "weekofyear",
+        "weekofyear",
         "day",
         "dayofweek",
-        # "is_year_end",
-        # "is_year_start",
-        # "is_quarter_end",
-        # "is_quarter_start",
-        # "is_month_end",
-        # "is_month_start",
+        "is_year_end",
+        "is_year_start",
+        "is_quarter_end",
+        "is_quarter_start",
+        "is_month_end",
+        "is_month_start",
     ]
 
     for attr in attrs:
@@ -102,7 +102,7 @@ def parse_sales_train():
 
 """ Transform
 """
-@cache_result(filename='melted_and_merged_train', use_cache=True)
+@cache_result(filename='melted_and_merged_train', use_cache=False)
 def melted_and_merged_train():
     # Load Data
     calendar = pd.read_pickle('features/parse_calendar.pkl')
@@ -115,10 +115,18 @@ def melted_and_merged_train():
     df = pd.merge(df, sell_prices, how='left', on=['store_id', 'item_id', 'wm_yr_wk'])
 
     # Label Encoding
-    cat_cols = ['item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
-    for c in cat_cols:
+    label_cols = ['item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
+    for c in label_cols:
         encodaer = preprocessing.LabelEncoder()
         df[c] = encodaer.fit_transform(df[c])
+
+    cat_cols = [
+        'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id',
+        'event_name_1', 'event_type_1', 'event_name_2', 'event_type_2',
+        'quarter', 'month', 'week', 'day', 'dayofweek', 'weekofyear'
+    ]
+    for c in cat_cols:
+        df[c] = df[c].astype('category')
 
     df.dropna(subset=['sell_price'], axis=0, inplace=True)
     return df.pipe(reduce_mem_usage)
@@ -126,7 +134,7 @@ def melted_and_merged_train():
 
 """ Feature Engineering
 """
-@cache_result(filename='simple_fe', use_cache=True)
+@cache_result(filename='simple_fe', use_cache=False)
 def simple_fe():
     df = pd.read_pickle('features/melted_and_merged_train.pkl')
     # rolling demand features
@@ -258,13 +266,11 @@ def run_train(all_train_data, features):
     params = {
         'boosting_type': 'gbdt',
         'metric': 'rmse',
-        'objective': 'regression',
-        'n_jobs': -1,
+        'objective': 'poisson',
         'seed': SEED,
         'learning_rate': 0.1,
-        'bagging_fraction': 0.75,
+        'bagging_fraction': 0.7,
         'bagging_freq': 5,
-        'colsample_bytree': 0.75,
         'verbosity': -1
     }
 

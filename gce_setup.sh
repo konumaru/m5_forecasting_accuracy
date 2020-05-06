@@ -24,13 +24,13 @@ echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
 echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 source ~/.bashrc
-pyenv update
 pyenv install 3.8.2
 pyenv global 3.8.2
 
 pip install -U pip
 curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 poetry completions bash > /etc/bash_completion.d/poetry.bash-completion
+source $HOME/.poetry/env
 echo 'source $HOME/.poetry/env' >> ~/.bashrc
 source ~/.bashrc
 poetry config virtualenvs.in-project true
