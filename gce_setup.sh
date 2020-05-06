@@ -25,8 +25,8 @@ echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 source ~/.bashrc
 pyenv update
-pyenv install 3.8.0
-pyenv global 3.8.0
+pyenv install 3.8.2
+pyenv global 3.8.2
 
 pip install -U pip
 curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python

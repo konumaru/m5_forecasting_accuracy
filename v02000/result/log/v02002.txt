@@ -1,5 +1,3 @@
-/home/rui/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/pandas/compat/__init__.py:117: UserWarning: Could not import the lzma module. Your installed Python is incomplete. Attempting to use lzma compression will result in a RuntimeError.
-  warnings.warn(msg)
 
 
 --- Load Data and Initial Processing ---
@@ -31,24 +29,66 @@ Cache to features/evaluator.pkl
 --- Train Model ---
 
 
-{'boosting_type': 'gbdt', 'metric': 'rmse', 'objective': 'poisson', 'learning_rate': 0.3, 'min_data_in_leaf': 50, 'bagging_fraction': 0.7, 'bagging_freq': 1, 'verbosity': -1, 'n_jobs': -1, 'seed': 42}
+{
+    "boosting_type": "gbdt",
+    "metric": "rmse",
+    "objective": "regression",
+    "n_jobs": -1,
+    "seed": 42,
+    "learning_rate": 0.1,
+    "bagging_fraction": 0.75,
+    "bagging_freq": 5,
+    "colsample_bytree": 0.75,
+    "verbosity": -1
+}
 Training until validation scores don't improve for 50 rounds
+[100]	training's rmse: 2.44563	valid_1's rmse: 2.28251
 Early stopping, best iteration is:
-[2]	training's rmse: 4.54145e+12	valid_1's rmse: 5.67217e+12
+[142]	training's rmse: 2.41999	valid_1's rmse: 2.27938
 
 
 --- Evaluation ---
 
 
-Our val RMSE score is 8611591.19341774
-Our val WRMSSE score is 196768.1372426472
-Traceback (most recent call last):
-  File "v02002_baseline.py", line 384, in <module>
-    main()
-  File "v02002_baseline.py", line 376, in main
-    run_evaluation(eval_data, features)
-  File "v02002_baseline.py", line 313, in run_evaluation
-    dump_pickle(scores, SCORE_PATH)
-  File "/home/rui/m5_forecasting_accuracy/v02000/script/tools.py", line 14, in dump_pickle
-    with open(filepath, 'wb') as file:
-FileNotFoundError: [Errno 2] No such file or directory: 'result/scores/v02002.json'
+Our val RMSE score is 2.142431879884113
+Our val WRMSSE score is 0.6150067584754049
+
+
+--- Submission ---
+
+
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.902552  0.723528  0.720532  0.687166   
+1  HOBBIES_1_002_CA_1_validation  0.401105  0.320714  0.319821  0.294487   
+2  HOBBIES_1_003_CA_1_validation  0.485966  0.430675  0.429782  0.429782   
+3  HOBBIES_1_004_CA_1_validation  1.881659  1.704562  1.638329  1.501833   
+4  HOBBIES_1_005_CA_1_validation  0.925499  0.768013  0.963851  1.138615   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.741605  0.841640  0.876353  0.737033  0.914938  0.889351  0.940329   
+1  0.322400  0.409416  0.423731  0.280043  0.226559  0.198859  0.153621   
+2  0.455887  0.517826  0.641588  0.362902  0.332434  0.287905  0.275109   
+3  1.813060  1.910932  1.897520  1.500231  1.664639  1.516681  1.447091   
+4  1.149949  1.400116  1.715868  1.244507  1.239154  1.097908  0.998420   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  1.040878  1.249140  1.241588  1.022504  0.838551  0.795038  0.767338   
+1  0.227194  0.311461  0.263344  0.223365  0.162289  0.168074  0.168074   
+2  0.360910  0.472230  0.405471  0.348981  0.275587  0.326132  0.371841   
+3  1.658176  2.265703  2.382511  1.897777  1.620943  1.787584  1.701018   
+4  1.079193  1.360056  1.210645  1.094604  0.943062  0.978811  0.978811   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.879004  1.184226  1.049474  0.875438  0.758995  0.773305  0.914462   
+1  0.208779  0.283068  0.290251  0.217579  0.152599  0.223314  0.209515   
+2  0.509948  0.661579  0.811578  0.699624  0.644865  0.676173  0.608635   
+3  1.809168  1.920725  2.199107  1.829037  1.611771  1.439852  1.483283   
+4  1.147378  1.378061  1.369346  0.989154  0.955865  0.955865  0.976709   
+
+        F26       F27       F28  
+0  0.918250  1.027297  1.041607  
+1  0.257204  0.330993  0.330993  
+2  0.688458  0.840284  0.753924  
+3  1.723258  2.691428  2.464691  
+4  1.095811  1.285711  1.617793  

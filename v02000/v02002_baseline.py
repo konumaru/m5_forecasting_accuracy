@@ -40,7 +40,7 @@ VERSION = str(__file__).split('_')[0]
 TARGET = 'sales'
 
 MODEL_PATH = f'result/model/{VERSION}.pkl'
-SCORE_PATH = f'result/scores/{VERSION}.json'
+SCORE_PATH = f'result/score/{VERSION}.json'
 
 
 """ Load Data and Initial Processing
@@ -135,35 +135,24 @@ def simple_fe():
     df['sales_lag_t28'] = df.groupby(['id'])['sales'].transform(lambda x: x.shift(28))
     df['sales_lag_t29'] = df.groupby(['id'])['sales'].transform(lambda x: x.shift(29))
     df['sales_lag_t30'] = df.groupby(['id'])['sales'].transform(lambda x: x.shift(30))
-    df['sales_rolling_mean_t7'] = df.groupby(['id'])['sales'].transform(
-        lambda x: x.shift(28).rolling(7).mean())
-    df['sales_rolling_std_t7'] = df.groupby(['id'])['sales'].transform(
-        lambda x: x.shift(28).rolling(7).std())
-    df['sales_rolling_mean_t30'] = df.groupby(['id'])['sales'].transform(
-        lambda x: x.shift(28).rolling(30).mean())
-    df['sales_rolling_mean_t90'] = df.groupby(['id'])['sales'].transform(
-        lambda x: x.shift(28).rolling(90).mean())
-    df['sales_rolling_mean_t180'] = df.groupby(['id'])['sales'].transform(
-        lambda x: x.shift(28).rolling(180).mean())
-    df['sales_rolling_std_t30'] = df.groupby(['id'])['sales'].transform(
-        lambda x: x.shift(28).rolling(30).std())
-    df['sales_rolling_skew_t30'] = df.groupby(['id'])['sales'].transform(
-        lambda x: x.shift(28).rolling(30).skew())
-    df['sales_rolling_kurt_t30'] = df.groupby(['id'])['sales'].transform(
-        lambda x: x.shift(28).rolling(30).kurt())
+    df['sales_rolling_mean_t7'] = df.groupby(['id'])['sales'].transform(lambda x: x.shift(28).rolling(7).mean())
+    df['sales_rolling_std_t7'] = df.groupby(['id'])['sales'].transform(lambda x: x.shift(28).rolling(7).std())
+    df['sales_rolling_mean_t30'] = df.groupby(['id'])['sales'].transform(lambda x: x.shift(28).rolling(30).mean())
+    df['sales_rolling_mean_t90'] = df.groupby(['id'])['sales'].transform(lambda x: x.shift(28).rolling(90).mean())
+    df['sales_rolling_mean_t180'] = df.groupby(['id'])['sales'].transform(lambda x: x.shift(28).rolling(180).mean())
+    df['sales_rolling_std_t30'] = df.groupby(['id'])['sales'].transform(lambda x: x.shift(28).rolling(30).std())
+    df['sales_rolling_skew_t30'] = df.groupby(['id'])['sales'].transform(lambda x: x.shift(28).rolling(30).skew())
+    df['sales_rolling_kurt_t30'] = df.groupby(['id'])['sales'].transform(lambda x: x.shift(28).rolling(30).kurt())
 
     # price features
-    df['price_lag_t1'] = df.groupby(['id'])['sell_price'].transform(
-        lambda x: x.shift(1))  # after drop.
+    df['price_lag_t1'] = df.groupby(['id'])['sell_price'].transform(lambda x: x.shift(1))  # after drop.
     df['price_change_t1'] = (df['price_lag_t1'] - df['sell_price']) / (df['price_lag_t1'])
     df['rolling_price_max_t365'] = df.groupby(
-        ['id'])['sell_price'].transform(lambda x: x.shift(1).rolling(365).max())  # after drop.
-    df['price_change_t365'] = (df['rolling_price_max_t365'] - df['sell_price'])\
-        / (df['rolling_price_max_t365'])
-    df['price_rolling_std_t7'] = df.groupby(['id'])['sell_price'].transform(
-        lambda x: x.rolling(7).std())
-    df['price_rolling_std_t30'] = df.groupby(['id'])['sell_price'].transform(
-        lambda x: x.rolling(30).std())
+        ['id'])['sell_price'].transform(
+        lambda x: x.shift(1).rolling(365).max())  # after drop.
+    df['price_change_t365'] = (df['rolling_price_max_t365'] - df['sell_price']) / (df['rolling_price_max_t365'])
+    df['price_rolling_std_t7'] = df.groupby(['id'])['sell_price'].transform(lambda x: x.rolling(7).std())
+    df['price_rolling_std_t30'] = df.groupby(['id'])['sell_price'].transform(lambda x: x.rolling(30).std())
     df.drop(['rolling_price_max_t365', 'price_lag_t1'], inplace=True, axis=1)
 
     return df.pipe(reduce_mem_usage)
@@ -253,7 +242,12 @@ def save_importance(model, filepath, max_num_features=50, figsize=(15, 20)):
 def run_train(all_train_data, features):
     evaluator = load_pickle('features/evaluator.pkl')
 
-    train_data, valid_data = train_test_split(all_train_data, test_size=0.1, random_state=42)
+    train_days = 365 * 3
+    train_thresh = all_train_data['date'].max() - datetime.timedelta(days=train_days)
+    all_train_data = all_train_data[all_train_data['date'] > train_thresh]
+
+    train_data, valid_data = train_test_split(
+        all_train_data, test_size=0.1, shuffle=False, random_state=SEED)
 
     train_set = lgb.Dataset(train_data[features], train_data[TARGET])
     val_set = lgb.Dataset(valid_data[features], valid_data[TARGET], reference=train_set)
@@ -266,24 +260,22 @@ def run_train(all_train_data, features):
     params = {
         'boosting_type': 'gbdt',
         'metric': 'rmse',
-        'objective': 'poisson',
-        'learning_rate': 0.3,
-        'min_data_in_leaf': 50,
-        'bagging_fraction': 0.7,
-        'bagging_freq': 1,
-        'verbosity': -1,
+        'objective': 'regression',
         'n_jobs': -1,
-        'seed': SEED
+        'seed': SEED,
+        'learning_rate': 0.1,
+        'bagging_fraction': 0.75,
+        'bagging_freq': 5,
+        'colsample_bytree': 0.75,
+        'verbosity': -1
     }
 
-    print(params)
+    print(json.dumps(params, indent=4), '\n')
 
     train_params = {
         'num_boost_round': 2500,
         'early_stopping_rounds': 50,
         'verbose_eval': 100,
-        # 'feval': lgbm_rmsle
-        # 'feval': evaluator.feval
     }
     model = lgb.train(params, train_set, valid_sets=[train_set, val_set], **train_params)
     # Save Image of feature importance.
@@ -363,7 +355,7 @@ def main():
     _ = get_evaluator()
 
     print('\n\n--- Train Model ---\n\n')
-    cols_to_drop = ['id', 'd', 'date', 'wm_yr_wk', 'weekday', 'year']
+    cols_to_drop = ['id', 'd', 'date', 'wm_yr_wk', 'weekday', 'year'] + [TARGET]
     features = train.columns.tolist()
     features = [f for f in features if f not in cols_to_drop]
 
