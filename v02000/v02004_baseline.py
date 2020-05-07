@@ -75,7 +75,7 @@ def parse_calendar():
 
     for attr in attrs:
         calendar[attr] = getattr(calendar['date'].dt, attr)
-    # calendar["is_weekend"] = calendar["dayofweek"].isin([5, 6]).astype(np.int8)|
+    calendar["is_weekend"] = calendar["dayofweek"].isin([5, 6]).astype(np.int8)
 
     # drop_features = ['weekday', 'wday', 'month', 'year']
     # features = calendar.columns.tolist()
@@ -258,7 +258,7 @@ def run_train(all_train_data, features):
     train_set = lgb.Dataset(train_data[features], train_data[TARGET])
     val_set = lgb.Dataset(valid_data[features], valid_data[TARGET], reference=train_set)
 
-    use_weight = False
+    use_weight = True
     if use_weight:
         train_set.set_weight(evaluator.get_sample_weight(train_data['id']))
         val_set.set_weight(evaluator.get_sample_weight(valid_data['id']))
@@ -266,7 +266,7 @@ def run_train(all_train_data, features):
     params = {
         'boosting_type': 'gbdt',
         'metric': 'rmse',
-        'objective': 'poisson',
+        'objective': 'regression',
         'seed': SEED,
         'learning_rate': 0.1,
         'num_leaves': 2**11 - 1,
