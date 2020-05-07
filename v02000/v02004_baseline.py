@@ -216,11 +216,10 @@ def get_evaluator():
 
 
 def train_eval_submit_split(df, eval_days=28):
-    oldest_submit_date = '2016-04-25'
+    oldest_submit_date = datetime.datetime.strptime('2016-04-25', '%Y-%m-%d')
     submit_mask = (df["date"] >= oldest_submit_date)
 
-    eval_date = datetime.datetime.strptime(oldest_submit_date, '%Y-%m-%d') \
-        - datetime.timedelta(days=eval_days)
+    eval_date = oldest_submit_date - datetime.timedelta(days=eval_days)
     eval_mask = ((df["date"] >= eval_date) & (df["date"] < oldest_submit_date))
 
     train_mask = ((~eval_mask) & (~submit_mask))
@@ -248,9 +247,9 @@ def save_importance(model, filepath, max_num_features=50, figsize=(15, 20)):
 def run_train(all_train_data, features):
     evaluator = load_pickle('features/evaluator.pkl')
 
-    train_days = 365 * 3
-    train_thresh = all_train_data['date'].max() - datetime.timedelta(days=train_days)
-    all_train_data = all_train_data[all_train_data['date'] > train_thresh]
+    # train_days = 365 * 3
+    # train_thresh = all_train_data['date'].max() - datetime.timedelta(days=train_days)
+    # all_train_data = all_train_data[all_train_data['date'] > train_thresh]
 
     train_data, valid_data = train_test_split(
         all_train_data, test_size=0.2, shuffle=False, random_state=SEED)
@@ -258,7 +257,7 @@ def run_train(all_train_data, features):
     train_set = lgb.Dataset(train_data[features], train_data[TARGET])
     val_set = lgb.Dataset(valid_data[features], valid_data[TARGET], reference=train_set)
 
-    use_weight = True
+    use_weight = False
     if use_weight:
         train_set.set_weight(evaluator.get_sample_weight(train_data['id']))
         val_set.set_weight(evaluator.get_sample_weight(valid_data['id']))
@@ -267,13 +266,12 @@ def run_train(all_train_data, features):
         'boosting_type': 'gbdt',
         'metric': 'rmse',
         'objective': 'regression',
+        'n_jobs': -1,
         'seed': SEED,
         'learning_rate': 0.1,
-        'num_leaves': 2**11 - 1,
-        'bagging_fraction': 0.7,
+        'bagging_fraction': 0.75,
         'bagging_freq': 5,
-        'min_data_in_leaf': 50,
-        'verbosity': -1
+        'colsample_bytree': 0.75
     }
 
     print(json.dumps(params, indent=4), '\n')
