@@ -164,6 +164,77 @@ def simple_fe():
     return df.pipe(reduce_mem_usage)
 
 
+def ordered_d_cols(df_cols, is_reverse=False):
+    return sorted(df_cols, key=lambda x: int((re.search(r"\d+", x)).group(0)), reverse=is_reverse)
+
+
+@cache_result(filename='sample_weight', use_cache=True)
+def calc_similar_weight():
+    df = pd.read_pickle('features/melted_and_merged_train.pkl')
+    # Prepare raw data.
+    df = df[['id', 'd', 'sales', 'sell_price']]
+    df['sales_value'] = df['sales'] * df['sell_price']
+    df.drop(['sell_price'], axis=1, inplace=True)
+    # Calculation salse value ratio.
+    weight_df = df.pivot(values='sales_value', index='id', columns='d')
+    weight_df = weight_df[ordered_d_cols(weight_df.columns)]
+
+    weight_df = weight_df.shift(28, axis=1).rolling(28, axis=1).sum()
+    weight_df = weight_df / weight_df.sum(axis=0)
+
+    weight_df = weight_df.reset_index()
+    weight_df = pd.melt(weight_df, id_vars='id', var_name='d', value_name='weight').fillna(0)
+    # Calculation scale that is Variance of past values.
+    scale_df = df.pivot(values='sales', index='id', columns='d')
+    scale_df = scale_df[ordered_d_cols(scale_df.columns, is_reverse=False)]
+
+    def est_scale(series):
+        series = series[~np.isnan(series)][np.argmax(series != 0):]
+        if series.shape[0] > 0:
+            scale = np.mean(((series[1:] - series[:-1]) ** 2))
+        else:
+            scale = 1
+        return scale
+    scale_df = scale_df.rolling(90, min_periods=28, axis=1).apply(est_scale, raw=True)
+    scale_df = scale_df.reset_index()
+    scale_df = pd.melt(scale_df, id_vars='id', var_name='d', value_name='scale').fillna(0)
+    # Merge weight_df and scale_df.
+    weight_df = weight_df.merge(scale_df, how='left', on=['id', 'd'])
+    weight_df['sample_weight'] = weight_df['weight'] / (weight_df['scale'].map(np.sqrt) + 1)
+    # Min_Max_Scaling sample weight.
+    weight_df['sample_weight'] = (weight_df['sample_weight'] - weight_df['sample_weight'].min()) \
+        / weight_df['sample_weight'].max() - weight_df['sample_weight'].min()
+
+    df = pd.merge(df, weight_df, how='left', on=['id', 'd'])
+    return df[['sample_weight']].pipe(reduce_mem_usage)
+
+
+@cache_result(filename='sales_features', use_cache=True)
+def sales_features():
+    pred_days = 28
+    dst_df = pd.DataFrame()
+    df = pd.read_pickle('features/melted_and_merged_train.pkl')
+    grouped_df = df.groupby(["id"])['sales']
+
+    for window in [7, 14, 28]:
+
+        dst_df[f"sales_rolling_ZeroRatio_t{window}"] = grouped_df.transform(
+            lambda x: 1 - (x == 0).shift(pred_days).rolling(window).mean())
+
+        dst_df[f"sales_rolling_ZeroCount_t{window}"] = grouped_df.transform(
+            lambda x: (x == 0).shift(pred_days).rolling(window).sum())
+
+    # df = df[df[f"sales_rolling_ZeroRatio_t28"] < 0.25]
+    return dst_df.pipe(reduce_mem_usage)
+
+
+@cache_result(filename='all_train_data', use_cache=True)
+def get_all_train_data():
+    df = simple_fe()
+    df = pd.concat([df, sales_features()], axis=1)
+    return df
+
+
 """ Define Evaluation Object
 - WRMSSEForLightGBM の制約は
     - validation では, すべての id が存在し, 連続する28日のデータであること.
@@ -190,14 +261,22 @@ class WRMSSEForLightGBM(WRMSSEEvaluator):
         weight_df.index = weight_df.index.str.replace('--', '_')
         weight_df.columns = ['weight']
         scale = np.where(self.scale != 0, self.scale, 1)
-        weight_df['sample_weight'] = weight_df['weight'] / scale
+        weight_df['sample_weight'] = weight_df['weight']**2 / scale
+
+        weight_max = weight_df['sample_weight'].max()
+        weight_min = weight_df['sample_weight'].min()
+        weight_df['sample_weight'] = \
+            (weight_df['sample_weight'] - weight_min) / (weight_max - weight_min)
 
         return weight_df.loc[data_idx, 'sample_weight'].values
 
 
-@cache_result(filename='evaluator', use_cache=True)
-def get_evaluator():
+@cache_result(filename='evaluator', use_cache=False)
+def get_evaluator(for_local=False):
     train_df = pd.read_pickle('../data/reduced/sales_train_validation.pkl')
+    # If local test, drop sales data latest 28 days.
+    if for_local:
+        train_df = train_df.iloc[:, :-28]
 
     train_fold_df = train_df.iloc[:, :-28]
     valid_fold_df = train_df.iloc[:, -28:].copy()
@@ -244,34 +323,58 @@ def save_importance(model, filepath, max_num_features=50, figsize=(15, 20)):
     plt.close('all')
 
 
+def lgb_custom_fobj(preds, train_data):
+    weight = train_data.get_weight()
+    labels = train_data.get_label()
+
+    grad = 2 * weight * (preds - labels)
+    hess = 2 * weight
+    return grad, hess
+
+
+def lgb_wrmse(preds, train_data):
+    weight = train_data.get_weight()
+    labels = train_data.get_label()
+
+    loss = np.sqrt(np.mean(2 * weight * np.power(preds - labels, 2)))
+    return 'WRMSE', loss, False
+
+
 def run_train(all_train_data, features):
     evaluator = load_pickle('features/evaluator.pkl')
 
-    # train_days = 365 * 3
-    # train_thresh = all_train_data['date'].max() - datetime.timedelta(days=train_days)
-    # all_train_data = all_train_data[all_train_data['date'] > train_thresh]
+    train_days = 365 * 2
+    train_thresh = all_train_data['date'].max() - datetime.timedelta(days=train_days)
+    all_train_data = all_train_data[all_train_data['date'] > train_thresh]
 
     train_data, valid_data = train_test_split(
         all_train_data, test_size=0.2, shuffle=False, random_state=SEED)
 
     train_set = lgb.Dataset(train_data[features], train_data[TARGET])
-    val_set = lgb.Dataset(valid_data[features], valid_data[TARGET], reference=train_set)
+    valid_set = lgb.Dataset(valid_data[features], valid_data[TARGET], reference=train_set)
 
-    use_weight = False
+    use_weight = True
     if use_weight:
-        train_set.set_weight(evaluator.get_sample_weight(train_data['id']))
-        val_set.set_weight(evaluator.get_sample_weight(valid_data['id']))
+        train_weight = 2 * evaluator.get_sample_weight(train_data['id'])
+        train_set.set_weight(train_weight)
+
+        valid_weight = 2 * evaluator.get_sample_weight(valid_data['id'])
+        valid_set.set_weight(valid_weight)
 
     params = {
         'boosting_type': 'gbdt',
+        # 'objective': 'regression',  # regression, tweedie, poisson
+        # 'tweedie_variance_power': 1.1,
         'metric': 'rmse',
-        'objective': 'regression',
-        'n_jobs': -1,
-        'seed': SEED,
-        'learning_rate': 0.1,
-        'bagging_fraction': 0.75,
-        'bagging_freq': 5,
-        'colsample_bytree': 0.75
+        'subsample': 0.5,
+        'subsample_freq': 1,
+        'learning_rate': 0.03,  # 0.03
+        'num_leaves': 2**11 - 1,
+        'min_data_in_leaf': 2**12 - 1,
+        'feature_fraction': 0.5,
+        # 'max_bin': 100,
+        'boost_from_average': False,
+        'verbose': -1,
     }
 
     print(json.dumps(params, indent=4), '\n')
@@ -280,8 +383,10 @@ def run_train(all_train_data, features):
         'num_boost_round': 2500,
         'early_stopping_rounds': 50,
         'verbose_eval': 100,
+        # 'feval': lgb_wrmse,
+        'fobj': lgb_custom_fobj
     }
-    model = lgb.train(params, train_set, valid_sets=[train_set, val_set], **train_params)
+    model = lgb.train(params, train_set, valid_sets=[train_set, valid_set], **train_params)
     # Save Image of feature importance.
     save_importance(model, filepath=f'result/importance/{VERSION}.png')
     # Export Model.
@@ -353,19 +458,23 @@ def main():
     _ = melted_and_merged_train()
 
     print('\n\n--- Feature Engineering ---\n\n')
-    train = simple_fe()
-    print(train.dtypes, '\n')
+    df = get_all_train_data()
+    print('\n', df.dtypes, '\n')
 
     print('\n\n--- Define Evaluation Object ---\n\n')
     _ = get_evaluator()
 
     print('\n\n--- Train Model ---\n\n')
-    cols_to_drop = ['id', 'd', 'date', 'wm_yr_wk', 'weekday', 'year'] + [TARGET]
-    features = train.columns.tolist()
+    cols_to_drop = [
+        'id', 'd', 'date', 'wm_yr_wk', 'weekday', 'year', 'sample_weight',
+        'is_year_end', 'is_year_start', 'is_quarter_end', 'is_quarter_start',
+        'is_month_end', 'is_month_start'
+    ] + [TARGET]
+    features = df.columns.tolist()
     features = [f for f in features if f not in cols_to_drop]
 
-    all_train_data, eval_data, sub_data = train_eval_submit_split(train)
-    del train; gc.collect()
+    all_train_data, eval_data, sub_data = train_eval_submit_split(df)
+    del df; gc.collect()
     run_train(all_train_data, features)
     del all_train_data; gc.collect()
 

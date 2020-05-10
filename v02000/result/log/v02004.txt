@@ -17,56 +17,63 @@ Load Cached data, features/melted_and_merged_train.pkl
 --- Feature Engineering ---
 
 
-Load Cached data, features/simple_fe.pkl
-id                                 object
-item_id                          category
-dept_id                          category
-cat_id                           category
-store_id                         category
-state_id                         category
-d                                  object
-sales                               int16
-date                       datetime64[ns]
-wm_yr_wk                            int16
-weekday                            object
-wday                                 int8
-month                            category
-year                                int16
-event_name_1                     category
-event_type_1                     category
-event_name_2                     category
-event_type_2                     category
-snap_CA                              int8
-snap_TX                              int8
-snap_WI                              int8
-quarter                          category
-week                             category
-weekofyear                       category
-day                              category
-dayofweek                        category
-is_year_end                          bool
-is_year_start                        bool
-is_quarter_end                       bool
-is_quarter_start                     bool
-is_month_end                         bool
-is_month_start                       bool
-is_weekend                           int8
-sell_price                        float16
-sales_lag_t28                     float16
-sales_lag_t29                     float16
-sales_lag_t30                     float16
-sales_rolling_mean_t7             float16
-sales_rolling_std_t7              float16
-sales_rolling_mean_t30            float16
-sales_rolling_mean_t90            float16
-sales_rolling_mean_t180           float16
-sales_rolling_std_t30             float16
-sales_rolling_skew_t30            float16
-sales_rolling_kurt_t30            float16
-price_change_t1                   float16
-price_change_t365                 float16
-price_rolling_std_t7              float16
-price_rolling_std_t30             float16
+Load Cached data, features/all_train_data.pkl
+
+ id                                     object
+item_id                              category
+dept_id                              category
+cat_id                               category
+store_id                             category
+state_id                             category
+d                                      object
+sales                                   int16
+date                           datetime64[ns]
+wm_yr_wk                                int16
+weekday                                object
+wday                                     int8
+month                                category
+year                                    int16
+event_name_1                         category
+event_type_1                         category
+event_name_2                         category
+event_type_2                         category
+snap_CA                                  int8
+snap_TX                                  int8
+snap_WI                                  int8
+quarter                              category
+week                                 category
+weekofyear                           category
+day                                  category
+dayofweek                            category
+is_year_end                              bool
+is_year_start                            bool
+is_quarter_end                           bool
+is_quarter_start                         bool
+is_month_end                             bool
+is_month_start                           bool
+sell_price                            float16
+sales_lag_t28                         float16
+sales_lag_t29                         float16
+sales_lag_t30                         float16
+sales_rolling_mean_t7                 float16
+sales_rolling_std_t7                  float16
+sales_rolling_mean_t30                float16
+sales_rolling_mean_t90                float16
+sales_rolling_mean_t180               float16
+sales_rolling_std_t30                 float16
+sales_rolling_skew_t30                float16
+sales_rolling_kurt_t30                float16
+price_change_t1                       float16
+price_change_t365                     float16
+price_rolling_std_t7                  float16
+price_rolling_std_t30                 float16
+sample_weight                         float16
+sales_rolling_ZeroRatio_t7            float16
+sales_rolling_ZeroCount_t7            float16
+sales_rolling_ZeroRatio_t14           float16
+sales_rolling_ZeroCount_t14           float16
+sales_rolling_ZeroRatio_t28           float16
+sales_rolling_ZeroCount_t28           float16
 dtype: object 
 
 
@@ -74,7 +81,7 @@ dtype: object
 --- Define Evaluation Object ---
 
 
-Load Cached data, features/evaluator.pkl
+Cache to features/evaluator.pkl
 
 
 --- Train Model ---
@@ -83,35 +90,28 @@ Load Cached data, features/evaluator.pkl
 {
     "boosting_type": "gbdt",
     "metric": "rmse",
-    "objective": "regression",
-    "n_jobs": -1,
-    "seed": 42,
-    "learning_rate": 0.1,
-    "bagging_fraction": 0.75,
-    "bagging_freq": 5,
-    "colsample_bytree": 0.75
+    "subsample": 0.5,
+    "subsample_freq": 1,
+    "learning_rate": 0.03,
+    "num_leaves": 2047,
+    "min_data_in_leaf": 4095,
+    "feature_fraction": 0.5,
+    "boost_from_average": false,
+    "verbose": -1
 } 
 
-[LightGBM] [Info] Total Bins 6587
-[LightGBM] [Info] Number of data: 36139389, number of used features: 42
-[LightGBM] [Info] Start training from score 1.460362
 Training until validation scores don't improve for 50 rounds
-[100]	training's rmse: 2.65077	valid_1's rmse: 2.30792
-[200]	training's rmse: 2.58701	valid_1's rmse: 2.29462
-[300]	training's rmse: 2.54876	valid_1's rmse: 2.2906
-[400]	training's rmse: 2.51862	valid_1's rmse: 2.28913
-[500]	training's rmse: 2.49363	valid_1's rmse: 2.28583
-[600]	training's rmse: 2.47326	valid_1's rmse: 2.28502
-[700]	training's rmse: 2.45469	valid_1's rmse: 2.28488
+[100]	training's rmse: 2.47798	valid_1's rmse: 3.2077
+[200]	training's rmse: 2.31536	valid_1's rmse: 3.17116
 Early stopping, best iteration is:
-[660]	training's rmse: 2.46247	valid_1's rmse: 2.28445
+[187]	training's rmse: 2.33093	valid_1's rmse: 3.1703
 
 
 --- Evaluation ---
 
 
-Our val RMSE score is 2.1507080272988226
-Our val WRMSSE score is 0.6030947666673672
+Our val RMSE score is 2.1948346151480225
+Our val WRMSSE score is 0.6466979700142688
 
 
 --- Submission ---
@@ -119,36 +119,36 @@ Our val WRMSSE score is 0.6030947666673672
 
 (60980, 29)
                               id        F1        F2        F3        F4  \
-0  HOBBIES_1_001_CA_1_validation  0.848841  0.725308  0.723067  0.681976   
-1  HOBBIES_1_002_CA_1_validation  0.350135  0.314771  0.293562  0.266781   
-2  HOBBIES_1_003_CA_1_validation  0.480880  0.440579  0.442568  0.440418   
-3  HOBBIES_1_004_CA_1_validation  2.081407  1.782583  1.701928  1.551182   
-4  HOBBIES_1_005_CA_1_validation  0.885139  0.727302  0.895877  0.972871   
+0  HOBBIES_1_001_CA_1_validation  0.755828  0.782608  0.747840  0.728765   
+1  HOBBIES_1_002_CA_1_validation  0.362729  0.366594  0.332166  0.320757   
+2  HOBBIES_1_003_CA_1_validation  0.463555  0.485404  0.450706  0.459837   
+3  HOBBIES_1_004_CA_1_validation  1.939169  1.636797  1.333284  1.362918   
+4  HOBBIES_1_005_CA_1_validation  0.982846  0.946515  1.148066  1.109252   
 
          F5        F6        F7        F8        F9       F10       F11  \
-0  0.709133  0.826936  0.846438  0.745991  0.877860  0.814506  1.007093   
-1  0.286503  0.362586  0.372482  0.224290  0.195555  0.144007  0.157686   
-2  0.484527  0.554347  0.634807  0.401817  0.373807  0.321098  0.330718   
-3  1.897579  2.065494  2.048007  1.759431  1.899088  1.639980  1.658374   
-4  1.047396  1.259289  1.720778  1.196191  1.158875  0.977166  0.959943   
+0  0.795712  0.839072  0.834485  0.646082  0.656680  0.658085  0.687170   
+1  0.394154  0.451737  0.436328  0.365064  0.291630  0.289135  0.239829   
+2  0.491321  0.662468  0.759792  0.341577  0.344337  0.314461  0.282866   
+3  1.745052  2.136178  2.062491  1.637827  1.652414  1.464042  1.423349   
+4  1.148071  1.340269  1.614547  1.109696  1.132563  1.047831  0.950862   
 
         F12       F13       F14       F15       F16       F17       F18  \
-0  1.048213  1.273455  1.188155  1.031524  0.829275  0.775045  0.753454   
-1  0.211412  0.275488  0.177434  0.182948  0.125085  0.137099  0.143912   
-2  0.398227  0.470899  0.313738  0.308958  0.231596  0.272484  0.384402   
-3  1.823560  2.524912  2.177337  2.066316  1.722752  1.822176  1.763571   
-4  1.079790  1.248421  0.927688  1.032028  0.851772  0.876177  0.882990   
+0  0.827083  0.949211  0.981134  0.719767  0.773131  0.693944  0.671550   
+1  0.293417  0.428618  0.378186  0.229238  0.192280  0.186562  0.224029   
+2  0.350263  0.455530  0.445231  0.291849  0.274185  0.296704  0.364997   
+3  1.736765  2.337677  2.543280  2.003376  1.637553  1.559435  1.731630   
+4  1.145750  1.390406  1.241666  1.037222  0.943863  0.947048  0.953885   
 
         F19       F20       F21       F22       F23       F24       F25  \
-0  0.843092  1.163867  0.989339  0.785465  0.771370  0.786546  0.918655   
-1  0.184211  0.254948  0.281699  0.168442  0.124959  0.196209  0.196450   
-2  0.539414  0.655756  0.786494  0.665231  0.688968  0.690716  0.561823   
-3  1.902499  2.117538  2.393070  1.976740  1.721229  1.683417  1.715143   
-4  1.076006  1.288764  1.244815  0.893767  0.868266  0.868266  0.864582   
+0  0.793821  1.096973  0.956463  0.868527  0.641345  0.667579  0.729947   
+1  0.227869  0.325197  0.267546  0.252911  0.194861  0.302046  0.294268   
+2  0.509895  0.659036  0.654488  0.620625  0.643349  0.644787  0.567408   
+3  1.904398  1.886844  2.231811  1.864811  1.650709  1.373665  1.547668   
+4  1.087118  1.302473  1.301832  1.010691  0.928481  0.919492  0.956154   
 
         F26       F27       F28  
-0  0.889533  1.040891  1.056067  
-1  0.249414  0.313877  0.303496  
-2  0.630865  0.785729  0.737532  
-3  1.970760  2.787395  2.496304  
-4  1.019282  1.208781  1.523712  
+0  0.858591  1.009952  0.986870  
+1  0.308771  0.374330  0.382417  
+2  0.640857  0.826400  0.859627  
+3  1.820869  2.728394  2.643684  
+4  1.071086  1.403481  1.656069  
