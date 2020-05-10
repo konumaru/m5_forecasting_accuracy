@@ -1,0 +1,98 @@
+
+
+--- Load Data and Initial Processing ---
+
+
+Load Cached data, features/parse_calendar.pkl
+Load Cached data, features/parse_sell_prices.pkl
+Load Cached data, features/parse_sales_train.pkl
+
+
+--- Transform ---
+
+
+Load Cached data, features/melted_and_merged_train.pkl
+
+
+--- Feature Engineering ---
+
+
+Load Cached data, features/simple_fe.pkl
+
+
+--- Train Model ---
+
+
+[LightGBM] [Info] Total Bins 7565
+[LightGBM] [Info] Number of data: 21403980, number of used features: 44
+[LightGBM] [Info] Start training from score 0.207471
+Training until validation scores don't improve for 200 rounds
+[100]	training's rmse: 2.34939	valid_1's rmse: 2.19955
+[200]	training's rmse: 2.28974	valid_1's rmse: 2.17017
+[300]	training's rmse: 2.25169	valid_1's rmse: 2.15403
+[400]	training's rmse: 2.22052	valid_1's rmse: 2.14209
+[500]	training's rmse: 2.19593	valid_1's rmse: 2.13089
+[600]	training's rmse: 2.17445	valid_1's rmse: 2.12387
+[700]	training's rmse: 2.15412	valid_1's rmse: 2.11719
+[800]	training's rmse: 2.13978	valid_1's rmse: 2.11514
+[900]	training's rmse: 2.12935	valid_1's rmse: 2.11239
+[1000]	training's rmse: 2.11853	valid_1's rmse: 2.1112
+[1100]	training's rmse: 2.10994	valid_1's rmse: 2.11015
+[1200]	training's rmse: 2.10136	valid_1's rmse: 2.10984
+[1300]	training's rmse: 2.09354	valid_1's rmse: 2.10915
+[1400]	training's rmse: 2.08599	valid_1's rmse: 2.10793
+[1500]	training's rmse: 2.07917	valid_1's rmse: 2.10826
+Early stopping, best iteration is:
+[1398]	training's rmse: 2.08607	valid_1's rmse: 2.1079
+Our val rmse score is 2.1079012841621187
+v03001_baseline.py:240: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  test['sales'] = y_pred
+
+
+--- Evaluation ---
+
+
+
+
+--- Submission ---
+
+
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.824601  0.698227  0.675169  0.670988   
+1  HOBBIES_1_002_CA_1_validation  0.381474  0.374233  0.374470  0.343761   
+2  HOBBIES_1_003_CA_1_validation  0.260104  0.252081  0.256057  0.262017   
+3  HOBBIES_1_004_CA_1_validation  1.951054  1.624866  1.572587  1.517232   
+4  HOBBIES_1_005_CA_1_validation  1.009023  0.819975  1.038168  1.123256   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.762957  0.852391  0.922011  0.642930  0.838268  0.791666  0.893693   
+1  0.380569  0.451795  0.479883  0.297323  0.282093  0.250450  0.252438   
+2  0.294711  0.357505  0.402369  0.277991  0.290551  0.257151  0.273161   
+3  1.875992  2.245274  2.575645  1.967634  1.787882  1.611658  1.572488   
+4  1.120010  1.476759  1.944634  1.294845  1.326193  1.054233  1.080473   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.908891  1.236609  1.019068  0.892429  0.754332  0.748040  0.765505   
+1  0.277255  0.333461  0.265729  0.213980  0.221803  0.217545  0.220260   
+2  0.297482  0.360522  0.348922  0.240125  0.239893  0.250010  0.285386   
+3  1.859508  2.555758  2.154190  2.003468  1.679253  1.787201  1.756127   
+4  1.191147  1.528764  1.141496  1.201791  1.035807  1.053339  1.066337   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.875573  1.252667  1.088074  0.840029  0.741629  0.745183  0.808352   
+1  0.259199  0.327405  0.319947  0.218439  0.219455  0.259536  0.257182   
+2  0.362513  0.450085  0.489355  0.366486  0.388564  0.394275  0.359005   
+3  1.919779  2.299716  2.519975  1.984176  1.654712  1.555303  1.592824   
+4  1.234149  1.560465  1.499991  1.059252  0.949963  0.920810  0.955188   
+
+        F26       F27       F28  
+0  0.840029  1.135308  1.146221  
+1  0.284136  0.346369  0.314594  
+2  0.417683  0.548648  0.541600  
+3  1.909368  2.579705  2.507528  
+4  1.081942  1.500395  1.662798  

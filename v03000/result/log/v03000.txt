@@ -1,0 +1,32 @@
+Mem. usage decreased to 130.48 Mb (37.5% reduction)
+Sell prices has 6841121 rows and 4 columns
+Mem. usage decreased to  0.12 Mb (41.9% reduction)
+Calendar has 1969 rows and 14 columns
+Sales train validation has 30490 rows and 1919 columns
+Mem. usage decreased to  0.08 Mb (36.9% reduction)
+Mem. usage decreased to 94.01 Mb (78.9% reduction)
+Mem. usage decreased to 45.67 Mb (65.0% reduction)
+Melted sales train validation has 58327370 rows and 8 columns
+Mem. usage decreased to 1335.01 Mb (0.0% reduction)
+(23965140, 9)
+Our final dataset to train has 23111420 rows and 18 columns
+Mem. usage decreased to 2358.36 Mb (47.3% reduction)
+[LightGBM] [Info] Total Bins 3059
+[LightGBM] [Info] Number of data: 21403980, number of used features: 25
+[LightGBM] [Info] Start training from score 0.207471ｚ
+Training until validation scores don't improve for 200 rounds
+[100]	training's rmse: 2.43656	valid_1's rmse: 2.21223
+[200]	training's rmse: 2.37151	valid_1's rmse: 2.17529
+[300]	training's rmse: 2.32672	valid_1's rmse: 2.15862
+[400]	training's rmse: 2.29097	valid_1's rmse: 2.14715
+[500]	training's rmse: 2.2674	valid_1's rmse: 2.14158
+[600]	training's rmse: 2.2502	valid_1's rmse: 2.13805
+[700]	training's rmse: 2.23443	valid_1's rmse: 2.13656
+[800]	training's rmse: 2.22225	valid_1's rmse: 2.13326
+[900]	training's rmse: 2.211	valid_1's rmse: 2.13081
+[1000]	training's rmse: 2.1994	valid_1's rmse: 2.13006
+[1100]	training's rmse: 2.18777	valid_1's rmse: 2.13212
+[1200]	training's rmse: 2.17922	valid_1's rmse: 2.1302
+Early stopping, best iteration is:
+[1011]	training's rmse: 2.19791	valid_1's rmse: 2.12968
+Our val rmse score is 2.129677502472199
