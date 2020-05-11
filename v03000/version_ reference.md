@@ -17,15 +17,21 @@ Validation Strorategy や 特徴量エンジニアリングは次の実験で行
 
 ## Experiments
 
-### v03000
+### v03000: もう一度 Baselineを引き直す
 - Baselineとなりそうなコードをただただスクリプトにしただけ。
 - 同じ実行結果がローカル環境でも再現できることを確認
 - Reference Kernel
   - Baseline: https://www.kaggle.com/rohitsingh9990/m5-lgbm-fe
 
 
-### v03001
+### v03001: Baselineのコードをリファクタリング
 - v03000 のリファクタリング
 - 変更と結果
   - Categorical 変数を指定したら、スコアが、0.60869 -> 0.63296 に下がった。
     - RMSE に向かって最適化した結果、WRMSSE が下がったと思われる。
+  - Categorical を指定しつつ、特徴量を追加した結果、0.63296 -> 0.62649 になった。
+    - RMSE の世界ではスコアが改善した。
+- コードは、だいぶ読みやすくなったので、WRMSSE で評価できるようにする。
+
+
+### v03002: Validation に使っているデータを WRMSSE で評価する。
