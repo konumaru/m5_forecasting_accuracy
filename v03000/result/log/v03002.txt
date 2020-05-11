@@ -33,10 +33,10 @@ Parameters:
  {
     "model_params": {
         "boosting": "gbdt",
-        "metric": "rmse",
+        "metric": "None",
         "objective": "poisson",
         "n_jobs": -1,
-        "seed": 20,
+        "seed": 42,
         "learning_rate": 0.1,
         "alpha": 0.1,
         "lambda": 0.1,
@@ -51,14 +51,63 @@ Parameters:
     }
 } 
 
-Our val rmse score is 2.1076810265178842
-Traceback (most recent call last):
-  File "v03002_baseline.py", line 462, in <module>
-    main()
-  File "v03002_baseline.py", line 453, in main
-    _ = run_train()
-  File "v03002_baseline.py", line 392, in run_train
-    wrmsse = evaluator.score(val_pred)
-  File "/home/ruikonuma/m5_forecasting_accuracy/v03000/script/Evaluator.py", line 133, in score
-    assert self.valid_df[self.valid_target_columns].shape == valid_preds.shape
-AssertionError
+[LightGBM] [Info] Total Bins 7563
+[LightGBM] [Info] Number of data: 21403980, number of used features: 44
+[LightGBM] [Info] Start training from score 0.207471
+Training until validation scores don't improve for 200 rounds
+[100]	valid_0's WRMSSE: 0.634328
+[200]	valid_0's WRMSSE: 0.569062
+[300]	valid_0's WRMSSE: 0.552874
+[400]	valid_0's WRMSSE: 0.539345
+[500]	valid_0's WRMSSE: 0.536187
+[600]	valid_0's WRMSSE: 0.530578
+[700]	valid_0's WRMSSE: 0.527978
+[800]	valid_0's WRMSSE: 0.527171
+[900]	valid_0's WRMSSE: 0.528342
+[1000]	valid_0's WRMSSE: 0.527259
+Early stopping, best iteration is:
+[853]	valid_0's WRMSSE: 0.526819
+Evaluation:
+
+Our val rmse score is 2.1421888884207156
+Our val wrmsse score is 0.5268186285005333
+
+
+--- Submission ---
+
+
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.849012  0.742704  0.689002  0.694995   
+1  HOBBIES_1_002_CA_1_validation  0.366063  0.341477  0.339960  0.326751   
+2  HOBBIES_1_003_CA_1_validation  0.291734  0.281626  0.286793  0.287191   
+3  HOBBIES_1_004_CA_1_validation  1.901508  1.642993  1.606219  1.523750   
+4  HOBBIES_1_005_CA_1_validation  0.960559  0.773615  0.991396  1.093762   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.799101  0.927302  0.987934  0.700032  0.875889  0.822747  0.915670   
+1  0.363699  0.421395  0.435887  0.292754  0.280185  0.251121  0.251942   
+2  0.323619  0.378562  0.402246  0.282827  0.269899  0.248955  0.252501   
+3  1.935985  2.263353  2.533528  1.730649  1.756059  1.630841  1.570498   
+4  1.111990  1.467236  1.844778  1.238427  1.272264  1.050816  1.030583   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.960647  1.258217  1.044149  0.917668  0.777806  0.776145  0.784456   
+1  0.278903  0.340861  0.278300  0.221045  0.220767  0.220879  0.221537   
+2  0.283428  0.333213  0.272457  0.241165  0.236379  0.254465  0.281108   
+3  1.865573  2.663539  2.098742  2.039983  1.706174  1.836143  1.752136   
+4  1.145332  1.518949  1.039492  1.144917  0.997775  1.023969  1.038305   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.920314  1.328841  1.123788  0.877270  0.766818  0.770931  0.868605   
+1  0.254845  0.324526  0.322813  0.221523  0.218501  0.257092  0.255668   
+2  0.351626  0.437926  0.468413  0.360488  0.386099  0.386907  0.344539   
+3  1.970801  2.369793  2.648311  1.988186  1.690884  1.570598  1.636162   
+4  1.223832  1.536623  1.510960  1.035308  0.947111  0.943855  0.988772   
+
+        F26       F27       F28  
+0  0.885671  1.162388  1.168580  
+1  0.284876  0.346591  0.316246  
+2  0.403576  0.526530  0.520720  
+3  2.027111  2.788115  2.671348  
+4  1.120526  1.570583  1.683259  

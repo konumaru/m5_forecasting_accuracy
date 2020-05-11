@@ -187,20 +187,25 @@ class WRMSSEForLightGBM(WRMSSEEvaluator):
         score = self.score(preds)
         return 'WRMSSE', score, False
 
-    def custom_fobj(self, preds, dtrain):
-        weight = 2 * np.power(self.weight, 2) / self.scale
-        labels = dtrain.get_label()
+    def set_series_weight_for_fobj(self, valid_idx):
+        pass
 
-        grad = weight * (preds - labels)
+    def custom_fobj(self, preds, dtrain):
+        '''CAUTION: Input された Validation Data の index 分の weight と scale を用意する必要がある。 '''
+        weight = 2 * np.power(self.weight, 2) / self.scale
+        actual = dtrain.get_label()
+
+        grad = weight * (preds - actual)
         hess = weight
         return grad, hess
 
 
 def get_evaluator(go_back_days=28):
     pred_days = 28
+    end_thresh = (-go_back_days + pred_days) if (-go_back_days + pred_days) != 0 else None
     train_df = pd.read_pickle('../data/reduced/sales_train_validation.pkl')
     train_fold_df = train_df.iloc[:, :-go_back_days]
-    valid_fold_df = train_df.iloc[:, -go_back_days:(-go_back_days + pred_days)].copy()
+    valid_fold_df = train_df.iloc[:, -go_back_days:end_thresh].copy()
 
     evaluator = WRMSSEForLightGBM(
         train_df=train_fold_df,
@@ -249,48 +254,6 @@ def save_importance(model, filepath, max_num_features=50, figsize=(15, 20)):
     )
     plt.savefig(filepath)
     plt.close('all')
-
-
-def run_lgb(data, features):
-    x_train = data[data['date'] <= '2016-03-27']
-    y_train = x_train['sales']
-    x_val = data[(data['date'] > '2016-03-27') & (data['date'] <= '2016-04-24')]
-    y_val = x_val['sales']
-    test = data[(data['date'] > '2016-04-24')]
-    del data
-    gc.collect()
-
-    params = {
-        'boosting': 'gbdt',
-        'metric': 'rmse',
-        'objective': 'poisson',
-        'n_jobs': -1,
-        'seed': 20,
-        'learning_rate': 0.1,
-        'alpha': 0.1,
-        'lambda': 0.1,
-        'bagging_fraction': 0.66,
-        'bagging_freq': 2,
-        'colsample_bytree': 0.77
-    }
-
-    train_set = lgb.Dataset(x_train[features], y_train)
-    val_set = lgb.Dataset(x_val[features], y_val)
-
-    del x_train, y_train
-    model = lgb.train(params, train_set, num_boost_round=2000, early_stopping_rounds=200,
-                      valid_sets=[train_set, val_set], verbose_eval=100)
-
-    dump_pickle(model, MODEL_PATH)
-    model = load_pickle(MODEL_PATH)
-
-    val_pred = model.predict(x_val[features])
-    val_score = np.sqrt(mean_squared_error(val_pred, y_val))
-    print(f'Our val rmse score is {val_score}')
-    y_pred = model.predict(test[features])
-    test['sales'] = y_pred
-    save_importance(model, filepath=IMPORTANCE_PATH)
-    return test
 
 
 def run_train():
@@ -361,10 +324,10 @@ def run_train():
     params = {
         'model_params': {
             'boosting': 'gbdt',
-            'metric': 'rmse',
+            'metric': 'None',
             'objective': 'poisson',
             'n_jobs': -1,
-            'seed': 20,
+            'seed': SEED,
             'learning_rate': 0.1,
             'alpha': 0.1,
             'lambda': 0.1,
@@ -375,29 +338,30 @@ def run_train():
         'train_params': {
             'num_boost_round': 2000,
             'early_stopping_rounds': 200,
-            'verbose_eval': 100
+            'verbose_eval': 100,
         }
     }
     print('Parameters:\n', json.dumps(params, indent=4), '\n')
 
-    # model = lgb.train(
-    #     params['model_params'], train_set, valid_sets=[train_set, val_set], **params['train_params']
-    # )
-    model = load_pickle(MODEL_PATH)
+    model = lgb.train(
+        params['model_params'],
+        train_set,
+        valid_sets=[val_set],
+        feval=evaluator.custom_feval,
+        **params['train_params']
+    )
     dump_pickle(model, MODEL_PATH)
 
-    val_pred = model.predict(valid_data[features], num_iteration=model.best_iteration)
-    val_score = np.sqrt(mean_squared_error(val_pred, valid_data[TARGET]))
+    print('Evaluation:\n')
+    valid_pred = model.predict(valid_data[features], num_iteration=model.best_iteration)
+    val_score = np.sqrt(mean_squared_error(valid_pred, valid_data[TARGET]))
     print(f'Our val rmse score is {val_score}')
-    wrmsse = evaluator.score(val_pred)
+    valid_pred = valid_pred.reshape(-1, NUM_ITEMS).T
+    wrmsse = evaluator.score(valid_pred)
     print(f'Our val wrmsse score is {wrmsse}')
 
     save_importance(model, filepath=IMPORTANCE_PATH)
     return model
-
-
-""" Evaluation
-"""
 
 
 """ Submission
@@ -451,8 +415,6 @@ def main():
 
     print('\n\n--- Train Model ---\n\n')
     _ = run_train()
-
-    print('\n\n--- Evaluation ---\n\n')
 
     print('\n\n--- Submission ---\n\n')
     run_submission()

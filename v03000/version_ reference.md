@@ -34,4 +34,11 @@ Validation Strorategy や 特徴量エンジニアリングは次の実験で行
 - コードは、だいぶ読みやすくなったので、WRMSSE で評価できるようにする。
 
 
-### v03002: Validation に使っているデータを WRMSSE で評価する。
+### v03002: Validation に使っているデータを WRMSSE で評価する. 学習時の評価関数として WRMSSE を適応.
+- 予測結果をWRMSSE で評価できるようにした
+  - 0.50~~~ だった。LBは、0.63296.
+- ついで程度だったので、WRMSSE で学習できるようにした。
+
+
+### v03003: LightGBM の Custom Object を利用して、WRMSSE を最適化するようなものに変更
+
