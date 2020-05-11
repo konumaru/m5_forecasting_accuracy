@@ -1,0 +1,64 @@
+
+
+--- Load Data and Initial Processing ---
+
+
+Load Cached data, features/parse_calendar.pkl
+Load Cached data, features/parse_sell_prices.pkl
+Load Cached data, features/parse_sales_train.pkl
+
+
+--- Transform ---
+
+
+Load Cached data, features/melted_and_merged_train.pkl
+
+
+--- Feature Engineering ---
+
+
+Load Cached data, features/simple_fe.pkl
+Cache Train and Submission Data.
+
+
+--- Define Evaluation Object ---
+
+
+
+
+--- Train Model ---
+
+
+Parameters:
+ {
+    "model_params": {
+        "boosting": "gbdt",
+        "metric": "rmse",
+        "objective": "poisson",
+        "n_jobs": -1,
+        "seed": 20,
+        "learning_rate": 0.1,
+        "alpha": 0.1,
+        "lambda": 0.1,
+        "bagging_fraction": 0.66,
+        "bagging_freq": 2,
+        "colsample_bytree": 0.77
+    },
+    "train_params": {
+        "num_boost_round": 2000,
+        "early_stopping_rounds": 200,
+        "verbose_eval": 100
+    }
+} 
+
+Our val rmse score is 2.1076810265178842
+Traceback (most recent call last):
+  File "v03002_baseline.py", line 462, in <module>
+    main()
+  File "v03002_baseline.py", line 453, in main
+    _ = run_train()
+  File "v03002_baseline.py", line 392, in run_train
+    wrmsse = evaluator.score(val_pred)
+  File "/home/ruikonuma/m5_forecasting_accuracy/v03000/script/Evaluator.py", line 133, in score
+    assert self.valid_df[self.valid_target_columns].shape == valid_preds.shape
+AssertionError
