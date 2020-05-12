@@ -41,5 +41,12 @@ Validation Strorategy や 特徴量エンジニアリングは次の実験で行
   - LB 0.63296 -> 0.61504 に改善した。
 
 
-### v03003: LightGBM の Custom Object を利用して、WRMSSE を最適化するようなものに変更
+
+### v03003: LightGBM のパラメータを変更
+- 最新の情報から paramerter を変更
+  - Reference: https://www.kaggle.com/kyakovlev/m5-three-shades-of-dark-darker-magic
+
+
+
+### v03004: LightGBM の Custom Object を利用して、WRMSSE を最適化するようなものに変更
 
