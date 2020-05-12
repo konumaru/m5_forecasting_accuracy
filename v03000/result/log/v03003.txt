@@ -1,0 +1,106 @@
+
+
+--- Load Data and Initial Processing ---
+
+
+Load Cached data, features/parse_calendar.pkl
+Load Cached data, features/parse_sell_prices.pkl
+Load Cached data, features/parse_sales_train.pkl
+
+
+--- Transform ---
+
+
+Load Cached data, features/melted_and_merged_train.pkl
+
+
+--- Feature Engineering ---
+
+
+Load Cached data, features/simple_fe.pkl
+Cache Train and Submission Data.
+
+
+--- Define Evaluation Object ---
+
+
+
+
+--- Train Model ---
+
+
+Parameters:
+ {
+    "model_params": {
+        "boosting": "gbdt",
+        "objective": "tweedie",
+        "tweedie_variance_power": 1.1,
+        "metric": "None",
+        "num_leaves": 2047,
+        "min_data_in_leaf": 4095,
+        "seed": 42,
+        "learning_rate": 0.03,
+        "subsample": 0.5,
+        "subsample_freq": 1,
+        "feature_fraction": 0.5,
+        "max_bin": 100,
+        "verbose": -1
+    },
+    "train_params": {
+        "num_boost_round": 1500,
+        "early_stopping_rounds": 100,
+        "verbose_eval": 100
+    }
+} 
+
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.61808
+[200]	valid_0's WRMSSE: 0.52697
+[300]	valid_0's WRMSSE: 0.510915
+[400]	valid_0's WRMSSE: 0.509562
+Early stopping, best iteration is:
+[364]	valid_0's WRMSSE: 0.509268
+Evaluation:
+
+Our val rmse score is 2.1128503418581115
+Our val wrmsse score is 0.5092675084675451
+
+
+--- Submission ---
+
+
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.858772  0.742688  0.687852  0.665892   
+1  HOBBIES_1_002_CA_1_validation  0.341136  0.308537  0.310348  0.320849   
+2  HOBBIES_1_003_CA_1_validation  0.425631  0.390818  0.379376  0.376795   
+3  HOBBIES_1_004_CA_1_validation  1.831595  1.562235  1.417164  1.352196   
+4  HOBBIES_1_005_CA_1_validation  1.062428  0.858673  0.919050  0.979594   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.788091  0.996094  0.991748  0.764564  0.787224  0.785919  0.848601   
+1  0.355837  0.431577  0.440391  0.267794  0.253502  0.238857  0.232619   
+2  0.459817  0.512786  0.590334  0.373944  0.373999  0.378604  0.335873   
+3  1.766223  2.287690  2.520217  1.623943  1.552980  1.474026  1.339923   
+4  1.134100  1.532580  1.594480  1.216488  1.173908  1.052522  1.045963   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.953185  1.219722  0.918135  0.858521  0.744608  0.678575  0.722328   
+1  0.260966  0.332711  0.280082  0.207524  0.196258  0.198255  0.198557   
+2  0.402561  0.524417  0.409445  0.325250  0.319280  0.334286  0.390824   
+3  1.682488  2.730110  2.224950  1.853332  1.628308  1.535963  1.533670   
+4  1.142423  1.556163  1.107229  1.164957  1.043662  0.992124  1.000257   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.882425  1.125083  1.043872  0.885128  0.751880  0.722026  0.764813   
+1  0.246643  0.311326  0.322868  0.208630  0.188999  0.245097  0.233518   
+2  0.499271  0.685331  0.722745  0.542372  0.518762  0.525564  0.459358   
+3  1.865663  2.263926  2.526284  1.898125  1.556678  1.424035  1.430500   
+4  1.130580  1.470478  1.399120  1.073514  0.989326  0.952153  0.966273   
+
+        F26       F27       F28  
+0  0.839599  1.062163  1.030648  
+1  0.265132  0.308405  0.309200  
+2  0.591537  0.774685  0.720723  
+3  1.891515  2.680932  2.642794  
+4  1.123054  1.506877  1.527736  
