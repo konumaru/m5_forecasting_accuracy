@@ -187,7 +187,7 @@ class WRMSSEForLightGBM(WRMSSEEvaluator):
         score = self.score(preds)
         return 'WRMSSE', score, False
 
-    def get_series_weight_for_fobj(self, data_idx):
+    def get_series_weight(self, data_idx):
         data_idx = data_idx.apply(lambda x: x.rsplit('_', 1)[0]).values
 
         weight_df = self.weights * 12
@@ -198,16 +198,22 @@ class WRMSSEForLightGBM(WRMSSEEvaluator):
         fobj_weight = weight_df.loc[data_idx, 'weight'].values
         fojb_sclae = weight_df.loc[data_idx, 'scale'].values
 
-        weight = 2 * np.power(fobj_weight, 2) / fojb_sclae
-        return weight
+        # weight = 2 * fobj_weight / np.sqrt(fojb_sclae)
+        return fobj_weight, fojb_sclae
 
-    # def custom_fobj(self, preds, dtrain):
-    #     actual = dtrain.get_label()
-    #     weight = 2 * np.power(self.fobj_weight, 2) / self.fojb_sclae
+    def set_series_weight_for_fobj(self, train_idx):
+        fobj_weight, fojb_sclae = self.get_series_weight(train_idx)
+        self.custom_jobj_weight = fobj_weight / np.sqrt(fojb_sclae)
 
-    #     grad = weight * (preds - actual)
-    #     hess = weight
-    #     return grad, hess
+    def custom_fobj(self, preds, dtrain):
+        actual = dtrain.get_label()
+        # weight = 2 * np.power(self.fobj_weight, 2) / self.fojb_sclae
+        # weight = self.custom_jobj_weight
+        weight = 2 * np.power(dtrain.get_weight(), 2)
+
+        grad = weight * (preds - actual)
+        hess = weight
+        return grad, hess
 
 
 def get_evaluator(go_back_days=28):
@@ -273,6 +279,7 @@ def run_train():
     train_data, valid_data = train_valid_split(df, go_back_days)
     del df; gc.collect()
     # Define Evaluator
+    print('Define Evaluation Object.')
     evaluator = get_evaluator(go_back_days)
 
     features = [
@@ -331,28 +338,33 @@ def run_train():
     train_set = lgb.Dataset(train_data[features], train_data[TARGET])
     val_set = lgb.Dataset(valid_data[features], valid_data[TARGET])
 
-    # use_weight = True
-    # if use_weight:
-    #     train_weight = evaluator.get_series_weight_for_fobj(train_data['id'])
-    #     train_set.set_weight(train_weight)
-    #     valid_weight = evaluator.get_series_weight_for_fobj(valid_data['id'])
-    #     val_set.set_weight(valid_weight)
+    use_weight = False
+    if use_weight:
+        weight, scale = evaluator.get_series_weight(train_data['id'])
+        train_set.set_weight(weight / np.sqrt(scale))
+
+        weight, scale = evaluator.get_series_weight(valid_data['id'])
+        val_set.set_weight(weight / np.sqrt(scale))
+
+    set_obj_weight = False
+    if set_obj_weight:
+        evaluator.set_series_weight_for_fobj(train_data['id'])
 
     del train_data; gc.collect()
 
     params = {
         'model_params': {
             'boosting': 'gbdt',
-            'objective': 'tweedie',
+            'objective': 'tweedie',  # tweedie, poisson
             'tweedie_variance_power': 1.1,
             'metric': 'None',
             'num_leaves': 2**11 - 1,
             'min_data_in_leaf': 2**12 - 1,
             'seed': SEED,
-            'learning_rate': 0.03,  # 0.1
+            'learning_rate': 0.1,  # 0.1
             'subsample': 0.5,
             'subsample_freq': 1,
-            'feature_fraction': 0.5,
+            'feature_fraction': 0.8,
             'max_bin': 100,
             'verbose': -1,
         },
@@ -368,17 +380,16 @@ def run_train():
         params['model_params'],
         train_set,
         valid_sets=[val_set],
-        # fobj=custom_fobj,
+        # fobj=evaluator.custom_fobj,
         feval=evaluator.custom_feval,
         **params['train_params']
     )
     dump_pickle(model, MODEL_PATH)
     save_importance(model, filepath=IMPORTANCE_PATH)
 
-    print('Evaluation:\n')
-    scores = {}
+    print('\nEvaluation:')
     valid_pred = model.predict(valid_data[features], num_iteration=model.best_iteration)
-
+    scores = {}
     scores['RMSE'] = mean_squared_error(valid_pred, valid_data[TARGET], squared=False)
     scores['WRMSSE'] = evaluator.score(valid_pred.reshape(-1, NUM_ITEMS).T)
     for f_name, score in scores.items():
@@ -435,8 +446,6 @@ def main():
     dump_pickle(all_train_data, 'features/all_train_data.pkl')
     dump_pickle(submit_data, 'features/submit_data.pkl')
     del all_data, all_train_data, submit_data; gc.collect();
-
-    print('\n\n--- Define Evaluation Object ---\n\n')
 
     print('\n\n--- Train Model ---\n\n')
     _ = run_train()

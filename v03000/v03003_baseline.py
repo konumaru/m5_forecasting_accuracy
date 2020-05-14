@@ -201,14 +201,6 @@ class WRMSSEForLightGBM(WRMSSEEvaluator):
         weight = 2 * np.power(fobj_weight, 2) / fojb_sclae
         return weight
 
-    # def custom_fobj(self, preds, dtrain):
-    #     actual = dtrain.get_label()
-    #     weight = 2 * np.power(self.fobj_weight, 2) / self.fojb_sclae
-
-    #     grad = weight * (preds - actual)
-    #     hess = weight
-    #     return grad, hess
-
 
 def get_evaluator(go_back_days=28):
     pred_days = 28
@@ -331,13 +323,6 @@ def run_train():
     train_set = lgb.Dataset(train_data[features], train_data[TARGET])
     val_set = lgb.Dataset(valid_data[features], valid_data[TARGET])
 
-    # use_weight = True
-    # if use_weight:
-    #     train_weight = evaluator.get_series_weight_for_fobj(train_data['id'])
-    #     train_set.set_weight(train_weight)
-    #     valid_weight = evaluator.get_series_weight_for_fobj(valid_data['id'])
-    #     val_set.set_weight(valid_weight)
-
     del train_data; gc.collect()
 
     params = {
@@ -368,7 +353,6 @@ def run_train():
         params['model_params'],
         train_set,
         valid_sets=[val_set],
-        # fobj=custom_fobj,
         feval=evaluator.custom_feval,
         **params['train_params']
     )

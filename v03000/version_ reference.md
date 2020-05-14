@@ -50,3 +50,12 @@ Validation Strorategy や 特徴量エンジニアリングは次の実験で行
 
 ### v03004: LightGBM の Custom Object を利用して、WRMSSE を最適化するようなものに変更
 
+- custom object を設定したものの精度の向上ができなかった。
+  - 参考 Discussion
+    - https://www.kaggle.com/c/m5-forecasting-accuracy/discussion/143070
+    - https://www.kaggle.com/c/m5-forecasting-accuracy/discussion/138881
+  - なにかやり方は違うような気がする。
+    - このやり方がでやったといっているっぽい
+      - https://www.kaggle.com/sibmike/fast-clear-wrmsse-18ms
+
+
