@@ -31,7 +31,6 @@ mlflow-extend = "^0.1.5"
 jupyter = "^1.0.0"
 plotly = "^4.6.0"
 cufflinks = "^0.17.3"
-lightgbm = "^2.3.1"
 
 [tool.poetry.dev-dependencies]
 pycodestyle = "^2.5.0"
