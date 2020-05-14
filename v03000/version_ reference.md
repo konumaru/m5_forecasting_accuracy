@@ -59,3 +59,16 @@ Validation Strorategy や 特徴量エンジニアリングは次の実験で行
       - https://www.kaggle.com/sibmike/fast-clear-wrmsse-18ms
 
 
+
+## Conclusion
+- Baseline を引くことができた。
+- RMSE では WRMSSE と同等の最適化ができないことがわかった。
+  - しかし、現状はRMSEで最適化したほうがLBのスコアがいい
+- 目的関数には、カスタム目的関数を定義するのがいい。
+  - しかし現状は、Tweedie による代用が可能（おいおいやらねばならない）
+- sample_weight を目的関数や重み付きRMSEなどはうまく機能せず、現状のアプローチが間違っている可能性が高い
+  - 他 Kernel を参考にして、正しいやり方を再調査する必要がありそう。
+- Baseline を引くことができたので、データクレンジングや特徴量エンジニアリングをしていきたい。
+  - Baselineの内容
+    - simple_fe
+    - tweedie, wrmsse, leave-one-out

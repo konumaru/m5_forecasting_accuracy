@@ -198,18 +198,15 @@ class WRMSSEForLightGBM(WRMSSEEvaluator):
         fobj_weight = weight_df.loc[data_idx, 'weight'].values
         fojb_sclae = weight_df.loc[data_idx, 'scale'].values
 
-        # weight = 2 * fobj_weight / np.sqrt(fojb_sclae)
         return fobj_weight, fojb_sclae
 
     def set_series_weight_for_fobj(self, train_idx):
         fobj_weight, fojb_sclae = self.get_series_weight(train_idx)
-        self.custom_jobj_weight = fobj_weight / np.sqrt(fojb_sclae)
+        self.custom_jobj_weight = 2 * np.power(fobj_weight, 2) / fojb_sclae
 
     def custom_fobj(self, preds, dtrain):
         actual = dtrain.get_label()
-        # weight = 2 * np.power(self.fobj_weight, 2) / self.fojb_sclae
-        # weight = self.custom_jobj_weight
-        weight = 2 * np.power(dtrain.get_weight(), 2)
+        weight = self.custom_jobj_weight
 
         grad = weight * (preds - actual)
         hess = weight
@@ -356,16 +353,16 @@ def run_train():
         'model_params': {
             'boosting': 'gbdt',
             'objective': 'tweedie',  # tweedie, poisson
-            'tweedie_variance_power': 1.1,
+            'tweedie_variance_power': 1.1,  # 1.0=poisson
             'metric': 'None',
-            'num_leaves': 2**11 - 1,
-            'min_data_in_leaf': 2**12 - 1,
+            'num_leaves': 2**7 - 1,
+            'min_data_in_leaf': 25,
             'seed': SEED,
             'learning_rate': 0.1,  # 0.1
             'subsample': 0.5,
             'subsample_freq': 1,
             'feature_fraction': 0.8,
-            'max_bin': 100,
+            'force_row_wise': True,
             'verbose': -1,
         },
         'train_params': {
