@@ -1,0 +1,105 @@
+
+
+--- Load Data and Initial Processing ---
+
+
+Load Cached data, features/parse_calendar.pkl
+Load Cached data, features/parse_sell_prices.pkl
+Load Cached data, features/parse_sales_train.pkl
+
+
+--- Transform ---
+
+
+Load Cached data, features/melted_and_merged_train.pkl
+
+
+--- Feature Engineering ---
+
+
+Load Cached data, features/simple_fe.pkl
+Cache Train and Submission Data.
+
+
+--- Train Model ---
+
+
+Define Evaluation Object.
+Parameters:
+ {
+    "model_params": {
+        "boosting": "gbdt",
+        "objective": "tweedie",
+        "tweedie_variance_power": 1.1,
+        "metric": "rmse",
+        "num_leaves": 127,
+        "min_data_in_leaf": 25,
+        "seed": 42,
+        "learning_rate": 0.1,
+        "subsample": 0.5,
+        "subsample_freq": 1,
+        "feature_fraction": 0.8,
+        "force_row_wise": true,
+        "verbose": -1
+    },
+    "train_params": {
+        "num_boost_round": 1500,
+        "early_stopping_rounds": 100,
+        "verbose_eval": 100
+    }
+} 
+
+/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py:1117: UserWarning: Overriding the parameters from Reference Dataset.
+  warnings.warn('Overriding the parameters from Reference Dataset.')
+/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py:929: UserWarning: categorical_column in param dict is overridden.
+  warnings.warn('{} in param dict is overridden.'.format(cat_alias))
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's rmse: 2.13986
+[200]	valid_0's rmse: 2.12098
+[300]	valid_0's rmse: 2.1189
+Early stopping, best iteration is:
+[262]	valid_0's rmse: 2.11548
+
+Evaluation:
+Our val RMSE score is 2.1154841329078686
+Our val WRMSSE score is 0.5190592035087088
+
+
+--- Submission ---
+
+
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.771861  0.698496  0.692279  0.653208   
+1  HOBBIES_1_002_CA_1_validation  0.288877  0.270232  0.265870  0.267248   
+2  HOBBIES_1_003_CA_1_validation  0.293076  0.307230  0.302887  0.310526   
+3  HOBBIES_1_004_CA_1_validation  1.908942  1.654698  1.553073  1.560827   
+4  HOBBIES_1_005_CA_1_validation  0.963465  0.885919  1.022082  1.091775   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.779377  0.935059  0.895806  0.633133  0.729718  0.687466  0.674138   
+1  0.318235  0.361246  0.417803  0.266696  0.252869  0.233963  0.220796   
+2  0.377510  0.469169  0.506047  0.316023  0.333124  0.314503  0.307333   
+3  1.951507  2.155558  2.372638  1.653027  1.705614  1.633664  1.598841   
+4  1.219381  1.478606  1.871837  1.250734  1.236724  1.123297  1.072386   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.737813  0.916156  0.768247  0.765290  0.684157  0.706047  0.720939   
+1  0.285697  0.326366  0.270201  0.230075  0.227677  0.226671  0.228620   
+2  0.348742  0.459056  0.480813  0.263228  0.294264  0.279126  0.301043   
+3  1.780073  2.615390  2.229000  1.923035  1.672132  1.732590  1.691825   
+4  1.244199  1.529298  1.034880  1.111125  1.080556  0.992297  0.995216   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.827439  1.119546  1.059907  0.784444  0.729472  0.728482  0.719837   
+1  0.279715  0.324988  0.327386  0.232181  0.228707  0.256988  0.243752   
+2  0.416422  0.547805  0.531555  0.398601  0.425062  0.413972  0.375688   
+3  1.825446  2.115155  2.549707  1.953200  1.616295  1.573136  1.555329   
+4  1.205541  1.547808  1.479075  1.031149  0.968466  0.942765  0.970286   
+
+        F26       F27       F28  
+0  0.818713  1.072185  1.092894  
+1  0.281548  0.325092  0.311805  
+2  0.484684  0.592998  0.579253  
+3  1.944511  2.764065  2.416833  
+4  1.138924  1.475144  1.616631  
