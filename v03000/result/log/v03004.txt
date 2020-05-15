@@ -47,7 +47,59 @@ Parameters:
         "early_stopping_rounds": 100,
         "verbose_eval": 100
     }
-} 
+}
 
-[LightGBM] [Warning] Unknown parameter: force_row_wise
+/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py:1117: UserWarning: Overriding the parameters from Reference Dataset.
+  warnings.warn('Overriding the parameters from Reference Dataset.')
+/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py:929: UserWarning: categorical_column in param dict is overridden.
+  warnings.warn('{} in param dict is overridden.'.format(cat_alias))
 Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.53396
+[200]	valid_0's WRMSSE: 0.520218
+[300]	valid_0's WRMSSE: 0.520399
+Early stopping, best iteration is:
+[246]	valid_0's WRMSSE: 0.516782
+
+Evaluation:
+Our val RMSE score is 2.1188750407761177
+Our val WRMSSE score is 0.5167821687986586
+
+
+--- Submission ---
+
+
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.772252  0.698850  0.691937  0.652886
+1  HOBBIES_1_002_CA_1_validation  0.290695  0.271933  0.267544  0.268930
+2  HOBBIES_1_003_CA_1_validation  0.305902  0.320676  0.316142  0.324116
+3  HOBBIES_1_004_CA_1_validation  1.914130  1.659195  1.554024  1.561302
+4  HOBBIES_1_005_CA_1_validation  0.964666  0.886136  1.023356  1.093136
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.778991  0.934597  0.904851  0.639526  0.737824  0.687987  0.674649
+1  0.320238  0.363520  0.424887  0.271218  0.257157  0.235494  0.222242
+2  0.394031  0.489702  0.528334  0.311025  0.327856  0.309526  0.302469
+3  1.952102  2.156214  2.367690  1.649579  1.702057  1.630235  1.595485
+4  1.220900  1.480449  1.874667  1.252625  1.238594  1.124979  1.073992
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.738372  0.916850  0.758356  0.763029  0.682136  0.707826  0.722755
+1  0.287567  0.328503  0.267618  0.230722  0.228317  0.228557  0.230522
+2  0.343222  0.451791  0.465632  0.258101  0.288532  0.275192  0.297097
+3  1.776336  2.609900  2.241855  1.912465  1.666854  1.731995  1.691244
+4  1.246063  1.531589  1.043555  1.108661  1.078160  0.995532  0.998461
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.829523  1.122366  1.062577  0.786420  0.729841  0.728852  0.720201
+1  0.282042  0.327691  0.330109  0.234112  0.230146  0.258605  0.245286
+2  0.410963  0.540624  0.524587  0.393376  0.418229  0.407318  0.370019
+3  1.829674  2.114429  2.548831  1.957724  1.616788  1.573615  1.555802
+4  1.209472  1.552854  1.483897  1.034511  0.969673  0.943940  0.971496
+
+        F26       F27       F28
+0  0.819128  1.072728  1.093448
+1  0.283320  0.327138  0.313767
+2  0.477370  0.584489  0.570371
+3  1.945104  2.771577  2.418313
+4  1.140344  1.476982  1.618646

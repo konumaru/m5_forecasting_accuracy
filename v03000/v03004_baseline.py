@@ -333,7 +333,7 @@ def run_train():
     dump_pickle(features, FEATURECOLS_PATH)
 
     train_set = lgb.Dataset(train_data[features], train_data[TARGET])
-    val_set = lgb.Dataset(valid_data[features], valid_data[TARGET])
+    val_set = lgb.Dataset(valid_data[features], valid_data[TARGET], reference=train_set)
 
     use_weight = False
     if use_weight:
