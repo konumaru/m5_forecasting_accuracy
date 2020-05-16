@@ -21,5 +21,17 @@ v03000 で Baseline を決めることができた。
 - Copied from v03004
 
 
-### v04001:
--
+### v04001: 手当り次第いに特徴量の追加
+- calendar 特徴量の追加
+- sell_prices 特徴量の追加
+  - １年単位のデータは周期性が捉えにくい点や過学習の恐れから捨てた。
+- sales_lag_and_roll を追加
+  - simple_fe の内容を内包しており、さらに過去に作った特徴量をいくつか追加
+- sell_pprice_simple_feature
+  - 販売価格の変動率を追加
+
+
+### v04002
+- days_from_last_sales
+  - 最後に売上があった日からの経過日数を特徴量に追加
+- fillna(-999)

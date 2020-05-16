@@ -60,16 +60,17 @@ def parse_calendar():
 
         encodaer = preprocessing.LabelEncoder()
         calendar[f] = encodaer.fit_transform(calendar[f])
-
+    # Date Features
     calendar['date'] = pd.to_datetime(calendar['date'])
     attrs = [
         "year",
         "quarter",
         "month",
         "week",
-        # "weekofyear",
+        "weekofyear",
         "day",
         "dayofweek",
+        "dayofyear",
         "is_year_end",
         "is_year_start",
         "is_quarter_end",
@@ -79,16 +80,32 @@ def parse_calendar():
     ]
 
     for attr in attrs:
-        dtype = np.int16 if attr == "year" else np.int8
-        calendar[attr] = getattr(calendar['date'].dt, attr).astype(dtype)
-    calendar["is_weekend"] = calendar["dayofweek"].isin([5, 6]).astype(np.int8)
-    return calendar
+        calendar[attr] = getattr(calendar['date'].dt, attr)
+    calendar["is_weekend"] = calendar["dayofweek"].isin([5, 6]).astype(np.bool)
+
+    return calendar.pipe(reduce_mem_usage)
 
 
 @cache_result(filename='parse_sell_prices', use_cache=True)
 def parse_sell_prices():
     sell_prices = pd.read_pickle('../data/reduced/sell_prices.pkl')
-    return sell_prices
+    # Add Release Feature.
+    groupd_df = sell_prices.groupby(['store_id', 'item_id'])
+    sell_prices = sell_prices.assign(
+        release=sell_prices['wm_yr_wk'] - groupd_df['wm_yr_wk'].transform('min'),
+    )
+    sell_prices = sell_prices.assign(
+        price_max=groupd_df['sell_price'].transform('max'),
+        price_min=groupd_df['sell_price'].transform('min'),
+        price_std=groupd_df['sell_price'].transform('std'),
+        price_mean=groupd_df['sell_price'].transform('mean'),
+        price_nunique=groupd_df['sell_price'].transform('nunique'),
+        id_nunique_by_price=sell_prices.groupby(
+            ['store_id', 'sell_price'])['item_id'].transform('nunique'),
+    )
+    sell_prices['price_norm'] = sell_prices['sell_price'] / sell_prices['price_max']
+
+    return sell_prices.pipe(reduce_mem_usage)
 
 
 @cache_result(filename='parse_sales_train', use_cache=True)
@@ -114,7 +131,7 @@ def melted_and_merged_train():
     idx_cols = ['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
     df = pd.melt(df, id_vars=idx_cols, var_name='d', value_name='sales')
     # Drop very old data.
-    nrows = (365 * 2 + 28 * 2) * NUM_ITEMS
+    nrows = (365 * 3 + 28 * 2) * NUM_ITEMS
     df = df.iloc[-nrows:, :]
     df = pd.merge(df, calendar, how='left', on='d')
     df = pd.merge(df, sell_prices, how='left', on=['store_id', 'item_id', 'wm_yr_wk'])
@@ -133,43 +150,71 @@ def melted_and_merged_train():
         encoder = preprocessing.LabelEncoder()
         df[c] = pd.Series(encoder.fit_transform(df[c])).astype('category')
     print(f'Our final dataset to train has {df.shape[0]} rows and {df.shape[1]} columns\n')
+
+    df = df.reset_index(drop=True)
     return df.pipe(reduce_mem_usage)
 
 
 """ Feature Engineering
 """
-@cache_result(filename='simple_fe', use_cache=True)
-def simple_fe():
+@cache_result(filename='sales_lag_and_roll', use_cache=True)
+def sales_lag_and_roll():
+    # Define variables and dataframes.
+    target = TARGET
+    shift_days = 28
+    use_cols = ['id', 'sales']
+    srd_df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
+    dst_df = pd.DataFrame()
+    # Creat Features
+    agg_funcs = {}
+    grouped_df = srd_df.groupby('id')
+
+    for i in range(15):
+        lag_t = shift_days + i
+        agg_funcs[f'{target}_lag_t{shift_days}p{i}'] = grouped_df[target].transform(
+            lambda x: x.shift(lag_t))
+
+    for i in [7, 14, 30, 60, 180]:
+        agg_funcs[f'{target}_roll_mean_t{i}'] = grouped_df[target].transform(
+            lambda x: x.shift(shift_days).rolling(i).mean())
+        agg_funcs[f'{target}_roll_std_t{i}'] = grouped_df[target].transform(
+            lambda x: x.shift(shift_days).rolling(i).std())
+        agg_funcs[f'{target}_rolling_ZeroRatio_t{i}'] = grouped_df[target].transform(
+            lambda x: 1 - (x == 0).shift(shift_days).rolling(i).mean())
+        agg_funcs[f'{target}_rolling_ZeroCount_t{i}'] = grouped_df[target].transform(
+            lambda x: (x == 0).shift(shift_days).rolling(i).sum())
+
+    agg_funcs['sales_rolling_skew_t30'] = grouped_df[target].transform(
+        lambda x: x.shift(shift_days).rolling(30).skew())
+    agg_funcs['sales_rolling_kurt_t30'] = grouped_df[target].transform(
+        lambda x: x.shift(shift_days).rolling(30).kurt())
+
+    dst_df = dst_df.assign(**agg_funcs)
+    dst_df = dst_df.reset_index(drop=True)
+    return dst_df.pipe(reduce_mem_usage)
+
+
+@cache_result(filename='price_simple_feature', use_cache=True)
+def price_simple_feature():
+    use_cols = ['id', 'sell_price', 'month']
+    srd_df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
+    dst_df = pd.DataFrame()
+    grouped_df = srd_df.groupby('id')
+
+    dst_df['price_momentum'] = srd_df['sell_price'] / srd_df.groupby(
+        'id')['sell_price'].transform(lambda x: x.shift(1))
+    dst_df['price_momentum_m'] = srd_df['sell_price'] \
+        / srd_df.groupby(['id', 'month'])['sell_price'].transform('mean')
+
+    dst_df = dst_df.reset_index(drop=True)
+    return dst_df.pipe(reduce_mem_usage)
+
+
+def get_all_features():
     df = pd.read_pickle('features/melted_and_merged_train.pkl')
-    # rolling demand features
-    for val in [28, 29, 30]:
-        df[f'sales_lag_t{val}'] = df.groupby(['id'])['sales'].transform(lambda x: x.shift(val))
-
-    for val in [7, 30, 60, 90, 180]:
-        df[f'sales_rolling_mean_t{val}'] = df.groupby(['id'])['sales'].transform(
-            lambda x: x.shift(28).rolling(val).mean())
-        df[f'sales_rolling_std_t{val}'] = df.groupby(['id'])['sales'].transform(
-            lambda x: x.shift(28).rolling(val).std())
-
-    df['sales_rolling_skew_t30'] = df.groupby(['id'])['sales'].transform(
-        lambda x: x.shift(28).rolling(30).skew())
-    df['sales_rolling_kurt_t30'] = df.groupby(['id'])['sales'].transform(
-        lambda x: x.shift(28).rolling(30).kurt())
-
-    # price features
-    df['price_lag_t1'] = df.groupby(['id'])['sell_price'].transform(lambda x: x.shift(1))
-    df['price_change_t1'] = (df['price_lag_t1'] - df['sell_price']) / (df['price_lag_t1'])
-    df['rolling_price_max_t365'] = df.groupby(['id'])['sell_price'].transform(
-        lambda x: x.shift(1).rolling(365).max())
-    df['price_change_t365'] = (df['rolling_price_max_t365'] - df['sell_price'])\
-        / (df['rolling_price_max_t365'])
-    df['price_rolling_std_t7'] = df.groupby(['id'])['sell_price'].transform(
-        lambda x: x.rolling(7).std())
-    df['price_rolling_std_t30'] = df.groupby(['id'])['sell_price'].transform(
-        lambda x: x.rolling(30).std())
-    df.drop(['rolling_price_max_t365', 'price_lag_t1'], inplace=True, axis=1)
-
-    return df.pipe(reduce_mem_usage)
+    df = pd.concat([df, sales_lag_and_roll()], axis=1)
+    df = pd.concat([df, price_simple_feature()], axis=1)
+    return df
 
 
 """ Define Evaluation Object
@@ -279,7 +324,7 @@ def run_train():
     print('Define Evaluation Object.')
     evaluator = get_evaluator(go_back_days)
 
-    drop_cols = ['id', 'd', 'sales', 'date', 'wm_yr_wk']
+    drop_cols = ['id', 'd', 'sales', 'date', 'wm_yr_wk', 'year', '']
     features = train_data.columns.tolist()
     features = [f for f in features if f not in drop_cols]
     dump_pickle(features, FEATURECOLS_PATH)
@@ -388,7 +433,8 @@ def main():
     _ = melted_and_merged_train()
 
     print('\n\n--- Feature Engineering ---\n\n')
-    all_data = simple_fe()
+    all_data = get_all_features()
+    print('\n', all_data.info())
     all_train_data, submit_data = train_submit_split(all_data)
     # Dump Split Data.
     print('Cache Train and Submission Data.')
