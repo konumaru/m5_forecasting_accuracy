@@ -121,7 +121,7 @@ def parse_sales_train():
 
 """ Transform
 """
-@cache_result(filename='melted_and_merged_train', use_cache=True)
+@cache_result(filename='melted_and_merged_train', use_cache=False)
 def melted_and_merged_train():
     # Load Data
     calendar = pd.read_pickle('features/parse_calendar.pkl')
@@ -131,7 +131,7 @@ def melted_and_merged_train():
     idx_cols = ['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
     df = pd.melt(df, id_vars=idx_cols, var_name='d', value_name='sales')
     # Drop very old data.
-    nrows = (365 * 3 + 28 * 2) * NUM_ITEMS
+    nrows = (365 * 2 + 28 * 2) * NUM_ITEMS
     df = df.iloc[-nrows:, :]
     df = pd.merge(df, calendar, how='left', on='d')
     df = pd.merge(df, sell_prices, how='left', on=['store_id', 'item_id', 'wm_yr_wk'])
@@ -157,7 +157,7 @@ def melted_and_merged_train():
 
 """ Feature Engineering
 """
-@cache_result(filename='sales_lag_and_roll', use_cache=True)
+@cache_result(filename='sales_lag_and_roll', use_cache=False)
 def sales_lag_and_roll():
     # Define variables and dataframes.
     target = TARGET
@@ -194,7 +194,7 @@ def sales_lag_and_roll():
     return dst_df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='price_simple_feature', use_cache=True)
+@cache_result(filename='price_simple_feature', use_cache=False)
 def price_simple_feature():
     use_cols = ['id', 'sell_price', 'month']
     srd_df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
@@ -210,23 +210,20 @@ def price_simple_feature():
     return dst_df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='days_from_last_sales', use_cache=True)
+@cache_result(filename='days_from_last_sales', use_cache=False)
 def days_from_last_sales():
     # Define variables and dataframes.
     target = TARGET
     shift_days = 28
     use_cols = ['id', 'd', 'sales']
     srd_df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
-    srd_df = srd_df.assign({
-        'd': srd_df['d'].str.replace('d_', '').astype(int)
-    })
+    srd_df = srd_df.assign(d=srd_df['d'].str.replace('d_', '').astype(int))
 
     # Convert target to binary
-    srd_df['non_zero'] = (srd_df[TARGET] > 0).astype(np.int8)
-
+    src_df = src_df.assign(non_zero=(srd_df[TARGET] > 0).astype(np.int8))
     # Make lags to prevent any leakage
-    srd_df['non_zero_lag'] = srd_df.groupby(['id'])['non_zero'].transform(
-        lambda x: x.shift(28).rolling(2000, 1).sum()).fillna(-1)
+    src_df = src_df.assign(non_zero_lag=srd_df.groupby(['id'])['non_zero'].transform(
+        lambda x: x.shift(28).rolling(2000, 1).sum()).fillna(-1))
 
     temp_df = srd_df[['id', 'd', 'non_zero_lag']].drop_duplicates(subset=['id', 'non_zero_lag'])
     temp_df.columns = ['id', 'd_min', 'non_zero_lag']
@@ -241,7 +238,9 @@ def get_all_features():
     df = pd.concat([df, sales_lag_and_roll()], axis=1)
     df = pd.concat([df, price_simple_feature()], axis=1)
     df = pd.concat([df, days_from_last_sales()], axis=1)
-    df.fillna(-999, inplace=True)
+
+    # numeric_cols = df.select_dtypes(include=['number']).columns
+    # df = df.assign(**{num_c: df[num_c].fillna(-999) for num_c in numeric_cols})
     return df
 
 
@@ -352,7 +351,7 @@ def run_train():
     print('Define Evaluation Object.')
     evaluator = get_evaluator(go_back_days)
 
-    drop_cols = ['id', 'd', 'sales', 'date', 'wm_yr_wk', 'year', '']
+    drop_cols = ['id', 'd', 'sales', 'date', 'wm_yr_wk']
     features = train_data.columns.tolist()
     features = [f for f in features if f not in drop_cols]
     dump_pickle(features, FEATURECOLS_PATH)

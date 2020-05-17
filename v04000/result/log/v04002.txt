@@ -1,0 +1,163 @@
+
+
+--- Load Data and Initial Processing ---
+
+
+Load Cached data, features/parse_calendar.pkl
+Load Cached data, features/parse_sell_prices.pkl
+Load Cached data, features/parse_sales_train.pkl
+
+
+--- Transform ---
+
+
+Our final dataset to train has 23965140 rows and 41 columns
+
+Mem. usage decreased to 1737.08 Mb (19.1% reduction)
+Cache to features/melted_and_merged_train.pkl
+
+
+--- Feature Engineering ---
+
+
+Mem. usage decreased to 1691.27 Mb (75.0% reduction)
+Cache to features/sales_lag_and_roll.pkl
+Mem. usage decreased to 91.42 Mb (0.0% reduction)
+Cache to features/price_simple_feature.pkl
+/Users/rui/Documents/repositories/m5_forecasting_accuracy/v04000/script/tools.py:46: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].astype(np.int16)
+Mem. usage decreased to 228.55 Mb (37.5% reduction)
+Cache to features/days_from_last_sales.pkl
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 23965140 entries, 0 to 23965139
+Data columns (total 81 columns):
+ #   Column                        Dtype         
+---  ------                        -----         
+ 0   id                            object        
+ 1   item_id                       category      
+ 2   dept_id                       category      
+ 3   cat_id                        category      
+ 4   store_id                      category      
+ 5   state_id                      category      
+ 6   d                             object        
+ 7   sales                         int16         
+ 8   date                          datetime64[ns]
+ 9   wm_yr_wk                      int16         
+ 10  event_name_1                  category      
+ 11  event_type_1                  category      
+ 12  event_name_2                  category      
+ 13  event_type_2                  category      
+ 14  snap_CA                       int8          
+ 15  snap_TX                       int8          
+ 16  snap_WI                       int8          
+ 17  year                          int16         
+ 18  quarter                       int8          
+ 19  month                         int8          
+ 20  week                          int8          
+ 21  weekofyear                    int8          
+ 22  day                           int8          
+ 23  dayofweek                     int8          
+ 24  dayofyear                     int16         
+ 25  is_year_end                   bool          
+ 26  is_year_start                 bool          
+ 27  is_quarter_end                bool          
+ 28  is_quarter_start              bool          
+ 29  is_month_end                  bool          
+ 30  is_month_start                bool          
+ 31  is_weekend                    bool          
+ 32  sell_price                    float16       
+ 33  release                       float16       
+ 34  price_max                     float16       
+ 35  price_min                     float16       
+ 36  price_std                     float16       
+ 37  price_mean                    float16       
+ 38  price_nunique                 float16       
+ 39  id_nunique_by_price           float16       
+ 40  price_norm                    float16       
+ 41  sales_lag_t28p0               float16       
+ 42  sales_lag_t28p1               float16       
+ 43  sales_lag_t28p2               float16       
+ 44  sales_lag_t28p3               float16       
+ 45  sales_lag_t28p4               float16       
+ 46  sales_lag_t28p5               float16       
+ 47  sales_lag_t28p6               float16       
+ 48  sales_lag_t28p7               float16       
+ 49  sales_lag_t28p8               float16       
+ 50  sales_lag_t28p9               float16       
+ 51  sales_lag_t28p10              float16       
+ 52  sales_lag_t28p11              float16       
+ 53  sales_lag_t28p12              float16       
+ 54  sales_lag_t28p13              float16       
+ 55  sales_lag_t28p14              float16       
+ 56  sales_roll_mean_t7            float16       
+ 57  sales_roll_std_t7             float16       
+ 58  sales_rolling_ZeroRatio_t7    float16       
+ 59  sales_rolling_ZeroCount_t7    float16       
+ 60  sales_roll_mean_t14           float16       
+ 61  sales_roll_std_t14            float16       
+ 62  sales_rolling_ZeroRatio_t14   float16       
+ 63  sales_rolling_ZeroCount_t14   float16       
+ 64  sales_roll_mean_t30           float16       
+ 65  sales_roll_std_t30            float16       
+ 66  sales_rolling_ZeroRatio_t30   float16       
+ 67  sales_rolling_ZeroCount_t30   float16       
+ 68  sales_roll_mean_t60           float16       
+ 69  sales_roll_std_t60            float16       
+ 70  sales_rolling_ZeroRatio_t60   float16       
+ 71  sales_rolling_ZeroCount_t60   float16       
+ 72  sales_roll_mean_t180          float16       
+ 73  sales_roll_std_t180           float16       
+ 74  sales_rolling_ZeroRatio_t180  float16       
+ 75  sales_rolling_ZeroCount_t180  float16       
+ 76  sales_rolling_skew_t30        float16       
+ 77  sales_rolling_kurt_t30        float16       
+ 78  price_momentum                float16       
+ 79  price_momentum_m              float16       
+ 80  days_from_last_sales          int16         
+dtypes: bool(7), category(9), datetime64[ns](1), float16(48), int16(5), int8(9), object(2)
+memory usage: 3.5+ GB
+
+ None
+Cache Train and Submission Data.
+
+
+--- Train Model ---
+
+
+Define Evaluation Object.
+Parameters:
+ {
+    "model_params": {
+        "boosting": "gbdt",
+        "objective": "tweedie",
+        "tweedie_variance_power": 1.1,
+        "metric": "None",
+        "num_leaves": 127,
+        "min_data_in_leaf": 25,
+        "seed": 42,
+        "learning_rate": 0.1,
+        "subsample": 0.5,
+        "subsample_freq": 1,
+        "feature_fraction": 0.8,
+        "force_row_wise": true,
+        "verbose": -1
+    },
+    "train_params": {
+        "num_boost_round": 1500,
+        "early_stopping_rounds": 100,
+        "verbose_eval": 100
+    }
+} 
+
+/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py:1117: UserWarning: Overriding the parameters from Reference Dataset.
+  warnings.warn('Overriding the parameters from Reference Dataset.')
+/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py:929: UserWarning: categorical_column in param dict is overridden.
+  warnings.warn('{} in param dict is overridden.'.format(cat_alias))
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.532919
+[200]	valid_0's WRMSSE: 0.525945
+[300]	valid_0's WRMSSE: 0.520391
