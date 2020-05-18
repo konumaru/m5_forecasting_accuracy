@@ -9,7 +9,6 @@ packages = [
 ]
 
 [tool.poetry.scripts]
-hello = "tasks:hello"
 new-exp = "tasks:CreateNewExperiment"
 reduce-data = "tasks:ReduceData"
 
@@ -18,19 +17,13 @@ python = "^3.8"
 numpy = "^1.18.2"
 pandas = "^1.0.3"
 sklearn = "^0.0"
-xgboost = "^1.0.2"
-catboost = "^0.22"
 seaborn = "^0.10.0"
 jupyterlab = "^2.0.1"
 ipywidgets = "^7.5.1"
 matplotlib = "^3.2.1"
 tqdm = "^4.43.0"
-joblib = "^0.14.1"
 numba = "^0.48.0"
-mlflow-extend = "^0.1.5"
 jupyter = "^1.0.0"
-plotly = "^4.6.0"
-cufflinks = "^0.17.3"
 
 [tool.poetry.dev-dependencies]
 pycodestyle = "^2.5.0"
