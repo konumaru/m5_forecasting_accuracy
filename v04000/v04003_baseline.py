@@ -246,8 +246,8 @@ def get_all_features():
     # df = pd.concat([df, temp_feat_df], axis=1)
     # del temp_feat_df; gc.collect()
 
-    # numeric_cols = df.select_dtypes(include=['number']).columns
-    # df = df.assign(**{num_c: df[num_c].fillna(-999) for num_c in numeric_cols})
+    numeric_cols = df.select_dtypes(include=['number']).columns
+    df = df.assign(**{num_c: df[num_c].fillna(-999) for num_c in numeric_cols})
     return df
 
 
