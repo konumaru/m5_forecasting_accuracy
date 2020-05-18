@@ -584,6 +584,19 @@ version = "1.2.0"
 
 [[package]]
 category = "main"
+description = "LightGBM Python Package"
+name = "lightgbm"
+optional = false
+python-versions = "*"
+version = "2.3.1"
+
+[package.dependencies]
+numpy = "*"
+scikit-learn = "*"
+scipy = "*"
+
+[[package]]
+category = "main"
 description = "lightweight wrapper around basic LLVM functionality"
 name = "llvmlite"
 optional = false
@@ -1371,7 +1384,7 @@ plotting = ["graphviz", "matplotlib"]
 sklearn = ["sklearn"]
 
 [metadata]
-content-hash = "9bee5d34ed3ee8ca2a32ea790d9465086d37123e38f746a3acd0b46b59b39ecf"
+content-hash = "0d671ec58cf343a6605aa75b94c4ca782c7fbbeb440eb4b0123e2b3ec5f2302a"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -1579,6 +1592,12 @@ kiwisolver = [
     {file = "kiwisolver-1.2.0-cp38-none-win32.whl", hash = "sha256:d069ef4b20b1e6b19f790d00097a5d5d2c50871b66d10075dab78938dc2ee2cf"},
     {file = "kiwisolver-1.2.0-cp38-none-win_amd64.whl", hash = "sha256:18d749f3e56c0480dccd1714230da0f328e6e4accf188dd4e6884bdd06bf02dd"},
     {file = "kiwisolver-1.2.0.tar.gz", hash = "sha256:247800260cd38160c362d211dcaf4ed0f7816afb5efe56544748b21d6ad6d17f"},
+]
+lightgbm = [
+    {file = "lightgbm-2.3.1-py2.py3-none-macosx_10_9_x86_64.macosx_10_10_x86_64.macosx_10_11_x86_64.macosx_10_12_x86_64.macosx_10_13_x86_64.macosx_10_14_x86_64.macosx_10_15_x86_64.whl", hash = "sha256:c35743f825af65bd96106d4df1ee36a5f0f2d1140e2ed2e98e6742a931771730"},
+    {file = "lightgbm-2.3.1-py2.py3-none-manylinux1_x86_64.whl", hash = "sha256:d0c51c79cf34c6dc717fd6a1c1e5c73eb428ade51228fedd6e6ca26ed4756190"},
+    {file = "lightgbm-2.3.1-py2.py3-none-win_amd64.whl", hash = "sha256:c6968efcc5c19f9867592f885edbfaf2d753f7fd8ce924453ac8b453dbf81f55"},
+    {file = "lightgbm-2.3.1.tar.gz", hash = "sha256:bd1817be401e74c0d8b049e97ea2f35d2ce155cfa130119ce4195ea207bd6388"},
 ]
 llvmlite = [
     {file = "llvmlite-0.31.0-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:00fdf20d2f4972a00bcfaa9ce62ee55208ae5df38906a198650ddf91ba6a5fba"},

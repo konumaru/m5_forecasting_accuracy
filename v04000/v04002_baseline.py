@@ -121,7 +121,7 @@ def parse_sales_train():
 
 """ Transform
 """
-@cache_result(filename='melted_and_merged_train', use_cache=False)
+@cache_result(filename='melted_and_merged_train', use_cache=True)
 def melted_and_merged_train():
     # Load Data
     calendar = pd.read_pickle('features/parse_calendar.pkl')
@@ -157,7 +157,7 @@ def melted_and_merged_train():
 
 """ Feature Engineering
 """
-@cache_result(filename='sales_lag_and_roll', use_cache=False)
+@cache_result(filename='sales_lag_and_roll', use_cache=True)
 def sales_lag_and_roll():
     # Define variables and dataframes.
     target = TARGET
@@ -236,8 +236,8 @@ def days_from_last_sales():
 def get_all_features():
     df = pd.read_pickle('features/melted_and_merged_train.pkl')
     df = pd.concat([df, sales_lag_and_roll()], axis=1)
-    df = pd.concat([df, price_simple_feature()], axis=1)
-    df = pd.concat([df, days_from_last_sales()], axis=1)
+    # df = pd.concat([df, price_simple_feature()], axis=1)
+    # df = pd.concat([df, days_from_last_sales()], axis=1)
 
     # numeric_cols = df.select_dtypes(include=['number']).columns
     # df = df.assign(**{num_c: df[num_c].fillna(-999) for num_c in numeric_cols})
@@ -285,6 +285,7 @@ class WRMSSEForLightGBM(WRMSSEEvaluator):
         return grad, hess
 
 
+@cache_result(filename='evaluator', use_cache=True)
 def get_evaluator(go_back_days=28):
     pred_days = 28
     end_thresh = (-go_back_days + pred_days) if (-go_back_days + pred_days) != 0 else None
@@ -323,7 +324,7 @@ def train_valid_split(df, go_back_days=28):
     return df[train_mask], df[eval_mask]
 
 
-def save_importance(model, filepath, max_num_features=50, figsize=(15, 20)):
+def save_importance(model, filepath, max_num_features=50, figsize=(18, 25)):
     # Define Feature Importance DataFrame.
     imp_df = pd.DataFrame(
         [model.feature_importance()],

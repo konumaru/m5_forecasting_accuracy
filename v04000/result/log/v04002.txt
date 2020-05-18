@@ -11,10 +11,7 @@ Load Cached data, features/parse_sales_train.pkl
 --- Transform ---
 
 
-Our final dataset to train has 23965140 rows and 41 columns
-
-Mem. usage decreased to 1737.08 Mb (19.1% reduction)
-Cache to features/melted_and_merged_train.pkl
+Load Cached data, features/melted_and_merged_train.pkl
 
 
 --- Feature Engineering ---
@@ -22,104 +19,91 @@ Cache to features/melted_and_merged_train.pkl
 
 Mem. usage decreased to 1691.27 Mb (75.0% reduction)
 Cache to features/sales_lag_and_roll.pkl
-Mem. usage decreased to 91.42 Mb (0.0% reduction)
-Cache to features/price_simple_feature.pkl
-/Users/rui/Documents/repositories/m5_forecasting_accuracy/v04000/script/tools.py:46: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame.
-Try using .loc[row_indexer,col_indexer] = value instead
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  df[col] = df[col].astype(np.int16)
-Mem. usage decreased to 228.55 Mb (37.5% reduction)
-Cache to features/days_from_last_sales.pkl
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 23965140 entries, 0 to 23965139
-Data columns (total 81 columns):
- #   Column                        Dtype         
----  ------                        -----         
- 0   id                            object        
- 1   item_id                       category      
- 2   dept_id                       category      
- 3   cat_id                        category      
- 4   store_id                      category      
- 5   state_id                      category      
- 6   d                             object        
- 7   sales                         int16         
+Data columns (total 78 columns):
+ #   Column                        Dtype
+---  ------                        -----
+ 0   id                            object
+ 1   item_id                       category
+ 2   dept_id                       category
+ 3   cat_id                        category
+ 4   store_id                      category
+ 5   state_id                      category
+ 6   d                             object
+ 7   sales                         int16
  8   date                          datetime64[ns]
- 9   wm_yr_wk                      int16         
- 10  event_name_1                  category      
- 11  event_type_1                  category      
- 12  event_name_2                  category      
- 13  event_type_2                  category      
- 14  snap_CA                       int8          
- 15  snap_TX                       int8          
- 16  snap_WI                       int8          
- 17  year                          int16         
- 18  quarter                       int8          
- 19  month                         int8          
- 20  week                          int8          
- 21  weekofyear                    int8          
- 22  day                           int8          
- 23  dayofweek                     int8          
- 24  dayofyear                     int16         
- 25  is_year_end                   bool          
- 26  is_year_start                 bool          
- 27  is_quarter_end                bool          
- 28  is_quarter_start              bool          
- 29  is_month_end                  bool          
- 30  is_month_start                bool          
- 31  is_weekend                    bool          
- 32  sell_price                    float16       
- 33  release                       float16       
- 34  price_max                     float16       
- 35  price_min                     float16       
- 36  price_std                     float16       
- 37  price_mean                    float16       
- 38  price_nunique                 float16       
- 39  id_nunique_by_price           float16       
- 40  price_norm                    float16       
- 41  sales_lag_t28p0               float16       
- 42  sales_lag_t28p1               float16       
- 43  sales_lag_t28p2               float16       
- 44  sales_lag_t28p3               float16       
- 45  sales_lag_t28p4               float16       
- 46  sales_lag_t28p5               float16       
- 47  sales_lag_t28p6               float16       
- 48  sales_lag_t28p7               float16       
- 49  sales_lag_t28p8               float16       
- 50  sales_lag_t28p9               float16       
- 51  sales_lag_t28p10              float16       
- 52  sales_lag_t28p11              float16       
- 53  sales_lag_t28p12              float16       
- 54  sales_lag_t28p13              float16       
- 55  sales_lag_t28p14              float16       
- 56  sales_roll_mean_t7            float16       
- 57  sales_roll_std_t7             float16       
- 58  sales_rolling_ZeroRatio_t7    float16       
- 59  sales_rolling_ZeroCount_t7    float16       
- 60  sales_roll_mean_t14           float16       
- 61  sales_roll_std_t14            float16       
- 62  sales_rolling_ZeroRatio_t14   float16       
- 63  sales_rolling_ZeroCount_t14   float16       
- 64  sales_roll_mean_t30           float16       
- 65  sales_roll_std_t30            float16       
- 66  sales_rolling_ZeroRatio_t30   float16       
- 67  sales_rolling_ZeroCount_t30   float16       
- 68  sales_roll_mean_t60           float16       
- 69  sales_roll_std_t60            float16       
- 70  sales_rolling_ZeroRatio_t60   float16       
- 71  sales_rolling_ZeroCount_t60   float16       
- 72  sales_roll_mean_t180          float16       
- 73  sales_roll_std_t180           float16       
- 74  sales_rolling_ZeroRatio_t180  float16       
- 75  sales_rolling_ZeroCount_t180  float16       
- 76  sales_rolling_skew_t30        float16       
- 77  sales_rolling_kurt_t30        float16       
- 78  price_momentum                float16       
- 79  price_momentum_m              float16       
- 80  days_from_last_sales          int16         
-dtypes: bool(7), category(9), datetime64[ns](1), float16(48), int16(5), int8(9), object(2)
-memory usage: 3.5+ GB
+ 9   wm_yr_wk                      int16
+ 10  event_name_1                  category
+ 11  event_type_1                  category
+ 12  event_name_2                  category
+ 13  event_type_2                  category
+ 14  snap_CA                       int8
+ 15  snap_TX                       int8
+ 16  snap_WI                       int8
+ 17  year                          int16
+ 18  quarter                       int8
+ 19  month                         int8
+ 20  week                          int8
+ 21  weekofyear                    int8
+ 22  day                           int8
+ 23  dayofweek                     int8
+ 24  dayofyear                     int16
+ 25  is_year_end                   bool
+ 26  is_year_start                 bool
+ 27  is_quarter_end                bool
+ 28  is_quarter_start              bool
+ 29  is_month_end                  bool
+ 30  is_month_start                bool
+ 31  is_weekend                    bool
+ 32  sell_price                    float16
+ 33  release                       float16
+ 34  price_max                     float16
+ 35  price_min                     float16
+ 36  price_std                     float16
+ 37  price_mean                    float16
+ 38  price_nunique                 float16
+ 39  id_nunique_by_price           float16
+ 40  price_norm                    float16
+ 41  sales_lag_t28p0               float16
+ 42  sales_lag_t28p1               float16
+ 43  sales_lag_t28p2               float16
+ 44  sales_lag_t28p3               float16
+ 45  sales_lag_t28p4               float16
+ 46  sales_lag_t28p5               float16
+ 47  sales_lag_t28p6               float16
+ 48  sales_lag_t28p7               float16
+ 49  sales_lag_t28p8               float16
+ 50  sales_lag_t28p9               float16
+ 51  sales_lag_t28p10              float16
+ 52  sales_lag_t28p11              float16
+ 53  sales_lag_t28p12              float16
+ 54  sales_lag_t28p13              float16
+ 55  sales_lag_t28p14              float16
+ 56  sales_roll_mean_t7            float16
+ 57  sales_roll_std_t7             float16
+ 58  sales_rolling_ZeroRatio_t7    float16
+ 59  sales_rolling_ZeroCount_t7    float16
+ 60  sales_roll_mean_t14           float16
+ 61  sales_roll_std_t14            float16
+ 62  sales_rolling_ZeroRatio_t14   float16
+ 63  sales_rolling_ZeroCount_t14   float16
+ 64  sales_roll_mean_t30           float16
+ 65  sales_roll_std_t30            float16
+ 66  sales_rolling_ZeroRatio_t30   float16
+ 67  sales_rolling_ZeroCount_t30   float16
+ 68  sales_roll_mean_t60           float16
+ 69  sales_roll_std_t60            float16
+ 70  sales_rolling_ZeroRatio_t60   float16
+ 71  sales_rolling_ZeroCount_t60   float16
+ 72  sales_roll_mean_t180          float16
+ 73  sales_roll_std_t180           float16
+ 74  sales_rolling_ZeroRatio_t180  float16
+ 75  sales_rolling_ZeroCount_t180  float16
+ 76  sales_rolling_skew_t30        float16
+ 77  sales_rolling_kurt_t30        float16
+dtypes: bool(7), category(9), datetime64[ns](1), float16(46), int16(4), int8(9), object(2)
+memory usage: 3.3+ GB
 
  None
 Cache Train and Submission Data.
@@ -151,13 +135,59 @@ Parameters:
         "early_stopping_rounds": 100,
         "verbose_eval": 100
     }
-} 
+}
 
-/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py:1117: UserWarning: Overriding the parameters from Reference Dataset.
+/home/ruikonuma/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py:1117: UserWarning: Overriding the parameters from Reference Dataset.
   warnings.warn('Overriding the parameters from Reference Dataset.')
-/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py:929: UserWarning: categorical_column in param dict is overridden.
+/home/ruikonuma/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py:929: UserWarning: categorical_column in param dict is overridden.
   warnings.warn('{} in param dict is overridden.'.format(cat_alias))
 Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.532919
-[200]	valid_0's WRMSSE: 0.525945
-[300]	valid_0's WRMSSE: 0.520391
+[100]	valid_0's WRMSSE: 0.541085
+[200]	valid_0's WRMSSE: 0.534948
+[300]	valid_0's WRMSSE: 0.534932
+Early stopping, best iteration is:
+[278]	valid_0's WRMSSE: 0.530611
+
+Evaluation:
+Our val RMSE score is 2.1136468888992326
+Our val WRMSSE score is 0.5306109872865731
+
+
+--- Submission ---
+
+
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.902372  0.774900  0.760937  0.735392
+1  HOBBIES_1_002_CA_1_validation  0.315322  0.283261  0.286058  0.288780
+2  HOBBIES_1_003_CA_1_validation  0.352692  0.362124  0.356202  0.362093
+3  HOBBIES_1_004_CA_1_validation  1.910375  1.700901  1.711296  1.536696
+4  HOBBIES_1_005_CA_1_validation  1.090926  0.841127  1.031304  1.155529
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.806629  0.916663  0.978909  0.743254  0.835589  0.770423  0.771702
+1  0.339882  0.394280  0.434547  0.289662  0.281423  0.270592  0.269093
+2  0.457808  0.585982  0.611815  0.344908  0.421618  0.406725  0.389691
+3  1.938637  2.425040  2.705449  1.759896  1.694717  1.563982  1.528697
+4  1.241788  1.492030  1.745461  1.202376  1.269781  1.138703  1.158636
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.896573  1.126743  0.966647  0.851079  0.813025  0.795516  0.763190
+1  0.282890  0.308211  0.301513  0.198416  0.190536  0.188447  0.192198
+2  0.495282  0.614916  0.544667  0.336216  0.367209  0.342014  0.410067
+3  2.013172  2.598646  2.180712  1.789117  1.596602  1.590052  1.543299
+4  1.205123  1.586296  1.106172  1.222592  1.052526  1.087498  1.061055
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.852372  1.214271  1.062317  0.889395  0.751206  0.745116  0.838848
+1  0.212951  0.253220  0.249213  0.186253  0.181579  0.242730  0.244840
+2  0.492066  0.621813  0.566461  0.415830  0.368658  0.388523  0.362793
+3  1.770740  2.363183  2.691921  1.851121  1.649228  1.433315  1.513956
+4  1.226236  1.567971  1.510986  1.067114  0.992812  0.965793  1.007683
+
+        F26       F27       F28
+0  0.869416  1.165001  1.129203
+1  0.259861  0.284823  0.281700
+2  0.450104  0.507559  0.537182
+3  1.873356  2.771020  2.685771
+4  1.221899  1.617843  1.674102
