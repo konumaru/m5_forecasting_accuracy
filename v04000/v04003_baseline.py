@@ -40,6 +40,7 @@ TARGET = 'sales'
 NUM_ITEMS = 30490
 
 FEATURECOLS_PATH = f'result/feature_cols/{VERSION}.pkl'
+CATEGORICALS_PATH = f'result/categoricals/{VERSION}.pkl'
 MODEL_PATH = f'result/model/{VERSION}.pkl'
 IMPORTANCE_PATH = f'result/importance/{VERSION}.png'
 SCORE_PATH = f'result/score/{VERSION}.pkl'
@@ -121,7 +122,7 @@ def parse_sales_train():
 
 """ Transform
 """
-@cache_result(filename='melted_and_merged_train', use_cache=False)
+@cache_result(filename='melted_and_merged_train', use_cache=True)
 def melted_and_merged_train():
     # Load Data
     calendar = pd.read_pickle('features/parse_calendar.pkl')
@@ -157,7 +158,7 @@ def melted_and_merged_train():
 
 """ Feature Engineering
 """
-@cache_result(filename='sales_lag_and_roll', use_cache=False)
+@cache_result(filename='sales_lag_and_roll', use_cache=True)
 def sales_lag_and_roll():
     # Define variables and dataframes.
     target = TARGET
@@ -349,11 +350,12 @@ def save_importance(model, filepath, max_num_features=50, figsize=(18, 25)):
     plt.close('all')
 
 
-def run_train():
+def set_dataset():
     go_back_days = 28
     df = load_pickle('features/all_train_data.pkl')
     # Split Train data.
     train_data, valid_data = train_valid_split(df, go_back_days)
+    dump_pickle(valid_data, './features/valid_data.pkl')
     del df; gc.collect()
     # Define Evaluator
     print('Define Evaluation Object.')
@@ -362,10 +364,12 @@ def run_train():
     drop_cols = ['id', 'd', 'sales', 'date', 'wm_yr_wk']
     features = train_data.columns.tolist()
     features = [f for f in features if f not in drop_cols]
+    categoricals = train_data.dtypes[train_data.dtypes == 'category'].index.tolist()
     dump_pickle(features, FEATURECOLS_PATH)
+    dump_pickle(categoricals, CATEGORICALS_PATH)
 
     train_set = lgb.Dataset(train_data[features], train_data[TARGET])
-    val_set = lgb.Dataset(valid_data[features], valid_data[TARGET], reference=train_set)
+    vadlid_set = lgb.Dataset(valid_data[features], valid_data[TARGET], reference=train_set)
 
     use_weight = False
     if use_weight:
@@ -373,13 +377,30 @@ def run_train():
         train_set.set_weight(weight / np.sqrt(scale))
 
         weight, scale = evaluator.get_series_weight(valid_data['id'])
-        val_set.set_weight(weight / np.sqrt(scale))
+        vadlid_set.set_weight(weight / np.sqrt(scale))
 
     set_obj_weight = False
     if set_obj_weight:
         evaluator.set_series_weight_for_fobj(train_data['id'])
 
     del train_data; gc.collect()
+    # Dump data.
+    train_set.save_binary('./faetures/train_set.bin')
+    vadlid_set.save_binary('./faetures/vadlid_set.bin')
+    return None
+
+
+def run_train():
+    features = load_pickle(FEATURECOLS_PATH)
+    categoricals = load_pickle(CATEGORICALS_PATH)
+
+    train_set = lgb.Dataset(
+        './faetures/train_set.bin', featurename=features, categorical_feature=categoricals)
+    vadlid_set = lgb.Dataset(
+        './faetures/vadlid_set.bin', featurename=features, categorical_feature=categoricals)
+    # Define Evaluator
+    print('Define Evaluation Object.')
+    evaluator = get_evaluator(28)
 
     params = {
         'model_params': {
@@ -395,7 +416,7 @@ def run_train():
             'subsample_freq': 1,
             'feature_fraction': 0.8,
             'force_row_wise': True,
-            'verbose': -1,
+            'verbose': 2,
         },
         'train_params': {
             'num_boost_round': 1500,  # 2000
@@ -408,7 +429,7 @@ def run_train():
     model = lgb.train(
         params['model_params'],
         train_set,
-        valid_sets=[val_set],
+        valid_sets=[vadlid_set],
         # fobj=evaluator.custom_fobj,
         feval=evaluator.custom_feval,
         **params['train_params']
@@ -417,6 +438,7 @@ def run_train():
     save_importance(model, filepath=IMPORTANCE_PATH)
 
     print('\nEvaluation:')
+    valid_data = load_pickle('./features/valid_data.pkl')
     valid_pred = model.predict(valid_data[features], num_iteration=model.best_iteration)
     scores = {}
     scores['RMSE'] = mean_squared_error(valid_pred, valid_data[TARGET], squared=False)
@@ -478,6 +500,7 @@ def main():
     del all_data, all_train_data, submit_data; gc.collect();
 
     print('\n\n--- Train Model ---\n\n')
+    _ = set_dataset()
     _ = run_train()
 
     print('\n\n--- Submission ---\n\n')

@@ -11,17 +11,13 @@ Load Cached data, features/parse_sales_train.pkl
 --- Transform ---
 
 
-Our final dataset to train has 35093990 rows and 41 columns
-
-Mem. usage decreased to 2543.69 Mb (19.1% reduction)
-Cache to features/melted_and_merged_train.pkl
+Load Cached data, features/melted_and_merged_train.pkl
 
 
 --- Feature Engineering ---
 
 
-Mem. usage decreased to 2476.65 Mb (75.0% reduction)
-Cache to features/sales_lag_and_roll.pkl
+Load Cached data, features/sales_lag_and_roll.pkl
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 35093990 entries, 0 to 35093989
 Data columns (total 78 columns):
@@ -117,28 +113,3 @@ Cache Train and Submission Data.
 
 Define Evaluation Object.
 Load Cached data, features/evaluator.pkl
-
-Parameters:
- {
-    "model_params": {
-        "boosting": "gbdt",
-        "objective": "tweedie",
-        "tweedie_variance_power": 1.1,
-        "metric": "None",
-        "num_leaves": 127,
-        "min_data_in_leaf": 25,
-        "seed": 42,
-        "learning_rate": 0.1,
-        "subsample": 0.5,
-        "subsample_freq": 1,
-        "feature_fraction": 0.8,
-        "force_row_wise": true,
-        "verbose": -1
-    },
-    "train_params": {
-        "num_boost_round": 1500,
-        "early_stopping_rounds": 100,
-        "verbose_eval": 100
-    }
-} 
-
