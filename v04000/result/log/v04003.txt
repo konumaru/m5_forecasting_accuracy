@@ -11,17 +11,13 @@ Load Cached data, features/parse_sales_train.pkl
 --- Transform ---
 
 
-Our final dataset to train has 35093990 rows and 41 columns
-
-Mem. usage decreased to 2543.69 Mb (19.1% reduction)
-Cache to features/melted_and_merged_train.pkl
+Load Cached data, features/melted_and_merged_train.pkl
 
 
 --- Feature Engineering ---
 
 
-Mem. usage decreased to 2476.65 Mb (75.0% reduction)
-Cache to features/sales_lag_and_roll.pkl
+Load Cached data, features/sales_lag_and_roll.pkl
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 35093990 entries, 0 to 35093989
 Data columns (total 78 columns):
@@ -116,6 +112,7 @@ Cache Train and Submission Data.
 
 
 Define Evaluation Object.
+<<<<<<< HEAD
 Cache to features/evaluator.pkl
 
 Parameters:
@@ -192,3 +189,6 @@ Our val WRMSSE score is 0.522056112924799
 2  0.529781  0.662035  0.765231  
 3  1.795992  2.804818  2.664659  
 4  1.133835  1.415959  1.555603  
+=======
+Load Cached data, features/evaluator.pkl
+>>>>>>> 08887f5a9787ddf3332fe0011385ef2b89d42ecc
