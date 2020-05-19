@@ -132,7 +132,7 @@ def melted_and_merged_train():
     idx_cols = ['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
     df = pd.melt(df, id_vars=idx_cols, var_name='d', value_name='sales')
     # Drop very old data.
-    nrows = (365 * 3 + 28 * 2) * NUM_ITEMS
+    nrows = (365 * 2 + 28 * 2) * NUM_ITEMS
     df = df.iloc[-nrows:, :]
     df = pd.merge(df, calendar, how='left', on='d')
     df = pd.merge(df, sell_prices, how='left', on=['store_id', 'item_id', 'wm_yr_wk'])
@@ -170,20 +170,22 @@ def sales_lag_and_roll():
     agg_funcs = {}
     grouped_df = srd_df.groupby('id')
 
-    for i in range(15):
+    lag_list = [7, 14]  # list(range(15))
+    for i in lag_list:
         lag_t = shift_days + i
         agg_funcs[f'{target}_lag_t{shift_days}p{i}'] = grouped_df[target].transform(
-            lambda x: x.shift(lag_t))
+            lambda x: x.shift(lag_t - 1))
 
-    for i in [7, 14, 30, 60, 180]:
+    roll_values = [14, 30]  # [7, 14, 30, 60]
+    for i in roll_values:
         agg_funcs[f'{target}_roll_mean_t{i}'] = grouped_df[target].transform(
             lambda x: x.shift(shift_days).rolling(i).mean())
         agg_funcs[f'{target}_roll_std_t{i}'] = grouped_df[target].transform(
             lambda x: x.shift(shift_days).rolling(i).std())
-        agg_funcs[f'{target}_rolling_ZeroRatio_t{i}'] = grouped_df[target].transform(
-            lambda x: 1 - (x == 0).shift(shift_days).rolling(i).mean())
-        agg_funcs[f'{target}_rolling_ZeroCount_t{i}'] = grouped_df[target].transform(
-            lambda x: (x == 0).shift(shift_days).rolling(i).sum())
+        # agg_funcs[f'{target}_rolling_ZeroRatio_t{i}'] = grouped_df[target].transform(
+        #     lambda x: 1 - (x == 0).shift(shift_days).rolling(i).mean())
+        # agg_funcs[f'{target}_rolling_ZeroCount_t{i}'] = grouped_df[target].transform(
+        #     lambda x: (x == 0).shift(shift_days).rolling(i).sum())
 
     agg_funcs['sales_rolling_skew_t30'] = grouped_df[target].transform(
         lambda x: x.shift(shift_days).rolling(30).skew())
@@ -239,16 +241,15 @@ def days_from_last_sales():
 def get_all_features():
     df = pd.read_pickle('features/melted_and_merged_train.pkl')
 
-    temp_feat_df = sales_lag_and_roll()
-    df = pd.concat([df, temp_feat_df], axis=1)
-    del temp_feat_df; gc.collect()
+    feat_funcs = [sales_lag_and_roll]
 
-    # temp_feat_df = price_simple_feature()
-    # df = pd.concat([df, temp_feat_df], axis=1)
-    # del temp_feat_df; gc.collect()
+    for f_func in feat_funcs:
+        temp_feat_df = f_func()
+        df = pd.concat([df, temp_feat_df], axis=1)
+        del temp_feat_df; gc.collect()
 
-    numeric_cols = df.select_dtypes(include=['number']).columns
-    df = df.assign(**{num_c: df[num_c].fillna(-999) for num_c in numeric_cols})
+    # numeric_cols = df.select_dtypes(include=['number']).columns
+    # df = df.assign(**{num_c: df[num_c].fillna(-999) for num_c in numeric_cols})
     return df
 
 
@@ -332,34 +333,90 @@ def train_valid_split(df, go_back_days=28):
     return df[train_mask], df[eval_mask]
 
 
-def save_importance(model, filepath, max_num_features=50, figsize=(18, 25)):
-    # Define Feature Importance DataFrame.
-    imp_df = pd.DataFrame(
-        [model.feature_importance()],
-        columns=model.feature_name(),
-        index=['Importance']
-    ).T
-    imp_df.sort_values(by='Importance', inplace=True)
-    # Plot Importance DataFrame.
-    plt.figure(figsize=figsize)
-    imp_df[-max_num_features:].plot(
-        kind='barh', title='Feature importance', figsize=figsize,
-        y='Importance', align="center"
-    )
-    plt.savefig(filepath)
-    plt.close('all')
+class LGBM_Model():
+
+    def __init__(
+        self, params, train_param, train_data, valid_data,
+        target_col, feature_cols, categorical_cols=None, train_weight=None, valid_weight=None
+    ):
+        self.target_col = target_col
+        self.feature_cols = feature_cols
+        self.categorical_cols = categorical_cols
+
+        model = self.fit(params, train_param, train_data, valid_data)
+
+    def _remove_bin_file(self, filepath):
+        if os.path.exists(filepath):
+            os.remove(filepath)
+
+    def _convert_dataset(self, train_data, valid_data, save_binary=True):
+        train_dataset = lgb.Dataset(
+            train_data[self.feature_cols], train_data[self.target_col],
+            feature_name=self.feature_cols, categorical_feature=self.categorical_cols
+        )
+        valid_dataset = lgb.Dataset(
+            valid_data[self.feature_cols], valid_data[self.target_col], reference=train_dataset
+        )
+
+        if save_binary:
+            # Define cache filepath.
+            train_bin_path = 'tmp_train_set.bin'
+            valid_bin_path = 'tmp_valid_set.bin'
+            # Remove Cached File.
+            self._remove_bin_file(train_bin_path)
+            self._remove_bin_file(valid_bin_path)
+            # Save Binary Cache.
+            train_dataset.save_binary(train_bin_path)
+            valid_dataset.save_binary(valid_bin_path)
+            # Reload Binary Cache.
+            train_dataset = lgb.Dataset(train_bin_path)
+            valid_dataset = lgb.Dataset(valid_bin_path)
+
+        return train_dataset, valid_dataset
+
+    def fit(self, params, train_param, train_data, valid_data):
+        train_dataset, valid_dataset = self._convert_dataset(train_data, valid_data)
+
+        self.model = lgb.train(
+            params, train_dataset,
+            valid_sets=[valid_dataset],
+            **train_param
+        )
+
+    def predict(self, data):
+        model = self.model
+        return model.predict(data, num_iteration=model.best_iteration)
+
+    def get_importance(self):
+        # Define Feature Importance DataFrame.
+        imp_df = pd.DataFrame(
+            [self.model.feature_importance()],
+            columns=self.model.feature_name(),
+            index=['Importance']
+        ).T
+        imp_df.sort_values(by='Importance', inplace=True)
+        return imp_df
+
+    def save_importance(self, filepath, max_num_features=50, figsize=(18, 25)):
+        imp_df = self.get_importance()
+        # Plot Importance DataFrame.
+        plt.figure(figsize=figsize)
+        imp_df[-max_num_features:].plot(
+            kind='barh', title='Feature importance', figsize=figsize,
+            y='Importance', align="center"
+        )
+        plt.savefig(filepath)
+        plt.close('all')
 
 
-def set_dataset():
+def run_train():
     go_back_days = 28
+    evaluator = get_evaluator(go_back_days)
     df = load_pickle('features/all_train_data.pkl')
     # Split Train data.
     train_data, valid_data = train_valid_split(df, go_back_days)
     dump_pickle(valid_data, './features/valid_data.pkl')
     del df; gc.collect()
-    # Define Evaluator
-    print('Define Evaluation Object.')
-    evaluator = get_evaluator(go_back_days)
 
     drop_cols = ['id', 'd', 'sales', 'date', 'wm_yr_wk']
     features = train_data.columns.tolist()
@@ -368,46 +425,12 @@ def set_dataset():
     dump_pickle(features, FEATURECOLS_PATH)
     dump_pickle(categoricals, CATEGORICALS_PATH)
 
-    train_set = lgb.Dataset(train_data[features], train_data[TARGET])
-    vadlid_set = lgb.Dataset(valid_data[features], valid_data[TARGET], reference=train_set)
-
-    use_weight = False
-    if use_weight:
-        weight, scale = evaluator.get_series_weight(train_data['id'])
-        train_set.set_weight(weight / np.sqrt(scale))
-
-        weight, scale = evaluator.get_series_weight(valid_data['id'])
-        vadlid_set.set_weight(weight / np.sqrt(scale))
-
-    set_obj_weight = False
-    if set_obj_weight:
-        evaluator.set_series_weight_for_fobj(train_data['id'])
-
-    del train_data; gc.collect()
-    # Dump data.
-    train_set.save_binary('./faetures/train_set.bin')
-    vadlid_set.save_binary('./faetures/vadlid_set.bin')
-    return None
-
-
-def run_train():
-    features = load_pickle(FEATURECOLS_PATH)
-    categoricals = load_pickle(CATEGORICALS_PATH)
-
-    train_set = lgb.Dataset(
-        './faetures/train_set.bin', featurename=features, categorical_feature=categoricals)
-    vadlid_set = lgb.Dataset(
-        './faetures/vadlid_set.bin', featurename=features, categorical_feature=categoricals)
-    # Define Evaluator
-    print('Define Evaluation Object.')
-    evaluator = get_evaluator(28)
-
     params = {
         'model_params': {
             'boosting': 'gbdt',
             'objective': 'tweedie',  # tweedie, poisson
             'tweedie_variance_power': 1.1,  # 1.0=poisson
-            'metric': 'None',
+            'metric': 'custom',
             'num_leaves': 2**7 - 1,
             'min_data_in_leaf': 25,
             'seed': SEED,
@@ -416,30 +439,35 @@ def run_train():
             'subsample_freq': 1,
             'feature_fraction': 0.8,
             'force_row_wise': True,
-            'verbose': 2,
+            'verbose': -1,
+            'num_threads': 2
         },
         'train_params': {
             'num_boost_round': 1500,  # 2000
             'early_stopping_rounds': 100,
             'verbose_eval': 100,
+            # 'fobj': evaluator.custom_fobj,
+            'feval': evaluator.custom_feval,
         }
     }
-    print('\nParameters:\n', json.dumps(params, indent=4), '\n')
+    print('\nParameters:\n', json.dumps(params['model_params'], indent=4), '\n')
 
-    model = lgb.train(
+    lgb_model = LGBM_Model(
         params['model_params'],
-        train_set,
-        valid_sets=[vadlid_set],
-        # fobj=evaluator.custom_fobj,
-        feval=evaluator.custom_feval,
-        **params['train_params']
+        params['train_params'],
+        train_data,
+        valid_data,
+        TARGET,
+        features,
+        categoricals
     )
-    dump_pickle(model, MODEL_PATH)
-    save_importance(model, filepath=IMPORTANCE_PATH)
+
+    dump_pickle(lgb_model, MODEL_PATH)
+    lgb_model.save_importance(filepath=IMPORTANCE_PATH, figsize=(18, 25))
 
     print('\nEvaluation:')
     valid_data = load_pickle('./features/valid_data.pkl')
-    valid_pred = model.predict(valid_data[features], num_iteration=model.best_iteration)
+    valid_pred = lgb_model.predict(valid_data[features])
     scores = {}
     scores['RMSE'] = mean_squared_error(valid_pred, valid_data[TARGET], squared=False)
     scores['WRMSSE'] = evaluator.score(valid_pred.reshape(-1, NUM_ITEMS).T)
@@ -447,7 +475,7 @@ def run_train():
         print(f'Our val {f_name} score is {score}')
 
     dump_pickle(scores, SCORE_PATH)
-    return model
+    return lgb_model
 
 
 """ Submission
@@ -455,22 +483,21 @@ def run_train():
 
 
 def run_submission():
-    model = load_pickle(MODEL_PATH)
+    lgb_model = load_pickle(MODEL_PATH)
     scores = load_pickle(SCORE_PATH)['WRMSSE']
     features = load_pickle(FEATURECOLS_PATH)
     submit_data = load_pickle('features/submit_data.pkl')
-    submit_data['sales'] = model.predict(submit_data[features], num_iteration=model.best_iteration)
 
+    submit_data['sales'] = lgb_model.predict(submit_data[features])
     submission = pd.pivot(submit_data, index='id', columns='d', values='sales').reset_index()
-    # split valid and eval
+    # Processing for validation.
     valid_sub = submission[['id'] + [f'd_{i}' for i in range(1914, 1942)]]
-    eval_sub = submission[['id'] + [f'd_{i}' for i in range(1942, 1970)]]
-    # rename columns
     valid_sub.columns = ['id'] + ['F' + str(i + 1) for i in range(28)]
+    # Processing for evaluation.
+    eval_sub = submission[['id'] + [f'd_{i}' for i in range(1942, 1970)]]
     eval_sub.columns = ['id'] + ['F' + str(i + 1) for i in range(28)]
-    # rename id only evaluation
     eval_sub = eval_sub.assign(id=lambda x: x['id'].str.replace('validation', 'evaluation'))
-
+    # Dump Submission file.
     submission = pd.concat([valid_sub, eval_sub], axis=0)
     sample_submission = pd.read_pickle('../data/reduced/sample_submission.pkl')
     submission = sample_submission[['id']].merge(submission, how='left', on='id')
@@ -500,7 +527,6 @@ def main():
     del all_data, all_train_data, submit_data; gc.collect();
 
     print('\n\n--- Train Model ---\n\n')
-    _ = set_dataset()
     _ = run_train()
 
     print('\n\n--- Submission ---\n\n')
