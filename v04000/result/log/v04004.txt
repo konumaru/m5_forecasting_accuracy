@@ -1,0 +1,169 @@
+
+
+--- Load Data and Initial Processing ---
+
+
+Load Cached data, features/parse_calendar.pkl
+Load Cached data, features/parse_sell_prices.pkl
+Load Cached data, features/parse_sales_train.pkl
+
+
+--- Transform ---
+
+
+Load Cached data, features/melted_and_merged_train.pkl
+
+
+--- Feature Engineering ---
+
+
+Load Cached data, features/sales_lag_and_roll.pkl
+Load Cached data, features/price_simple_feature.pkl
+Mem. usage decreased to 228.55 Mb (37.5% reduction)
+Cache to features/days_from_last_sales.pkl
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 23965140 entries, 0 to 23965139
+Data columns (total 56 columns):
+ #   Column                       Dtype         
+---  ------                       -----         
+ 0   id                           object        
+ 1   item_id                      category      
+ 2   dept_id                      category      
+ 3   cat_id                       category      
+ 4   store_id                     category      
+ 5   state_id                     category      
+ 6   d                            object        
+ 7   sales                        int16         
+ 8   date                         datetime64[ns]
+ 9   wm_yr_wk                     int16         
+ 10  event_name_1                 category      
+ 11  event_type_1                 category      
+ 12  event_name_2                 category      
+ 13  event_type_2                 category      
+ 14  snap_CA                      int8          
+ 15  snap_TX                      int8          
+ 16  snap_WI                      int8          
+ 17  year                         int16         
+ 18  quarter                      int8          
+ 19  month                        int8          
+ 20  week                         int8          
+ 21  weekofyear                   int8          
+ 22  day                          int8          
+ 23  dayofweek                    int8          
+ 24  dayofyear                    int16         
+ 25  is_year_end                  bool          
+ 26  is_year_start                bool          
+ 27  is_quarter_end               bool          
+ 28  is_quarter_start             bool          
+ 29  is_month_end                 bool          
+ 30  is_month_start               bool          
+ 31  is_weekend                   bool          
+ 32  sell_price                   float16       
+ 33  release                      float16       
+ 34  price_max                    float16       
+ 35  price_min                    float16       
+ 36  price_std                    float16       
+ 37  price_mean                   float16       
+ 38  price_nunique                float16       
+ 39  id_nunique_by_price          float16       
+ 40  price_norm                   float16       
+ 41  sales_lag_t28p7              float16       
+ 42  sales_lag_t28p14             float16       
+ 43  sales_roll_mean_t14          float16       
+ 44  sales_roll_std_t14           float16       
+ 45  sales_rolling_ZeroRatio_t14  float16       
+ 46  sales_rolling_ZeroCount_t14  float16       
+ 47  sales_roll_mean_t30          float16       
+ 48  sales_roll_std_t30           float16       
+ 49  sales_rolling_ZeroRatio_t30  float16       
+ 50  sales_rolling_ZeroCount_t30  float16       
+ 51  sales_rolling_skew_t30       float16       
+ 52  sales_rolling_kurt_t30       float16       
+ 53  price_momentum               float16       
+ 54  price_momentum_m             float16       
+ 55  days_from_last_sales         int16         
+dtypes: bool(7), category(9), datetime64[ns](1), float16(23), int16(5), int8(9), object(2)
+memory usage: 2.4+ GB
+
+ None
+Cache Train and Submission Data.
+
+
+--- Train Model ---
+
+
+Load Cached data, features/evaluator.pkl
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1.1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 25,
+    "seed": 42,
+    "learning_rate": 0.075,
+    "subsample": 0.5,
+    "subsample_freq": 1,
+    "feature_fraction": 0.8,
+    "force_row_wise": true,
+    "verbose": -1,
+    "num_threads": 2
+} 
+
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.555526
+[200]	valid_0's WRMSSE: 0.529383
+[300]	valid_0's WRMSSE: 0.526629
+[400]	valid_0's WRMSSE: 0.521068
+[500]	valid_0's WRMSSE: 0.519076
+[600]	valid_0's WRMSSE: 0.520909
+Early stopping, best iteration is:
+[536]	valid_0's WRMSSE: 0.518216
+
+Evaluation:
+Our val RMSE score is 2.117389515329958
+Our val WRMSSE score is 0.518215683716953
+
+
+--- Submission ---
+
+
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.769089  0.705422  0.693018  0.630222   
+1  HOBBIES_1_002_CA_1_validation  0.300834  0.275480  0.264962  0.267648   
+2  HOBBIES_1_003_CA_1_validation  0.323907  0.308002  0.305862  0.308889   
+3  HOBBIES_1_004_CA_1_validation  2.118206  1.941247  1.914897  1.901492   
+4  HOBBIES_1_005_CA_1_validation  1.061375  0.920231  1.011298  1.119450   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.729558  0.829098  0.926780  0.668898  0.727054  0.723160  0.713883   
+1  0.319744  0.383877  0.414360  0.285392  0.278034  0.242809  0.234273   
+2  0.382578  0.509902  0.554876  0.297436  0.290047  0.247764  0.246854   
+3  2.066194  2.730933  3.058911  2.017058  1.919783  1.709627  1.623924   
+4  1.181387  1.508215  1.867073  1.170171  1.334328  1.080415  1.126783   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.781599  0.997009  0.785143  0.746315  0.700534  0.674270  0.700360   
+1  0.274413  0.320181  0.235396  0.175347  0.166197  0.163058  0.165284   
+2  0.306114  0.381022  0.301810  0.216993  0.187966  0.216670  0.264456   
+3  1.897744  2.775783  2.305120  1.990094  1.711423  1.764302  1.685452   
+4  1.203343  1.709677  1.079519  1.264007  1.057678  1.051902  1.064104   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.791138  1.065495  0.977756  0.769108  0.682655  0.664284  0.675394   
+1  0.203910  0.253500  0.258529  0.175402  0.169819  0.210242  0.213451   
+2  0.390011  0.563283  0.604774  0.401623  0.395382  0.365761  0.385709   
+3  2.048537  2.630086  2.828115  2.044290  1.797498  1.709315  1.775990   
+4  1.253712  1.551201  1.512801  1.026086  0.986257  0.929073  0.950748   
+
+        F26       F27       F28  
+0  0.744925  0.946040  0.963583  
+1  0.255128  0.294576  0.264611  
+2  0.471516  0.534582  0.522190  
+3  2.079754  2.818888  2.894947  
+4  1.135051  1.501530  1.625740  

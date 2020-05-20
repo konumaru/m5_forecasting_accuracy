@@ -241,7 +241,9 @@ def days_from_last_sales():
 def get_all_features():
     df = pd.read_pickle('features/melted_and_merged_train.pkl')
 
-    feat_funcs = [sales_lag_and_roll]
+    feat_funcs = [
+        sales_lag_and_roll
+    ]
 
     for f_func in feat_funcs:
         temp_feat_df = f_func()
