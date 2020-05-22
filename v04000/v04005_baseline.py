@@ -213,7 +213,7 @@ def price_simple_feature():
     return dst_df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='days_from_last_sales', use_cache=False)
+@cache_result(filename='days_from_last_sales', use_cache=True)
 def days_from_last_sales():
     # Define variables and dataframes.
     target = TARGET
@@ -222,10 +222,10 @@ def days_from_last_sales():
     srd_df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
     dst_df = pd.DataFrame()
     # Convert target to binary
+    dst_df['id'] = srd_df['id']
     dst_df['non_zero'] = (srd_df[TARGET] > 0)
     # Make lags to prevent any leakage
     dst_df = dst_df.assign(
-        id=srd_df['id'],
         d=srd_df['d'].str.replace('d_', '').astype(int),
         non_zero_lag=dst_df.groupby(['id'])['non_zero'].transform(
             lambda x: x.shift(28).rolling(2000, 1).sum()).fillna(-1)
@@ -338,6 +338,18 @@ def train_valid_split(df, go_back_days=28):
     return df[train_mask], df[eval_mask]
 
 
+@cache_result(filename='train_decayed_weights', use_cache=True)
+def get_decayed_weights(train_data, keep_weight_days=0):
+    max_train_d = train_data['d'].str.replace('d_', '').astype('int').max()
+    weight_map = np.concatenate([
+        [1 for _ in range(keep_weight_days)],
+        [1 - 0.0005 * i for i in range(keep_weight_days, max_train_d)]
+    ], axis=0)
+    weight_map = {f'd_{d+1}': w for d, w in zip(list(range(max_train_d)), weight_map)}
+    weight = train_data['d'].map(weight_map).values
+    return weight
+
+
 class LGBM_Model():
 
     def __init__(
@@ -347,6 +359,8 @@ class LGBM_Model():
         self.target_col = target_col
         self.feature_cols = feature_cols
         self.categorical_cols = categorical_cols
+        self.train_weight = train_weight
+        self.valid_weight = valid_weight
 
         model = self.fit(params, train_param, train_data, valid_data)
 
@@ -356,11 +370,12 @@ class LGBM_Model():
 
     def _convert_dataset(self, train_data, valid_data, save_binary=True):
         train_dataset = lgb.Dataset(
-            train_data[self.feature_cols], train_data[self.target_col],
+            train_data[self.feature_cols], train_data[self.target_col], weight=self.train_weight,
             feature_name=self.feature_cols, categorical_feature=self.categorical_cols
         )
         valid_dataset = lgb.Dataset(
-            valid_data[self.feature_cols], valid_data[self.target_col], reference=train_dataset
+            valid_data[self.feature_cols], valid_data[self.target_col], weight=self.valid_weight,
+            reference=train_dataset
         )
 
         if save_binary:
@@ -464,7 +479,9 @@ def run_train():
         valid_data,
         TARGET,
         features,
-        categoricals
+        categorical_cols=categoricals,
+        train_weight=get_decayed_weights(train_data, keep_weight_days=90),
+        valid_weight=None
     )
 
     dump_pickle(lgb_model, MODEL_PATH)
