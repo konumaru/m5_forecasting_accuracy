@@ -1,0 +1,170 @@
+
+
+--- Load Data and Initial Processing ---
+
+
+Load Cached data, features/parse_calendar.pkl
+Load Cached data, features/parse_sell_prices.pkl
+Load Cached data, features/parse_sales_train.pkl
+
+
+--- Transform ---
+
+
+Load Cached data, features/melted_and_merged_train.pkl
+
+
+--- Feature Engineering ---
+
+
+Load Cached data, features/sales_lag_and_roll.pkl
+Load Cached data, features/price_simple_feature.pkl
+Load Cached data, features/days_from_last_sales.pkl
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 23965140 entries, 0 to 23965139
+Data columns (total 56 columns):
+ #   Column                       Dtype         
+---  ------                       -----         
+ 0   id                           object        
+ 1   item_id                      category      
+ 2   dept_id                      category      
+ 3   cat_id                       category      
+ 4   store_id                     category      
+ 5   state_id                     category      
+ 6   d                            object        
+ 7   sales                        int16         
+ 8   date                         datetime64[ns]
+ 9   wm_yr_wk                     int16         
+ 10  event_name_1                 category      
+ 11  event_type_1                 category      
+ 12  event_name_2                 category      
+ 13  event_type_2                 category      
+ 14  snap_CA                      int8          
+ 15  snap_TX                      int8          
+ 16  snap_WI                      int8          
+ 17  year                         int16         
+ 18  quarter                      int8          
+ 19  month                        int8          
+ 20  week                         int8          
+ 21  weekofyear                   int8          
+ 22  day                          int8          
+ 23  dayofweek                    int8          
+ 24  dayofyear                    int16         
+ 25  is_year_end                  bool          
+ 26  is_year_start                bool          
+ 27  is_quarter_end               bool          
+ 28  is_quarter_start             bool          
+ 29  is_month_end                 bool          
+ 30  is_month_start               bool          
+ 31  is_weekend                   bool          
+ 32  sell_price                   float16       
+ 33  release                      float16       
+ 34  price_max                    float16       
+ 35  price_min                    float16       
+ 36  price_std                    float16       
+ 37  price_mean                   float16       
+ 38  price_nunique                float16       
+ 39  id_nunique_by_price          float16       
+ 40  price_norm                   float16       
+ 41  sales_lag_t28p7              float16       
+ 42  sales_lag_t28p14             float16       
+ 43  sales_roll_mean_t14          float16       
+ 44  sales_roll_std_t14           float16       
+ 45  sales_rolling_ZeroRatio_t14  float16       
+ 46  sales_rolling_ZeroCount_t14  float16       
+ 47  sales_roll_mean_t30          float16       
+ 48  sales_roll_std_t30           float16       
+ 49  sales_rolling_ZeroRatio_t30  float16       
+ 50  sales_rolling_ZeroCount_t30  float16       
+ 51  sales_rolling_skew_t30       float16       
+ 52  sales_rolling_kurt_t30       float16       
+ 53  price_momentum               float16       
+ 54  price_momentum_m             float16       
+ 55  days_from_last_sales         int16         
+dtypes: bool(7), category(9), datetime64[ns](1), float16(23), int16(5), int8(9), object(2)
+memory usage: 2.4+ GB
+
+ None
+Cache Train and Submission Data.
+
+
+--- Train Model ---
+
+
+Load Cached data, features/evaluator.pkl
+Load Cached data, features/train_decayed_weights.pkl
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1.1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 50,
+    "seed": 42,
+    "learning_rate": 0.075,
+    "subsample": 0.8,
+    "subsample_freq": 1,
+    "feature_fraction": 0.8,
+    "force_row_wise": true,
+    "verbose": -1,
+    "num_threads": 2
+} 
+
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py:1117: UserWarning: Overriding the parameters from Reference Dataset.
+  warnings.warn('Overriding the parameters from Reference Dataset.')
+/Users/rui/Documents/repositories/m5_forecasting_accuracy/.venv/lib/python3.8/site-packages/lightgbm/basic.py:929: UserWarning: categorical_column in param dict is overridden.
+  warnings.warn('{} in param dict is overridden.'.format(cat_alias))
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.557388
+[200]	valid_0's WRMSSE: 0.541949
+[300]	valid_0's WRMSSE: 0.53936
+Early stopping, best iteration is:
+[234]	valid_0's WRMSSE: 0.537756
+
+Evaluation:
+Our val RMSE score is 2.115021584134549
+Our val WRMSSE score is 0.5377557736046403
+
+
+--- Submission ---
+
+
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.886868  0.754923  0.756435  0.711020   
+1  HOBBIES_1_002_CA_1_validation  0.301584  0.280072  0.279656  0.280041   
+2  HOBBIES_1_003_CA_1_validation  0.326539  0.313232  0.311311  0.307690   
+3  HOBBIES_1_004_CA_1_validation  1.882652  1.612581  1.600634  1.558075   
+4  HOBBIES_1_005_CA_1_validation  1.056201  0.915235  1.039891  1.138776   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.785792  0.938949  1.047792  0.743970  0.796401  0.804709  0.853787   
+1  0.348675  0.416582  0.435923  0.311138  0.275424  0.254800  0.249927   
+2  0.423731  0.562565  0.635849  0.287661  0.259594  0.238431  0.235909   
+3  2.078651  2.707585  3.063346  2.040780  1.858290  1.627241  1.451957   
+4  1.138004  1.560827  1.820498  1.217658  1.275197  1.078833  1.132838   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.916347  1.236512  0.954625  0.846568  0.770722  0.759710  0.817456   
+1  0.286598  0.323279  0.257684  0.182245  0.180257  0.178309  0.178599   
+2  0.293825  0.364127  0.338897  0.203191  0.181680  0.211338  0.263440   
+3  1.980188  2.539981  2.053992  1.987645  1.633372  1.784239  1.651405   
+4  1.192382  1.568943  1.121916  1.204866  1.055294  1.032422  1.034370   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.955152  1.258805  1.110394  0.884978  0.742763  0.734646  0.751199   
+1  0.208222  0.265226  0.257945  0.187648  0.178544  0.214661  0.215606   
+2  0.388374  0.520583  0.547901  0.401467  0.393022  0.401353  0.361900   
+3  2.018973  2.281427  2.663487  1.963070  1.744540  1.584916  1.691792   
+4  1.216720  1.527551  1.409395  0.999592  0.962974  0.900424  0.920680   
+
+        F26       F27       F28  
+0  0.832596  1.076348  1.066602  
+1  0.266746  0.291170  0.254038  
+2  0.484626  0.467412  0.450319  
+3  2.037219  2.595681  2.802292  
+4  1.070726  1.426473  1.603304  
