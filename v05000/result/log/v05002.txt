@@ -1,0 +1,201 @@
+
+
+--- Transform ---
+
+
+Load Cached data, features/parse_calendar.pkl
+Load Cached data, features/parse_sell_prices.pkl
+Load Cached data, features/parse_sales_train.pkl
+Load Cached data, features/melted_and_merged_train.pkl
+
+
+--- Create Features ---
+
+
+Load Cached data, features/all_data.pkl
+
+
+--- Split Data ---
+
+
+Split all_train_data to features/all_train_data.pkl
+Split eval_data to features/eval_data.pkl
+Split submit_data to features/submit_data.pkl
+
+
+--- Train ---
+
+
+Load Cached data, features/evaluator.pkl
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1.1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 20,
+    "seed": 42,
+    "learning_rate": 0.03,
+    "subsample": 0.8,
+    "subsample_freq": 1,
+    "feature_fraction": 0.8,
+    "force_row_wise": true,
+    "verbose": -1
+}
+
+
+
+Group ID: CA_1
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0872921
+[200]	valid_0's WRMSSE: 0.0876883
+Early stopping, best iteration is:
+[119]	valid_0's WRMSSE: 0.0871199
+
+
+Group ID: CA_2
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0902858
+[200]	valid_0's WRMSSE: 0.0891515
+[300]	valid_0's WRMSSE: 0.0889955
+[400]	valid_0's WRMSSE: 0.0889183
+[500]	valid_0's WRMSSE: 0.0889272
+Early stopping, best iteration is:
+[455]	valid_0's WRMSSE: 0.0889089
+
+
+Group ID: CA_3
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.134776
+[200]	valid_0's WRMSSE: 0.134513
+Early stopping, best iteration is:
+[141]	valid_0's WRMSSE: 0.134113
+
+
+Group ID: CA_4
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0527105
+[200]	valid_0's WRMSSE: 0.0525272
+[300]	valid_0's WRMSSE: 0.0525517
+Early stopping, best iteration is:
+[225]	valid_0's WRMSSE: 0.0525187
+
+
+Group ID: TX_1
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0635652
+[200]	valid_0's WRMSSE: 0.0634129
+Early stopping, best iteration is:
+[165]	valid_0's WRMSSE: 0.0633713
+
+
+Group ID: TX_2
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0765902
+Early stopping, best iteration is:
+[98]	valid_0's WRMSSE: 0.0765836
+
+
+Group ID: TX_3
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0823849
+[200]	valid_0's WRMSSE: 0.0823267
+Early stopping, best iteration is:
+[120]	valid_0's WRMSSE: 0.0822382
+
+
+Group ID: WI_1
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0712995
+[200]	valid_0's WRMSSE: 0.0709209
+Early stopping, best iteration is:
+[163]	valid_0's WRMSSE: 0.0708712
+
+
+Group ID: WI_2
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.114655
+[200]	valid_0's WRMSSE: 0.11266
+[300]	valid_0's WRMSSE: 0.112372
+[400]	valid_0's WRMSSE: 0.112382
+Early stopping, best iteration is:
+[352]	valid_0's WRMSSE: 0.112325
+
+
+Group ID: WI_3
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0710788
+[200]	valid_0's WRMSSE: 0.0705136
+Early stopping, best iteration is:
+[193]	valid_0's WRMSSE: 0.0704871
+
+
+--- Evaluation ---
+
+
+Load Cached data, features/evaluator.pkl
+
+Our val RMSE score is 2.1018569711902813
+Our val WRMSSE score is 0.5861465366392931
+
+
+--- Submission ---
+
+
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  1.014646  0.815220  0.769135  0.724253
+1  HOBBIES_1_002_CA_1_validation  0.397567  0.393999  0.388578  0.383156
+2  HOBBIES_1_003_CA_1_validation  0.449975  0.432608  0.430804  0.430804
+3  HOBBIES_1_004_CA_1_validation  1.970887  1.602318  1.627611  1.538839
+4  HOBBIES_1_005_CA_1_validation  1.056731  0.932810  0.930532  1.032193
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.789908  0.913532  0.994232  0.770046  0.794040  0.828798  0.845429
+1  0.412030  0.451432  0.448666  0.362551  0.339323  0.337627  0.329699
+2  0.474253  0.418829  0.489011  0.333532  0.298068  0.295229  0.347984
+3  1.887160  3.156463  3.266317  1.827520  1.446020  1.520939  1.562661
+4  1.259304  1.526389  1.734697  1.267611  1.302460  1.145343  1.211130
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.863529  1.087382  1.025827  0.890109  0.799964  0.751954  0.815856
+1  0.325128  0.349638  0.345901  0.280805  0.272227  0.272138  0.272138
+2  0.345398  0.396199  0.386499  0.284095  0.269055  0.329012  0.342862
+3  1.657500  2.901153  2.857503  1.698312  1.635212  1.644282  1.544689
+4  1.110879  1.547056  1.247947  1.174511  1.047565  1.147832  1.118994
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.887702  1.049903  1.104467  0.890616  0.913918  0.807138  0.839391
+1  0.280596  0.322801  0.322801  0.278059  0.272138  0.357787  0.302384
+2  0.431887  0.610114  0.661500  0.566769  0.588146  0.603050  0.577195
+3  1.804314  2.838231  3.298307  1.705352  1.593001  1.489214  1.429725
+4  1.084653  1.501981  1.608478  0.966695  0.927977  0.900381  0.915969
+
+        F26       F27       F28
+0  0.816249  1.054709  1.057219
+1  0.305692  0.354024  0.340422
+2  0.685106  0.924528  0.943222
+3  1.758771  2.824023  3.218276
+4  1.053129  1.401032  1.546727
