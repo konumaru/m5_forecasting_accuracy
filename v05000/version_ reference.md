@@ -16,7 +16,17 @@
   - v05002 を踏襲
   - いくつか特徴量を追加する
     - lag 特徴量追加 7, 14,-> 1~14
+    - target encoding
 - v05005
   - v05003 を踏襲
   - いくつか特徴量を追加する
     - lag 特徴量追加 7, 14,-> 1~14
+    - target encoding
+
+### TODO
+- v05006
+  - `train_data[train_data['release'] < 30]` を除去
+- v05007
+  - 特徴量選択
+- v05008
+  - Hierarchical Bayesian Target Encoding の実装
