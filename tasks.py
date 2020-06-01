@@ -49,6 +49,7 @@ def ReduceData():
     SRC_FILES = [
         'calendar.csv',
         'sales_train_validation.csv',
+        'sales_train_evaluation.csv',
         'sample_submission.csv',
         'sell_prices.csv'
     ]
