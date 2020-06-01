@@ -1,0 +1,305 @@
+
+
+--- Transform ---
+
+
+Load Cached data, features/parse_calendar.pkl
+Load Cached data, features/parse_sell_prices.pkl
+Load Cached data, features/parse_sales_train.pkl
+Load Cached data, features/melted_and_merged_train.pkl
+
+
+--- Create Features ---
+
+
+Load Cached data, features/sales_lag_and_roll.pkl
+Load Cached data, features/price_simple_feature.pkl
+Load Cached data, features/days_from_last_sales.pkl
+Load Cached data, features/simple_target_encoding.pkl
+Cache to features/all_data.pkl
+
+
+--- Split Data ---
+
+
+Split all_train_data to features/all_train_data.pkl
+Split eval_data to features/eval_data.pkl
+Split submit_data to features/submit_data.pkl
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 35093990 entries, 0 to 35093989
+Data columns (total 103 columns):
+ #   Column                       Dtype         
+---  ------                       -----         
+ 0   id                           object        
+ 1   item_id                      category      
+ 2   dept_id                      category      
+ 3   cat_id                       category      
+ 4   store_id                     category      
+ 5   state_id                     category      
+ 6   d                            object        
+ 7   sales                        float32       
+ 8   date                         datetime64[ns]
+ 9   wm_yr_wk                     int16         
+ 10  event_name_1                 category      
+ 11  event_type_1                 category      
+ 12  event_name_2                 category      
+ 13  event_type_2                 category      
+ 14  snap_CA                      int8          
+ 15  snap_TX                      int8          
+ 16  snap_WI                      int8          
+ 17  year                         int16         
+ 18  quarter                      int8          
+ 19  month                        int8          
+ 20  week                         int8          
+ 21  weekofyear                   int8          
+ 22  day                          int8          
+ 23  dayofweek                    int8          
+ 24  dayofyear                    int16         
+ 25  is_month_end                 bool          
+ 26  is_month_start               bool          
+ 27  is_weekend                   bool          
+ 28  sell_price                   float16       
+ 29  price_max                    float16       
+ 30  price_min                    float16       
+ 31  price_std                    float16       
+ 32  price_mean                   float16       
+ 33  price_nunique                float16       
+ 34  release                      float16       
+ 35  id_nunique_by_price          float16       
+ 36  price_norm                   float16       
+ 37  sales_lag_t0                 float16       
+ 38  sales_lag_t1                 float16       
+ 39  sales_lag_t2                 float16       
+ 40  sales_lag_t3                 float16       
+ 41  sales_lag_t4                 float16       
+ 42  sales_lag_t5                 float16       
+ 43  sales_lag_t6                 float16       
+ 44  sales_lag_t7                 float16       
+ 45  sales_lag_t8                 float16       
+ 46  sales_lag_t9                 float16       
+ 47  sales_lag_t10                float16       
+ 48  sales_lag_t11                float16       
+ 49  sales_lag_t12                float16       
+ 50  sales_lag_t13                float16       
+ 51  sales_lag_t14                float16       
+ 52  sales_roll_mean_t1_7         float16       
+ 53  sales_roll_std_t1_7          float16       
+ 54  sales_roll_mean_t1_14        float16       
+ 55  sales_roll_std_t1_14         float16       
+ 56  sales_roll_mean_t1_30        float16       
+ 57  sales_roll_std_t1_30         float16       
+ 58  sales_roll_mean_t7_7         float16       
+ 59  sales_roll_std_t7_7          float16       
+ 60  sales_roll_mean_t7_14        float16       
+ 61  sales_roll_std_t7_14         float16       
+ 62  sales_roll_mean_t7_30        float16       
+ 63  sales_roll_std_t7_30         float16       
+ 64  sales_roll_mean_t14_7        float16       
+ 65  sales_roll_std_t14_7         float16       
+ 66  sales_roll_mean_t14_14       float16       
+ 67  sales_roll_std_t14_14        float16       
+ 68  sales_roll_mean_t14_30       float16       
+ 69  sales_roll_std_t14_30        float16       
+ 70  sales_rolling_ZeroRatio_t7   float16       
+ 71  sales_rolling_ZeroCount_t7   float16       
+ 72  sales_rolling_ZeroRatio_t14  float16       
+ 73  sales_rolling_ZeroCount_t14  float16       
+ 74  sales_rolling_ZeroRatio_t30  float16       
+ 75  sales_rolling_ZeroCount_t30  float16       
+ 76  sales_rolling_skew_t30       float16       
+ 77  sales_rolling_kurt_t30       float16       
+ 78  price_momentum               float16       
+ 79  price_momentum_m             float16       
+ 80  days_from_last_sales         int64         
+ 81  enc_state_id_mean            float16       
+ 82  enc_state_id_std             float16       
+ 83  enc_store_id_mean            float16       
+ 84  enc_store_id_std             float16       
+ 85  enc_cat_id_mean              float16       
+ 86  enc_cat_id_std               float16       
+ 87  enc_dept_id_mean             float16       
+ 88  enc_dept_id_std              float16       
+ 89  enc_state_id_cat_id_mean     float16       
+ 90  enc_state_id_cat_id_std      float16       
+ 91  enc_state_id_dept_id_mean    float16       
+ 92  enc_state_id_dept_id_std     float16       
+ 93  enc_store_id_cat_id_mean     float16       
+ 94  enc_store_id_cat_id_std      float16       
+ 95  enc_store_id_dept_id_mean    float16       
+ 96  enc_store_id_dept_id_std     float16       
+ 97  enc_item_id_mean             float16       
+ 98  enc_item_id_std              float16       
+ 99  enc_item_id_state_id_mean    float16       
+ 100 enc_item_id_state_id_std     float16       
+ 101 enc_item_id_store_id_mean    float16       
+ 102 enc_item_id_store_id_std     float16       
+dtypes: bool(3), category(9), datetime64[ns](1), float16(74), float32(1), int16(3), int64(1), int8(9), object(2)
+memory usage: 6.9+ GB
+None
+
+
+--- Train ---
+
+
+Load Cached data, features/evaluator.pkl
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1.1,
+    "metric": "custom",
+    "num_leaves": 2047,
+    "min_data_in_leaf": 20,
+    "seed": 42,
+    "learning_rate": 0.03,
+    "subsample": 0.5,
+    "subsample_freq": 1,
+    "feature_fraction": 0.5,
+    "force_row_wise": true,
+    "verbose": -1
+} 
+
+
+
+Group ID: HOBBIES_1, 1/8
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0432033
+[200]	valid_0's WRMSSE: 0.0409691
+[300]	valid_0's WRMSSE: 0.0405434
+[400]	valid_0's WRMSSE: 0.0404762
+[500]	valid_0's WRMSSE: 0.0404622
+[600]	valid_0's WRMSSE: 0.0404669
+Early stopping, best iteration is:
+[512]	valid_0's WRMSSE: 0.0404594
+
+
+Group ID: HOBBIES_2, 2/8
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00242531
+[200]	valid_0's WRMSSE: 0.00239715
+[300]	valid_0's WRMSSE: 0.00239141
+[400]	valid_0's WRMSSE: 0.00238973
+[500]	valid_0's WRMSSE: 0.00238949
+Early stopping, best iteration is:
+[459]	valid_0's WRMSSE: 0.00238936
+
+
+Group ID: HOUSEHOLD_1, 3/8
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0705496
+[200]	valid_0's WRMSSE: 0.067407
+[300]	valid_0's WRMSSE: 0.0669272
+[400]	valid_0's WRMSSE: 0.0669055
+Early stopping, best iteration is:
+[336]	valid_0's WRMSSE: 0.0668963
+
+
+Group ID: HOUSEHOLD_2, 4/8
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0301082
+[200]	valid_0's WRMSSE: 0.0293571
+[300]	valid_0's WRMSSE: 0.0291938
+[400]	valid_0's WRMSSE: 0.029146
+[500]	valid_0's WRMSSE: 0.0291335
+[600]	valid_0's WRMSSE: 0.029134
+Early stopping, best iteration is:
+[539]	valid_0's WRMSSE: 0.0291312
+
+
+Group ID: FOODS_1, 5/8
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0176809
+[200]	valid_0's WRMSSE: 0.0163499
+[300]	valid_0's WRMSSE: 0.0160562
+[400]	valid_0's WRMSSE: 0.015984
+[500]	valid_0's WRMSSE: 0.015991
+Early stopping, best iteration is:
+[448]	valid_0's WRMSSE: 0.0159799
+
+
+Group ID: FOODS_2, 6/8
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0482806
+[200]	valid_0's WRMSSE: 0.0454513
+[300]	valid_0's WRMSSE: 0.0447316
+[400]	valid_0's WRMSSE: 0.0445274
+[500]	valid_0's WRMSSE: 0.0444642
+[600]	valid_0's WRMSSE: 0.0444825
+Early stopping, best iteration is:
+[539]	valid_0's WRMSSE: 0.0444591
+
+
+Group ID: FOODS_3, 7/8
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0768572
+[200]	valid_0's WRMSSE: 0.0698482
+[300]	valid_0's WRMSSE: 0.0682664
+[400]	valid_0's WRMSSE: 0.0679189
+[500]	valid_0's WRMSSE: 0.0678428
+[600]	valid_0's WRMSSE: 0.0678409
+Early stopping, best iteration is:
+[580]	valid_0's WRMSSE: 0.0678261
+
+
+--- Evaluation ---
+
+
+Load Cached data, features/evaluator.pkl
+
+Our val RMSE score is 2.2570823752986002
+Our val WRMSSE score is 1.4045154619980096
+
+
+--- Submission ---
+
+
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.561324  0.464012  0.487895  0.441621   
+1  HOBBIES_1_002_CA_1_validation  0.255187  0.240521  0.240415  0.255384   
+2  HOBBIES_1_003_CA_1_validation  0.229107  0.211249  0.205365  0.205238   
+3  HOBBIES_1_004_CA_1_validation  1.323252  1.246777  1.335865  1.177352   
+4  HOBBIES_1_005_CA_1_validation  0.794951  0.722658  0.750272  0.851190   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.564050  0.616210  0.563840  0.513691  0.533471  0.534216  0.498574   
+1  0.279191  0.293484  0.304721  0.226209  0.219768  0.200371  0.210304   
+2  0.265115  0.412538  0.456724  0.234341  0.207972  0.199474  0.197159   
+3  1.631499  1.912365  1.921541  1.352476  1.237530  1.199095  1.193175   
+4  0.928658  1.165370  1.278158  0.921493  0.855434  0.861285  0.842062   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.576362  0.667574  0.535696  0.524468  0.533673  0.545748  0.569507   
+1  0.239453  0.288188  0.227292  0.198827  0.215576  0.210198  0.210275   
+2  0.244869  0.341257  0.269352  0.189568  0.186948  0.192865  0.205021   
+3  1.464199  2.356880  2.167982  1.453260  1.240394  1.394600  1.297406   
+4  0.875177  1.173645  0.902968  0.895341  0.809506  0.843911  0.846717   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.567412  0.708440  0.640753  0.577756  0.527128  0.513918  0.580186   
+1  0.219078  0.277503  0.278490  0.213305  0.222750  0.232536  0.210748   
+2  0.277875  0.435331  0.441559  0.296039  0.290978  0.272790  0.293052   
+3  1.567925  1.823294  2.251835  1.486143  1.382719  1.151732  1.144769   
+4  0.839243  1.167872  1.267928  0.748296  0.743285  0.681259  0.691572   
+
+        F26       F27       F28  
+0  0.566485  0.690072  0.658450  
+1  0.217509  0.262811  0.249817  
+2  0.372477  0.472454  0.437008  
+3  1.539261  2.084684  1.985720  
+4  0.803524  1.119590  1.212015  
