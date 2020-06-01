@@ -24,7 +24,7 @@ def CreateNewExperiment():
 
     os.makedirs(new_exp_path, exist_ok=True)
 
-    with open(os.path.join(new_exp_path, 'version_ reference.md'), 'w') as f:
+    with open(os.path.join(new_exp_path, 'version_reference.md'), 'w') as f:
         f.write('# Version Reference')
     print(f'Create {new_exp_path} Experiment Directory')
 
