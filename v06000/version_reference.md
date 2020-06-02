@@ -10,10 +10,14 @@
 - v05012 のコピー
 
 
-## TODO
 ### v06001
 - v05012 のリファクタリング
   - store_id * dept_id ごとのモデリング も行いたい
+  - Public LB の結果はあまり良くない。
+
+
+## TODO
+
 
 ### v06002
 - Evaluation data への対応

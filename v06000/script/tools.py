@@ -63,3 +63,10 @@ def reduce_mem_usage(df, verbose=True):
             )
         )
     return df
+
+
+def get_groups(group_id: tuple):
+    group_id = list(group_id)
+    df = pd.read_pickle('../data/reduced/sales_train_validation.pkl')[group_id]
+    groups = list(df.drop_duplicates().sort_values(by=group_id).to_records(index=False))
+    return groups
