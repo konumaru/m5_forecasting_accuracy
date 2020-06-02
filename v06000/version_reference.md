@@ -9,21 +9,17 @@
 ### v06000
 - v05012 のコピー
 
-
 ### v06001
 - v05012 のリファクタリング
   - store_id * dept_id ごとのモデリング も行いたい
   - Public LB の結果はあまり良くない。
-
-
-## TODO
-
 
 ### v06002
 - Evaluation data への対応
 - IS_TEST フラグによる処理の制御
 
 
+## TODO
 ### v06003
 - Hierarchical Bayesian Target Encoding の実装
   - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
