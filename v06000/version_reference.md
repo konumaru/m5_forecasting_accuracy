@@ -28,14 +28,13 @@
 
 
 ## TODO
-### v06003
 - Target Encodingの対象から、ラベルデータの期間を除く
 - Hierarchical Bayesian Target Encoding の実装
   - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
 
 ### Others
 - 特徴量選択
-- 曜日の集約があるなら、wm_yr_wk の集約特徴量もあり
+- 曜日の集約特徴量
   - これはラグ特徴量も有効
 - アンサンブル
   - https://www.kaggle.com/mmotoki/generalized-weighted-mean
@@ -43,3 +42,5 @@
   - あるGroupで学習したモデルのSEED変更
   - 学習データの期間を変更。（直近2年使う、直近3年間使う、など）
   - 曜日ごとにアンサンブルする
+  - Groupごとにアンサンブル
+- 他の商品に欠品があるか。またその商品数はいくつか。

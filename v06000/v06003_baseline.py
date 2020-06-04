@@ -628,14 +628,15 @@ def run_evaluation():
     print('')
     for f_name, score in scores.items():
         print(f'Our val {f_name} score is {score}')
-    # Export
+    # Export Score and evaluation data
     with open(f'result/score/{VERSION}.json', 'w') as f:
         json.dump(scores, f, indent=4)
-    # TODO: 後でアンサンブルができるように予測ファイルも出力する。
-    pd.DataFrame({
+    dump_filepath = f'result/evaluation/{VERSION}_{scores:.05}.csv.gz'
+    eval_df = pd.DataFrame({
         'id': eval_data['id'].values,
         'pred': valid_pred
-    }).to_csv(f'result/evaluation/{VERSION}.csv.gz', index=False, compression='gzip')
+    })
+    eval_df.to_csv(dump_filepath, index=False, compression='gzip')
 
 
 """ Submission
