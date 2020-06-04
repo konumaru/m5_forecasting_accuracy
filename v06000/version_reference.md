@@ -15,15 +15,23 @@
   - Public LB の結果はあまり良くない。
 
 ### v06002
+- なにやらパラメータがおかしい様子だったので調整
+- モデルをdept_idごとに学習するよう変更
+
+### v06003
+- LBとだいたい同じになることを確認
+- d を int にする。
 - Evaluation data への対応
 - IS_TEST フラグによる処理の制御
+- できていないこと
+  - IS_TEST = False での動作確認
 
 
 ## TODO
 ### v06003
+- Target Encodingの対象から、ラベルデータの期間を除く
 - Hierarchical Bayesian Target Encoding の実装
   - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
-- 上記に合わせて、Target encodingの期間にsubimitデータが含まれていることを修正
 
 ### Others
 - 特徴量選択
@@ -31,3 +39,7 @@
   - これはラグ特徴量も有効
 - アンサンブル
   - https://www.kaggle.com/mmotoki/generalized-weighted-mean
+  - いくつかのGroup別に学習したモデル
+  - あるGroupで学習したモデルのSEED変更
+  - 学習データの期間を変更。（直近2年使う、直近3年間使う、など）
+  - 曜日ごとにアンサンブルする

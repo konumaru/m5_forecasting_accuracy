@@ -38,6 +38,7 @@ from script import get_groups
 
 
 # Define global Variables.
+IS_TEST = True
 SEED = 42
 VERSION = str(__file__).split('_')[0]
 TARGET = 'sales'
@@ -48,7 +49,7 @@ MODEL_PATH = f'result/model/{VERSION}.pkl'
 IMPORTANCE_PATH = f'result/importance/{VERSION}.png'
 SCORE_PATH = f'result/score/{VERSION}.pkl'
 
-GROUP_ID = ('store_id', 'dept_id')  # one version, one group
+GROUP_ID = ('dept_id',)  # one version, one group
 GROUPS = get_groups(GROUP_ID)
 
 """ Transform
@@ -119,7 +120,7 @@ def parse_sell_prices():
 def parse_sales_train():
     train = pd.read_pickle('../data/reduced/sales_train_validation.pkl')
     # Add Prediction Columns
-    start_d = 1914
+    start_d = 1914  # 1915
     end_d = 1969
     for i in range(start_d, end_d + 1):
         train[f'd_{i}'] = 0
@@ -421,9 +422,6 @@ class LGBM_Model():
         self.train_bin_path = 'tmp_train_set.bin'
         self.valid_bin_path = 'tmp_valid_set.bin'
 
-        self._remove_bin_file(self.train_bin_path)
-        self._remove_bin_file(self.valid_bin_path)
-
         train_dataset, valid_dataset = self._convert_dataset(train_data, valid_data)
         model = self.fit(params, train_param, train_dataset, valid_dataset)
         # Remove bin file
@@ -447,7 +445,9 @@ class LGBM_Model():
             weight=self.valid_weight,
             reference=train_dataset
         )
-
+        # Remove Binary Cache.
+        self._remove_bin_file(self.train_bin_path)
+        self._remove_bin_file(self.valid_bin_path)
         # Save Binary Cache.
         train_dataset.save_binary(self.train_bin_path)
         valid_dataset.save_binary(self.valid_bin_path)
@@ -523,8 +523,8 @@ def train_group_models():
             'objective': 'tweedie',  # tweedie, poisson, regression
             'tweedie_variance_power': 1.1,  # 1.0=poisson
             'metric': 'custom',
-            'num_leaves': 2**11 - 1,
-            'min_data_in_leaf': 20,
+            'num_leaves': 2**7 - 1,
+            'min_data_in_leaf': 50,
             'seed': SEED,
             'learning_rate': 0.03,  # 0.1
             'subsample': 0.5,  # ~v05006, 0.8

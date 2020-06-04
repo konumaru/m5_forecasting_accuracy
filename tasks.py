@@ -41,7 +41,7 @@ def CreateNewExperiment():
 
     check_dir_exist(dirs=[
         'features', 'submit', 'result/importance', 'result/score', 'result/log', 'result/model',
-        'result/feature_cols'
+        'result/feature_cols', 'result/evaluation'
     ])
 
 
