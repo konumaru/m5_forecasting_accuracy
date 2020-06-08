@@ -31,16 +31,7 @@
   - ややスコアが上がった
   - `df = df.dropna(subset=['sell_price'])` も必要そうなのでいれてみる。
 
-
-
-
-## TODO
-- Target Encodingの対象から、ラベルデータの期間を除く
-- Hierarchical Bayesian Target Encoding の実装
-  - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
-
 ### Others
-- 特徴量選択
 - アンサンブル
   - https://www.kaggle.com/mmotoki/generalized-weighted-mean
   - いくつかのGroup別に学習したモデル
@@ -48,9 +39,38 @@
   - 学習データの期間を変更。（直近2年使う、直近3年間使う、など）
   - 曜日ごとにアンサンブルする
   - Groupごとにアンサンブル
-- 'max_bin': 100 のパラメータはどれくらい影響があるものだろうか
 - 特徴量案
   - groupごとに、欠品の数・割合。月ごとなどに集約する
   - 売上金額を考慮した特徴量
     - 過去に作った重み計算用の関数が使えるかも。
   - target encoding するときにlog1p変換をしたときの精度の変化
+
+
+## Todo
+- 特徴量を増やす
+  -  Hierarchical Bayesian Target Encoding
+     - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
+  - 休日フラグを作る。
+    - 休日で集約した特徴量
+    - https://www.kaggle.com/c/m5-forecasting-accuracy/discussion/144842
+  - release, days_from_last_sales の集約特徴量
+- 特徴量選択を行う
+  - 案１：各モデルの特徴量重要度の上位70%を使う
+  - 案２：Null importance を利用する
+    - Single model で学習して、特徴量選択を行う感じかなー
+    - 最悪後回し
+- モデルの目的関数についての調査
+  - これ以上なにも思いつかない
+- 学習方法に関して
+  - Train データにおいて、Cross Validation をしてみる
+    - 普通のCVはできないので、直前28, 56日・１年前の3CVを構築するのはやりたい
+  - XGBoost でも学習を行う
+- Ensemble
+  - https://www.kaggle.com/mmotoki/generalized-weighted-mean
+  - 前処理ですべての値をlog1p 変換する
+    - 学習時にlog1pしてうまくいかなかったので、ensenbleでもやらなくてもいいかも？
+  - 上記の手法を使って重みを予測
+  - Stacking じゃなくていいの？
+    - 自分で考えた不安定な手法よりも類似コンペの上位解法を参考にするほうがいいだろう（完）
+    - 平均化はこれつかう
+      - https://www.kaggle.com/mmotoki/generalized-weighted-mean
