@@ -1,0 +1,17 @@
+
+
+--- Transform ---
+
+
+Traceback (most recent call last):
+  File "v06007_baseline.py", line 832, in <module>
+    main()
+  File "v06007_baseline.py", line 810, in main
+    run_trainsform()
+  File "v06007_baseline.py", line 177, in run_trainsform
+    _ = parse_calendar()
+  File "/Users/rui/Documents/repositories/m5_forecasting_accuracy/v06000/script/tools.py", line 25, in run_func
+    result = func(*args, **kwargs)
+  File "v06007_baseline.py", line 105, in parse_calendar
+    cal[f'nwd_{state}'] = (~calendar.date.apply(work_cal.is_working_day))
+NameError: name 'cal' is not defined

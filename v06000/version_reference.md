@@ -37,9 +37,26 @@
 ### v06006
 - id ごとに sales を 99% cliping
 ```
-upperbound, lowerbound = np.percentile(x, [1, 99])
-y = np.clip(x, upperbound, lowerbound)
+def clip_outlier_one_percent(x):
+  non_zero_x = np.copy(x)
+  non_zero_x = non_zero_x[np.argmax(non_zero_x != 0):]
+  lowerbound, upperbound = np.percentile(non_zero_x, [1, 99])
+  x = np.clip(x, lowerbound, upperbound).round()
+  return x
 ```
+
+これはだめな前処理だった。
+データを歪ませるような処理なのだと思われる。
+
+こういった特徴量を入れるならば、平均値との差などがいいかもしれない。
+
+
+### v06007
+- [x] 休日フラグを作る。
+  - 休日で集約した特徴量
+  - https://www.kaggle.com/c/m5-forecasting-accuracy/discussion/144842
+- [ ] sell_price の小数点
+- [ ] sell_price の切り捨て / 切り上げ
 
 
 ### Others
@@ -66,17 +83,14 @@ y = np.clip(x, upperbound, lowerbound)
 ```
 
 ### 特徴量を増やす
-- [ ] Hierarchical Bayesian Target Encoding
-   - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
-- [ ] 休日フラグを作る。
-  - 休日で集約した特徴量
-  - https://www.kaggle.com/c/m5-forecasting-accuracy/discussion/144842
-- [ ] release, days_from_last_sales の集約特徴量'
+
+
 - [ ] is_not_zero
 - [ ] is_over_mean
-- [ ] sell_price の小数点
-- [ ] sell_price の切り捨て / 切り上げ
+- [ ] 休日（休日でない日）ごとのターゲットエンコーディング
 - [ ] id ごとの累積売上個数
+- [ ] Hierarchical Bayesian Target Encoding
+   - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
 - [ ] いくつかの特徴量の次元圧縮
   - PCAよりNMFのほうが木モデルに使いやすい次元縮約をしてくれる
   - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html
