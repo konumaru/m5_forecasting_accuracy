@@ -59,17 +59,17 @@ def clip_outlier_one_percent(x):
 
 
 ### v06008
-
+- [ ] 翌週の休日の数
+- [ ] is_not_zero
+- [ ] is_over_mean
+- [ ] id ごとの累積売上個数
 
 
 
 ## Todo
 ### 特徴量を増やす
-- [ ] 翌週の休日の数
-- [ ] is_not_zero
-- [ ] is_over_mean
+
 - [ ] 休日（休日でない日）ごとのターゲットエンコーディング
-- [ ] id ごとの累積売上個数
 - [ ] Hierarchical Bayesian Target Encoding
    - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
 - [ ] いくつかの特徴量の次元圧縮
