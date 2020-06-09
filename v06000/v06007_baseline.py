@@ -102,7 +102,7 @@ def parse_calendar():
 
     work_cals = {'CA': California(), 'TX': Texas(), 'WI': Wisconsin()}
     for state, work_cal in work_cals.items():
-        cal[f'nwd_{state}'] = (~calendar.date.apply(work_cal.is_working_day))
+        calendar[f'nwd_{state}'] = (~calendar.date.apply(work_cal.is_working_day))
 
     return calendar.pipe(reduce_mem_usage)
 

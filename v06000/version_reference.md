@@ -55,36 +55,17 @@ def clip_outlier_one_percent(x):
 - [x] 休日フラグを作る。
   - 休日で集約した特徴量
   - https://www.kaggle.com/c/m5-forecasting-accuracy/discussion/144842
-- [ ] sell_price の小数点
-- [ ] sell_price の切り捨て / 切り上げ
+- [x] sell_price の小数点と整数の分離特徴量
 
 
-### Others
-- アンサンブル
-  - https://www.kaggle.com/mmotoki/generalized-weighted-mean
-  - いくつかのGroup別に学習したモデル
-  - あるGroupで学習したモデルのSEED変更
-  - 学習データの期間を変更。（直近2年使う、直近3年間使う、など）
-  - 曜日ごとにアンサンブルする
-  - Groupごとにアンサンブル
-- 特徴量案
-  - groupごとに、欠品の数・割合。月ごとなどに集約する
-  - 売上金額を考慮した特徴量
-    - 過去に作った重み計算用の関数が使えるかも。
-  - target encoding するときにlog1p変換をしたときの精度の変化
+### v06008
+
+
 
 
 ## Todo
-### データクリーニング
-- id ごとに sales を 99% cliping
-```
-upperbound, lowerbound = np.percentile(x, [1, 99])
-y = np.clip(x, upperbound, lowerbound)
-```
-
 ### 特徴量を増やす
-
-
+- [ ] 翌週の休日の数
 - [ ] is_not_zero
 - [ ] is_over_mean
 - [ ] 休日（休日でない日）ごとのターゲットエンコーディング
