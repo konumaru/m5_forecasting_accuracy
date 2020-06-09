@@ -273,22 +273,19 @@ def days_from_last_sales():
     shift_days = 28
     use_cols = ['id', 'd', 'sales']
     srd_df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
-    dst_df = pd.DataFrame()
     # Convert target to binary
-    dst_df['id'] = srd_df['id']
-    dst_df['non_zero'] = (srd_df['sales'] > 0)
-    dst_df['d'] = srd_df['d'].str.replace('d_', '').astype(int)
-    dst_df = dst_df.assign(
-        non_zero_lag=dst_df.groupby(['id'])['non_zero'].transform(
+    srd_df['non_zero'] = (srd_df['sales'] > 0)
+    srd_df = srd_df.assign(
+        non_zero_lag=srd_df.groupby(['id'])['non_zero'].transform(
             lambda x: x.shift(28).rolling(2000, 1).sum()).fillna(-1)
     )
 
-    temp_df = dst_df[['id', 'd', 'non_zero_lag']].drop_duplicates(subset=['id', 'non_zero_lag'])
+    temp_df = srd_df[['id', 'd', 'non_zero_lag']].drop_duplicates(subset=['id', 'non_zero_lag'])
     temp_df.columns = ['id', 'd_min', 'non_zero_lag']
 
-    dst_df = dst_df.merge(temp_df, on=['id', 'non_zero_lag'], how='left')
-    dst_df['days_from_last_sales'] = dst_df['d'] - dst_df['d_min']
-    return dst_df[['days_from_last_sales']]
+    srd_df = srd_df.merge(temp_df, on=['id', 'non_zero_lag'], how='left')
+    srd_df['days_from_last_sales'] = srd_df['d'] - srd_df['d_min']
+    return srd_df[['days_from_last_sales']]
 
 
 @cache_result(filename='simple_target_encoding', use_cache=True)
@@ -502,6 +499,7 @@ class WRMSSEForLightGBM(WRMSSEEvaluator):
         return grad, hess
 
 
+@cache_result(filename='evaluator', use_cache=False)
 def get_evaluator():
     df = pd.read_pickle('../data/reduced/sales_train_evaluation.pkl')
     train_df = df.iloc[:, : -28] if IS_TEST else df
@@ -701,7 +699,7 @@ def train_group_models():
         # Save Importance
         IMPORTANCE_PATH = f'result/importance/{VERSION}/{g_id}.png'
         os.makedirs(f'result/importance/{VERSION}', exist_ok=True)
-        lgb_model.save_importance(filepath=IMPORTANCE_PATH, figsize=(18, 25))
+        lgb_model.save_importance(filepath=IMPORTANCE_PATH, figsize=(25, 30))
         # Add Model
         group_models[''.join(g_id)] = lgb_model
     return group_models

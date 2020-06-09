@@ -31,6 +31,11 @@
   - ややスコアが上がった
   - `df = df.dropna(subset=['sell_price'])` も必要そうなのでいれてみる。
 
+### v06005
+- PC 変えた影響か、精度が変わったので一旦保存
+
+
+
 ### Others
 - アンサンブル
   - https://www.kaggle.com/mmotoki/generalized-weighted-mean
@@ -47,26 +52,49 @@
 
 
 ## Todo
-- 特徴量を増やす
-  -  Hierarchical Bayesian Target Encoding
-     - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
-  - 休日フラグを作る。
-    - 休日で集約した特徴量
-    - https://www.kaggle.com/c/m5-forecasting-accuracy/discussion/144842
-  - release, days_from_last_sales の集約特徴量
-- 特徴量選択を行う
-  - 案１：各モデルの特徴量重要度の上位70%を使う
-  - 案２：Null importance を利用する
-    - Single model で学習して、特徴量選択を行う感じかなー
-    - 最悪後回し
-- モデルの目的関数についての調査
-  - これ以上なにも思いつかない
-- 学習方法に関して
-  - Train データにおいて、Cross Validation をしてみる
-    - 普通のCVはできないので、直前28, 56日・１年前の3CVを構築するのはやりたい
-  - XGBoost でも学習を行う
-- Ensemble
-  - https://www.kaggle.com/mmotoki/generalized-weighted-mean
+### データクリーニング
+- id ごとに sales を 99% cliping
+```
+upperbound, lowerbound = np.percentile(x, [1, 99])
+y = np.clip(x, upperbound, lowerbound)
+```
+
+### 特徴量を増やす
+- [ ] Hierarchical Bayesian Target Encoding
+   - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
+- [ ] 休日フラグを作る。
+  - 休日で集約した特徴量
+  - https://www.kaggle.com/c/m5-forecasting-accuracy/discussion/144842
+- release, days_from_last_sales の集約特徴量'
+- is_not_zero
+- is_over_mean
+- sell_price の小数点
+- sell_price の切り捨て / 切り上げ
+- id ごとの累積売上個数
+- いくつかの特徴量の次元圧縮
+  - PCAよりNMFのほうが木モデルに使いやすい次元縮約をしてくれる
+  - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html
+
+### 特徴量選択を行う
+  - 案１
+    - 各モデルの特徴量重要度の上位70%を使う
+  - 案２
+    - Null importance を利用する
+      - Single model で学習して、特徴量選択を行う感じかなー
+      - 最悪後回し
+  - 案３：
+    - Ridge 回帰を使ってR^2係数から変数の説明力を確認する
+
+### モデルの目的関数についての調査
+- これ以上なにも思いつかない
+
+### 学習方法に関して
+- [ ] Train データにおいて、Cross Validation をしてみる
+  - 普通のCVはできないので、直前28, 56日・１年前の3CVを構築するのはやりたい
+- [ ] XGBoost でも学習を行う
+
+### Ensemble
+- [ ] https://www.kaggle.com/mmotoki/generalized-weighted-mean
   - 前処理ですべての値をlog1p 変換する
     - 学習時にlog1pしてうまくいかなかったので、ensenbleでもやらなくてもいいかも？
   - 上記の手法を使って重みを予測
