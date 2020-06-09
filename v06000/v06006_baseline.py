@@ -126,6 +126,15 @@ def parse_sales_train():
     end_d = 1969
     for i in range(start_d, end_d + 1):
         train[f'd_{i}'] = 0
+    # Clip sales data 1 ~ 99%
+
+    def clip_outlier_one_percent(x):
+        non_zero_x = np.copy(x)
+        non_zero_x = non_zero_x[np.argmax(non_zero_x != 0):]
+        lowerbound, upperbound = np.percentile(non_zero_x, [1, 99])
+        x = np.clip(x, lowerbound, upperbound).round()
+        return x
+    train.iloc[:, 6:] = train.iloc[:, 6:].apply(clip_outlier_one_percent)
     return train
 
 
