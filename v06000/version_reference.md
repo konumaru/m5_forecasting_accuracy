@@ -34,6 +34,12 @@
 ### v06005
 - PC 変えた影響か、精度が変わったので一旦保存
 
+### v06006
+- id ごとに sales を 99% cliping
+```
+upperbound, lowerbound = np.percentile(x, [1, 99])
+y = np.clip(x, upperbound, lowerbound)
+```
 
 
 ### Others
@@ -65,25 +71,18 @@ y = np.clip(x, upperbound, lowerbound)
 - [ ] 休日フラグを作る。
   - 休日で集約した特徴量
   - https://www.kaggle.com/c/m5-forecasting-accuracy/discussion/144842
-- release, days_from_last_sales の集約特徴量'
-- is_not_zero
-- is_over_mean
-- sell_price の小数点
-- sell_price の切り捨て / 切り上げ
-- id ごとの累積売上個数
-- いくつかの特徴量の次元圧縮
+- [ ] release, days_from_last_sales の集約特徴量'
+- [ ] is_not_zero
+- [ ] is_over_mean
+- [ ] sell_price の小数点
+- [ ] sell_price の切り捨て / 切り上げ
+- [ ] id ごとの累積売上個数
+- [ ] いくつかの特徴量の次元圧縮
   - PCAよりNMFのほうが木モデルに使いやすい次元縮約をしてくれる
   - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html
 
 ### 特徴量選択を行う
-  - 案１
-    - 各モデルの特徴量重要度の上位70%を使う
-  - 案２
-    - Null importance を利用する
-      - Single model で学習して、特徴量選択を行う感じかなー
-      - 最悪後回し
-  - 案３：
-    - Ridge 回帰を使ってR^2係数から変数の説明力を確認する
+- Ridge 回帰を使ってR^2係数から変数の説明力を確認する
 
 ### モデルの目的関数についての調査
 - これ以上なにも思いつかない

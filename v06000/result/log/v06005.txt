@@ -26,156 +26,156 @@ Cache to features/all_data.pkl
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 35093990 entries, 0 to 35093989
 Data columns (total 145 columns):
- #   Column                                                    Dtype         
----  ------                                                    -----         
- 0   id                                                        object        
- 1   item_id                                                   category      
- 2   dept_id                                                   category      
- 3   cat_id                                                    category      
- 4   store_id                                                  category      
- 5   state_id                                                  category      
- 6   d                                                         int16         
- 7   sales                                                     int16         
+ #   Column                                                    Dtype
+---  ------                                                    -----
+ 0   id                                                        object
+ 1   item_id                                                   category
+ 2   dept_id                                                   category
+ 3   cat_id                                                    category
+ 4   store_id                                                  category
+ 5   state_id                                                  category
+ 6   d                                                         int16
+ 7   sales                                                     int16
  8   date                                                      datetime64[ns]
- 9   wm_yr_wk                                                  int16         
- 10  event_name_1                                              category      
- 11  event_type_1                                              category      
- 12  event_name_2                                              category      
- 13  event_type_2                                              category      
- 14  snap_CA                                                   int8          
- 15  snap_TX                                                   int8          
- 16  snap_WI                                                   int8          
- 17  year                                                      int16         
- 18  quarter                                                   int8          
- 19  month                                                     int8          
- 20  week                                                      int8          
- 21  weekofyear                                                int8          
- 22  day                                                       int8          
- 23  dayofweek                                                 int8          
- 24  dayofyear                                                 int16         
- 25  is_month_end                                              bool          
- 26  is_month_start                                            bool          
- 27  is_weekend                                                bool          
- 28  sell_price                                                float16       
- 29  price_max                                                 float16       
- 30  price_min                                                 float16       
- 31  price_std                                                 float16       
- 32  price_mean                                                float16       
- 33  price_nunique                                             float16       
- 34  release                                                   float16       
- 35  id_nunique_by_price                                       float16       
- 36  price_norm                                                float16       
- 37  sales_lag_t0                                              float16       
- 38  sales_lag_t1                                              float16       
- 39  sales_lag_t2                                              float16       
- 40  sales_lag_t3                                              float16       
- 41  sales_lag_t4                                              float16       
- 42  sales_lag_t5                                              float16       
- 43  sales_lag_t6                                              float16       
- 44  sales_lag_t7                                              float16       
- 45  sales_lag_t8                                              float16       
- 46  sales_lag_t9                                              float16       
- 47  sales_lag_t10                                             float16       
- 48  sales_lag_t11                                             float16       
- 49  sales_lag_t12                                             float16       
- 50  sales_lag_t13                                             float16       
- 51  sales_lag_t14                                             float16       
- 52  sales_roll_mean_t1_7                                      float16       
- 53  sales_roll_std_t1_7                                       float16       
- 54  sales_roll_mean_t1_14                                     float16       
- 55  sales_roll_std_t1_14                                      float16       
- 56  sales_roll_mean_t1_30                                     float16       
- 57  sales_roll_std_t1_30                                      float16       
- 58  sales_roll_mean_t7_7                                      float16       
- 59  sales_roll_std_t7_7                                       float16       
- 60  sales_roll_mean_t7_14                                     float16       
- 61  sales_roll_std_t7_14                                      float16       
- 62  sales_roll_mean_t7_30                                     float16       
- 63  sales_roll_std_t7_30                                      float16       
- 64  sales_roll_mean_t14_7                                     float16       
- 65  sales_roll_std_t14_7                                      float16       
- 66  sales_roll_mean_t14_14                                    float16       
- 67  sales_roll_std_t14_14                                     float16       
- 68  sales_roll_mean_t14_30                                    float16       
- 69  sales_roll_std_t14_30                                     float16       
- 70  sales_rolling_ZeroRatio_t7                                float16       
- 71  sales_rolling_ZeroCount_t7                                float16       
- 72  sales_rolling_ZeroRatio_t14                               float16       
- 73  sales_rolling_ZeroCount_t14                               float16       
- 74  sales_rolling_ZeroRatio_t30                               float16       
- 75  sales_rolling_ZeroCount_t30                               float16       
- 76  sales_rolling_skew_t30                                    float16       
- 77  sales_rolling_kurt_t30                                    float16       
- 78  price_momentum                                            float16       
- 79  price_momentum_m                                          float16       
- 80  days_from_last_sales                                      int16         
- 81  enc_sales_mean_by_state_id                                float16       
- 82  enc_sales_std_by_state_id                                 float16       
- 83  enc_sales_mean_by_store_id                                float16       
- 84  enc_sales_std_by_store_id                                 float16       
- 85  enc_sales_mean_by_cat_id                                  float16       
- 86  enc_sales_std_by_cat_id                                   float16       
- 87  enc_sales_mean_by_dept_id                                 float16       
- 88  enc_sales_std_by_dept_id                                  float16       
- 89  enc_sales_mean_by_state_id_cat_id                         float16       
- 90  enc_sales_std_by_state_id_cat_id                          float16       
- 91  enc_sales_mean_by_state_id_dept_id                        float16       
- 92  enc_sales_std_by_state_id_dept_id                         float16       
- 93  enc_sales_mean_by_store_id_cat_id                         float16       
- 94  enc_sales_std_by_store_id_cat_id                          float16       
- 95  enc_sales_mean_by_store_id_dept_id                        float16       
- 96  enc_sales_std_by_store_id_dept_id                         float16       
- 97  enc_sales_mean_by_item_id                                 float16       
- 98  enc_sales_std_by_item_id                                  float16       
- 99  enc_sales_mean_by_item_id_state_id                        float16       
- 100 enc_sales_std_by_item_id_state_id                         float16       
- 101 enc_sales_mean_by_item_id_store_id                        float16       
- 102 enc_sales_std_by_item_id_store_id                         float16       
- 103 enc_sales_mean_by_store_id_dayofweek                      float16       
- 104 enc_sales_std_by_store_id_dayofweek                       float16       
- 105 enc_sales_mean_by_dept_id_dayofweek                       float16       
- 106 enc_sales_std_by_dept_id_dayofweek                        float16       
- 107 enc_sales_mean_by_item_id_dayofweek                       float16       
- 108 enc_sales_std_by_item_id_dayofweek                        float16       
- 109 enc_sales_mean_by_store_id_dept_id_dayofweek              float16       
- 110 enc_sales_std_by_store_id_dept_id_dayofweek               float16       
- 111 enc_sales_mean_by_store_id_item_id_dayofweek              float16       
- 112 enc_sales_std_by_store_id_item_id_dayofweek               float16       
- 113 enc_sales_times_price_mean_by_state_id                    float16       
- 114 enc_sales_times_price_std_by_state_id                     float16       
- 115 enc_sales_times_price_mean_by_store_id                    float16       
- 116 enc_sales_times_price_std_by_store_id                     float16       
- 117 enc_sales_times_price_mean_by_cat_id                      float16       
- 118 enc_sales_times_price_std_by_cat_id                       float16       
- 119 enc_sales_times_price_mean_by_dept_id                     float16       
- 120 enc_sales_times_price_std_by_dept_id                      float16       
- 121 enc_sales_times_price_mean_by_state_id_cat_id             float16       
- 122 enc_sales_times_price_std_by_state_id_cat_id              float16       
- 123 enc_sales_times_price_mean_by_state_id_dept_id            float16       
- 124 enc_sales_times_price_std_by_state_id_dept_id             float16       
- 125 enc_sales_times_price_mean_by_store_id_cat_id             float16       
- 126 enc_sales_times_price_std_by_store_id_cat_id              float16       
- 127 enc_sales_times_price_mean_by_store_id_dept_id            float16       
- 128 enc_sales_times_price_std_by_store_id_dept_id             float16       
- 129 enc_sales_times_price_mean_by_item_id                     float16       
- 130 enc_sales_times_price_std_by_item_id                      float16       
- 131 enc_sales_times_price_mean_by_item_id_state_id            float16       
- 132 enc_sales_times_price_std_by_item_id_state_id             float16       
- 133 enc_sales_times_price_mean_by_item_id_store_id            float16       
- 134 enc_sales_times_price_std_by_item_id_store_id             float16       
- 135 enc_sales_times_price_mean_by_store_id_dayofweek          float16       
- 136 enc_sales_times_price_std_by_store_id_dayofweek           float16       
- 137 enc_sales_times_price_mean_by_dept_id_dayofweek           float16       
- 138 enc_sales_times_price_std_by_dept_id_dayofweek            float16       
- 139 enc_sales_times_price_mean_by_item_id_dayofweek           float16       
- 140 enc_sales_times_price_std_by_item_id_dayofweek            float16       
- 141 enc_sales_times_price_mean_by_store_id_dept_id_dayofweek  float16       
- 142 enc_sales_times_price_std_by_store_id_dept_id_dayofweek   float16       
- 143 enc_sales_times_price_mean_by_store_id_item_id_dayofweek  float16       
- 144 enc_sales_times_price_std_by_store_id_item_id_dayofweek   float16       
+ 9   wm_yr_wk                                                  int16
+ 10  event_name_1                                              category
+ 11  event_type_1                                              category
+ 12  event_name_2                                              category
+ 13  event_type_2                                              category
+ 14  snap_CA                                                   int8
+ 15  snap_TX                                                   int8
+ 16  snap_WI                                                   int8
+ 17  year                                                      int16
+ 18  quarter                                                   int8
+ 19  month                                                     int8
+ 20  week                                                      int8
+ 21  weekofyear                                                int8
+ 22  day                                                       int8
+ 23  dayofweek                                                 int8
+ 24  dayofyear                                                 int16
+ 25  is_month_end                                              bool
+ 26  is_month_start                                            bool
+ 27  is_weekend                                                bool
+ 28  sell_price                                                float16
+ 29  price_max                                                 float16
+ 30  price_min                                                 float16
+ 31  price_std                                                 float16
+ 32  price_mean                                                float16
+ 33  price_nunique                                             float16
+ 34  release                                                   float16
+ 35  id_nunique_by_price                                       float16
+ 36  price_norm                                                float16
+ 37  sales_lag_t0                                              float16
+ 38  sales_lag_t1                                              float16
+ 39  sales_lag_t2                                              float16
+ 40  sales_lag_t3                                              float16
+ 41  sales_lag_t4                                              float16
+ 42  sales_lag_t5                                              float16
+ 43  sales_lag_t6                                              float16
+ 44  sales_lag_t7                                              float16
+ 45  sales_lag_t8                                              float16
+ 46  sales_lag_t9                                              float16
+ 47  sales_lag_t10                                             float16
+ 48  sales_lag_t11                                             float16
+ 49  sales_lag_t12                                             float16
+ 50  sales_lag_t13                                             float16
+ 51  sales_lag_t14                                             float16
+ 52  sales_roll_mean_t1_7                                      float16
+ 53  sales_roll_std_t1_7                                       float16
+ 54  sales_roll_mean_t1_14                                     float16
+ 55  sales_roll_std_t1_14                                      float16
+ 56  sales_roll_mean_t1_30                                     float16
+ 57  sales_roll_std_t1_30                                      float16
+ 58  sales_roll_mean_t7_7                                      float16
+ 59  sales_roll_std_t7_7                                       float16
+ 60  sales_roll_mean_t7_14                                     float16
+ 61  sales_roll_std_t7_14                                      float16
+ 62  sales_roll_mean_t7_30                                     float16
+ 63  sales_roll_std_t7_30                                      float16
+ 64  sales_roll_mean_t14_7                                     float16
+ 65  sales_roll_std_t14_7                                      float16
+ 66  sales_roll_mean_t14_14                                    float16
+ 67  sales_roll_std_t14_14                                     float16
+ 68  sales_roll_mean_t14_30                                    float16
+ 69  sales_roll_std_t14_30                                     float16
+ 70  sales_rolling_ZeroRatio_t7                                float16
+ 71  sales_rolling_ZeroCount_t7                                float16
+ 72  sales_rolling_ZeroRatio_t14                               float16
+ 73  sales_rolling_ZeroCount_t14                               float16
+ 74  sales_rolling_ZeroRatio_t30                               float16
+ 75  sales_rolling_ZeroCount_t30                               float16
+ 76  sales_rolling_skew_t30                                    float16
+ 77  sales_rolling_kurt_t30                                    float16
+ 78  price_momentum                                            float16
+ 79  price_momentum_m                                          float16
+ 80  days_from_last_sales                                      int16
+ 81  enc_sales_mean_by_state_id                                float16
+ 82  enc_sales_std_by_state_id                                 float16
+ 83  enc_sales_mean_by_store_id                                float16
+ 84  enc_sales_std_by_store_id                                 float16
+ 85  enc_sales_mean_by_cat_id                                  float16
+ 86  enc_sales_std_by_cat_id                                   float16
+ 87  enc_sales_mean_by_dept_id                                 float16
+ 88  enc_sales_std_by_dept_id                                  float16
+ 89  enc_sales_mean_by_state_id_cat_id                         float16
+ 90  enc_sales_std_by_state_id_cat_id                          float16
+ 91  enc_sales_mean_by_state_id_dept_id                        float16
+ 92  enc_sales_std_by_state_id_dept_id                         float16
+ 93  enc_sales_mean_by_store_id_cat_id                         float16
+ 94  enc_sales_std_by_store_id_cat_id                          float16
+ 95  enc_sales_mean_by_store_id_dept_id                        float16
+ 96  enc_sales_std_by_store_id_dept_id                         float16
+ 97  enc_sales_mean_by_item_id                                 float16
+ 98  enc_sales_std_by_item_id                                  float16
+ 99  enc_sales_mean_by_item_id_state_id                        float16
+ 100 enc_sales_std_by_item_id_state_id                         float16
+ 101 enc_sales_mean_by_item_id_store_id                        float16
+ 102 enc_sales_std_by_item_id_store_id                         float16
+ 103 enc_sales_mean_by_store_id_dayofweek                      float16
+ 104 enc_sales_std_by_store_id_dayofweek                       float16
+ 105 enc_sales_mean_by_dept_id_dayofweek                       float16
+ 106 enc_sales_std_by_dept_id_dayofweek                        float16
+ 107 enc_sales_mean_by_item_id_dayofweek                       float16
+ 108 enc_sales_std_by_item_id_dayofweek                        float16
+ 109 enc_sales_mean_by_store_id_dept_id_dayofweek              float16
+ 110 enc_sales_std_by_store_id_dept_id_dayofweek               float16
+ 111 enc_sales_mean_by_store_id_item_id_dayofweek              float16
+ 112 enc_sales_std_by_store_id_item_id_dayofweek               float16
+ 113 enc_sales_times_price_mean_by_state_id                    float16
+ 114 enc_sales_times_price_std_by_state_id                     float16
+ 115 enc_sales_times_price_mean_by_store_id                    float16
+ 116 enc_sales_times_price_std_by_store_id                     float16
+ 117 enc_sales_times_price_mean_by_cat_id                      float16
+ 118 enc_sales_times_price_std_by_cat_id                       float16
+ 119 enc_sales_times_price_mean_by_dept_id                     float16
+ 120 enc_sales_times_price_std_by_dept_id                      float16
+ 121 enc_sales_times_price_mean_by_state_id_cat_id             float16
+ 122 enc_sales_times_price_std_by_state_id_cat_id              float16
+ 123 enc_sales_times_price_mean_by_state_id_dept_id            float16
+ 124 enc_sales_times_price_std_by_state_id_dept_id             float16
+ 125 enc_sales_times_price_mean_by_store_id_cat_id             float16
+ 126 enc_sales_times_price_std_by_store_id_cat_id              float16
+ 127 enc_sales_times_price_mean_by_store_id_dept_id            float16
+ 128 enc_sales_times_price_std_by_store_id_dept_id             float16
+ 129 enc_sales_times_price_mean_by_item_id                     float16
+ 130 enc_sales_times_price_std_by_item_id                      float16
+ 131 enc_sales_times_price_mean_by_item_id_state_id            float16
+ 132 enc_sales_times_price_std_by_item_id_state_id             float16
+ 133 enc_sales_times_price_mean_by_item_id_store_id            float16
+ 134 enc_sales_times_price_std_by_item_id_store_id             float16
+ 135 enc_sales_times_price_mean_by_store_id_dayofweek          float16
+ 136 enc_sales_times_price_std_by_store_id_dayofweek           float16
+ 137 enc_sales_times_price_mean_by_dept_id_dayofweek           float16
+ 138 enc_sales_times_price_std_by_dept_id_dayofweek            float16
+ 139 enc_sales_times_price_mean_by_item_id_dayofweek           float16
+ 140 enc_sales_times_price_std_by_item_id_dayofweek            float16
+ 141 enc_sales_times_price_mean_by_store_id_dept_id_dayofweek  float16
+ 142 enc_sales_times_price_std_by_store_id_dept_id_dayofweek   float16
+ 143 enc_sales_times_price_mean_by_store_id_item_id_dayofweek  float16
+ 144 enc_sales_times_price_std_by_store_id_item_id_dayofweek   float16
 dtypes: bool(3), category(9), datetime64[ns](1), float16(116), int16(6), int8(9), object(1)
 memory usage: 9.2+ GB
-None 
+None
 
 Split all_train_data to features/all_train_data.pkl
 Split eval_data to features/eval_data.pkl
@@ -207,7 +207,7 @@ Parameters:
     "feature_fraction": 0.5,
     "force_row_wise": true,
     "verbose": -1
-} 
+}
 
 
 
@@ -296,36 +296,36 @@ Our val WRMSSE score is 0.5812449890937936
 
 (60980, 29)
                               id        F1        F2        F3        F4  \
-0  HOBBIES_1_001_CA_1_validation  0.733744  0.852997  0.651318  0.695710   
-1  HOBBIES_1_002_CA_1_validation  0.316375  0.349500  0.355411  0.366591   
-2  HOBBIES_1_003_CA_1_validation  0.316123  0.356369  0.352033  0.371932   
-3  HOBBIES_1_004_CA_1_validation  1.931942  1.367168  1.447507  1.664479   
-4  HOBBIES_1_005_CA_1_validation  1.011064  0.962781  1.049109  1.166532   
+0  HOBBIES_1_001_CA_1_validation  0.733744  0.852997  0.651318  0.695710
+1  HOBBIES_1_002_CA_1_validation  0.316375  0.349500  0.355411  0.366591
+2  HOBBIES_1_003_CA_1_validation  0.316123  0.356369  0.352033  0.371932
+3  HOBBIES_1_004_CA_1_validation  1.931942  1.367168  1.447507  1.664479
+4  HOBBIES_1_005_CA_1_validation  1.011064  0.962781  1.049109  1.166532
 
          F5        F6        F7        F8        F9       F10       F11  \
-0  0.794650  0.994807  0.829812  0.665808  0.790241  0.615068  0.656221   
-1  0.376898  0.419935  0.349176  0.303943  0.323570  0.321676  0.333480   
-2  0.481500  0.621929  0.494746  0.307581  0.331049  0.316857  0.340668   
-3  2.004202  2.928058  3.437828  1.791135  1.367585  1.473731  1.696078   
-4  1.199069  1.500262  1.636952  1.150628  1.125253  1.110517  1.143179   
+0  0.794650  0.994807  0.829812  0.665808  0.790241  0.615068  0.656221
+1  0.376898  0.419935  0.349176  0.303943  0.323570  0.321676  0.333480
+2  0.481500  0.621929  0.494746  0.307581  0.331049  0.316857  0.340668
+3  2.004202  2.928058  3.437828  1.791135  1.367585  1.473731  1.696078
+4  1.199069  1.500262  1.636952  1.150628  1.125253  1.110517  1.143179
 
         F12       F13       F14       F15       F16       F17       F18  \
-0  0.783234  1.038879  0.827108  0.711790  0.795498  0.611036  0.657145   
-1  0.334884  0.381550  0.298096  0.270241  0.300076  0.305916  0.312962   
-2  0.450560  0.602038  0.420937  0.278202  0.307688  0.314774  0.350605   
-3  1.769090  3.230852  2.996703  1.695564  1.309291  1.494019  1.730144   
-4  1.128075  1.529858  1.412127  1.125597  1.038656  1.131610  1.142678   
+0  0.783234  1.038879  0.827108  0.711790  0.795498  0.611036  0.657145
+1  0.334884  0.381550  0.298096  0.270241  0.300076  0.305916  0.312962
+2  0.450560  0.602038  0.420937  0.278202  0.307688  0.314774  0.350605
+3  1.769090  3.230852  2.996703  1.695564  1.309291  1.494019  1.730144
+4  1.128075  1.529858  1.412127  1.125597  1.038656  1.131610  1.142678
 
         F19       F20       F21       F22       F23       F24       F25  \
-0  0.778089  1.089029  0.923816  0.722462  0.838209  0.634717  0.687841   
-1  0.323521  0.380231  0.312205  0.267372  0.293617  0.303340  0.309374   
-2  0.482230  0.705421  0.523392  0.354154  0.414854  0.415233  0.450797   
-3  1.877335  2.797899  3.415761  1.760924  1.356297  1.346634  1.647390   
-4  1.116289  1.561566  1.600841  1.003960  0.953839  1.009949  1.033297   
+0  0.778089  1.089029  0.923816  0.722462  0.838209  0.634717  0.687841
+1  0.323521  0.380231  0.312205  0.267372  0.293617  0.303340  0.309374
+2  0.482230  0.705421  0.523392  0.354154  0.414854  0.415233  0.450797
+3  1.877335  2.797899  3.415761  1.760924  1.356297  1.346634  1.647390
+4  1.116289  1.561566  1.600841  1.003960  0.953839  1.009949  1.033297
 
-        F26       F27       F28  
-0  0.766755  1.062208  0.887570  
-1  0.320548  0.377824  0.306932  
-2  0.586054  0.796307  0.602158  
-3  1.876407  3.225777  3.391505  
-4  1.084777  1.590162  1.649216  
+        F26       F27       F28
+0  0.766755  1.062208  0.887570
+1  0.320548  0.377824  0.306932
+2  0.586054  0.796307  0.602158
+3  1.876407  3.225777  3.391505
+4  1.084777  1.590162  1.649216
