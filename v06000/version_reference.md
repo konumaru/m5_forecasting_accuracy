@@ -72,22 +72,17 @@ def clip_outlier_one_percent(x):
   - あるカテゴリにおいて、自身（id）は平均よりも高いかどうか
 
 ### v06009
-- [ ] 休日（休日でない日）ごとのターゲットエンコーディング
-- [ ] Hierarchical Bayesian Target Encoding
+- [x] 休日（休日でない日）ごとのターゲットエンコーディング
+- [x] Hierarchical Bayesian Target Encoding
    - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
 
 
 ## Todo
-### 特徴量を増やす
-- [ ] いくつかの特徴量の次元圧縮
-  - PCAよりNMFのほうが木モデルに使いやすい次元縮約をしてくれる
-  - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html
-
 ### 特徴量選択を行う
 - [ ] Ridge 回帰を使ってR^2係数から変数の説明力を確認する
 
-### モデルの目的関数についての調査
-- これ以上なにも思いつかない
+### モデルに関して
+- 正則化について導入したい
 
 ### 学習方法に関して
 - [ ] Train データにおいて、Cross Validation をしてみる
@@ -103,3 +98,9 @@ def clip_outlier_one_percent(x):
     - 自分で考えた不安定な手法よりも類似コンペの上位解法を参考にするほうがいいだろう（完）
     - 平均化はこれつかう
       - https://www.kaggle.com/mmotoki/generalized-weighted-mean
+
+### Next Todo
+#### 特徴量を増やす
+- [ ] いくつかの特徴量の次元圧縮
+  - PCAよりNMFのほうが木モデルに使いやすい次元縮約をしてくれる
+  - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html

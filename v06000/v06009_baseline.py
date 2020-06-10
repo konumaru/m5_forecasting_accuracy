@@ -102,8 +102,6 @@ def parse_calendar():
     calendar["is_weekend"] = calendar["dayofweek"].isin([5, 6]).astype(np.bool)
 
     work_cals = {'CA': California(), 'TX': Texas(), 'WI': Wisconsin()}
-    for state, work_cal in work_cals.items():
-        calendar[f'nwd_{state}'] = (~calendar.date.apply(work_cal.is_working_day)).astype(int)
     # 休日フラグを未来に向かって rolling.sum() する。
     holiday_df = pd.DataFrame({'date': pd.date_range(start='2011-01-29', end='2016-07-30')})
     for state, work_cal in work_cals.items():
@@ -115,7 +113,6 @@ def parse_calendar():
             f'nwd_{state}_rolling_t14': reversed_holiday_df[f'nwd_{state}'].rolling(14).sum(),
             f'nwd_{state}_rolling_t28': reversed_holiday_df[f'nwd_{state}'].rolling(28).sum()
         })
-    holiday_df.drop([f'nwd_{state}' for state in ['CA', 'TX', 'WI']], axis=1, inplace=True)
 
     calendar = calendar.merge(holiday_df, how='left', on='date')
     return calendar.pipe(reduce_mem_usage)
@@ -202,7 +199,7 @@ Output: all_train_data, eval_data, submit_data
 """
 
 
-@cache_result(filename='sales_lag_and_roll', use_cache=False)
+@cache_result(filename='sales_lag_and_roll', use_cache=True)
 def sales_lag_and_roll():
     # Define variables and dataframes.
     shift_days = 28
@@ -326,13 +323,13 @@ def days_from_last_sales():
     return srd_df[['days_from_last_sales']]
 
 
-@cache_result(filename='simple_target_encoding', use_cache=True)
+@cache_result(filename='simple_target_encoding', use_cache=False)
 def simple_target_encoding():
     # Define variables and dataframes.
     shift_days = 28
     use_cols = [
         'id', 'd', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id',
-        'sales', 'sell_price', 'dayofweek'
+        'sales', 'sell_price', 'dayofweek', 'nwd_CA', 'nwd_TX', 'nwd_WI'
     ]
     df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
     dst_idx = df[['id', 'dayofweek']].to_records(index=False).tolist()
@@ -359,7 +356,11 @@ def simple_target_encoding():
         ['dept_id', 'dayofweek'],
         ['item_id', 'dayofweek'],
         ['store_id', 'dept_id', 'dayofweek'],
-        ['store_id', 'item_id', 'dayofweek']
+        ['store_id', 'item_id', 'dayofweek'],
+        # holiday
+        ['store_id', 'item_id', 'nwd_CA'],
+        ['store_id', 'item_id', 'nwd_TX'],
+        ['store_id', 'item_id', 'nwd_WI'],
     ]
 
     features = []
@@ -436,23 +437,44 @@ def simple_total_sales_encoding():
     return df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='nex_days_holiday_count', use_cache=False)
-def nex_days_holiday_count():
-    # is_weekend
-    holiday_cols = ['nwd_CA', 'nwd_TX', 'nwd_WI']
-    use_cols = ['id', 'is_weekend'] + holiday_cols
-    srd_df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
+@cache_result(filename='hierarchical_bayesian_target_encoding', use_cache=True)
+def hierarchical_bayesian_target_encoding():
+    use_cols = ['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id', 'sales', 'sell_price']
+    df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
 
-    agg_funcs = {}
-    grouped_df = srd_df.groupby('id')
-    for c in holiday_cols:
-        for i in [7, 14, 28]:
-            agg_funcs[f'next_{i}days_{c}_holiday_count'] = grouped_df[c].transform(
-                lambda x: x.rolling(-i).sum())
+    isnan_sell_price = df['sell_price'].isnull().values
+    df.loc[isnan_sell_price, 'sales'] = np.nan
+    df.drop(['sell_price'], axis=1, inplace=True)
 
-    dst_df = pd.DataFrame()
-    dst_df = dst_df.assign(**agg_funcs)
-    return dst_df.pipe(reduce_mem_usage)
+    groups_and_priors = {
+        # singe encodings
+        ("state_id",): None,
+        ("store_id",): None,
+        ("cat_id",): None,
+        ("dept_id",): None,
+        ("item_id",): None,
+
+        # second-order interactions
+        ("state_id", "dept_id"): ["gte_state_id", "gte_dept_id"],
+        ("state_id", "item_id"): ["gte_state_id", "gte_item_id"],
+        ("store_id", "dept_id"): ["gte_store_id", "gte_dept_id"],
+        ("store_id", "item_id"): ["gte_store_id", "gte_item_id"],
+    }
+
+    for agg_f in ['mean', 'var']:
+        features = []
+        for group_cols, prior_cols in groups_and_priors.items():
+            features.append(f"gte_{'_'.join(group_cols)}")
+            print(f'Add {features[-1]}')
+
+            gte = GaussianTargetEncoder(list(group_cols), "sales", prior_cols)
+            df[features[-1]] = gte.fit_transform(df, prior_precision=100, stat_type=agg_f)
+
+        rename_dict = {feat: f'{feat}_{agg_f.upper()}' for feat in features}
+        df = df.rename(columns=rename_dict)
+
+    dst_cols = df.columns[df.columns.str.startswith('gte')]
+    return df[dst_cols].pipe(reduce_mem_usage)
 
 
 @cache_result(filename='all_data', use_cache=False)
@@ -466,7 +488,7 @@ def run_create_features():
         days_from_last_sales,
         simple_target_encoding,
         simple_total_sales_encoding,
-        # nex_days_holiday_count
+        hierarchical_bayesian_target_encoding
     ]
     # Join All Features.
     for f_func in feat_funcs:
