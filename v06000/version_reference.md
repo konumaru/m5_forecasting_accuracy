@@ -71,14 +71,14 @@ def clip_outlier_one_percent(x):
   - Target Encodingを利用する
   - あるカテゴリにおいて、自身（id）は平均よりも高いかどうか
 
+### v06009
+- [ ] 休日（休日でない日）ごとのターゲットエンコーディング
+- [ ] Hierarchical Bayesian Target Encoding
+   - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
 
 
 ## Todo
 ### 特徴量を増やす
-
-- [ ] 休日（休日でない日）ごとのターゲットエンコーディング
-- [ ] Hierarchical Bayesian Target Encoding
-   - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
 - [ ] いくつかの特徴量の次元圧縮
   - PCAよりNMFのほうが木モデルに使いやすい次元縮約をしてくれる
   - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html
