@@ -22,6 +22,7 @@ import seaborn
 import matplotlib.pyplot as plt
 plt.style.use("seaborn-darkgrid")
 
+from scipy.stats import mode
 from scipy.stats import linregress
 
 from sklearn import preprocessing
@@ -102,12 +103,25 @@ def parse_calendar():
 
     work_cals = {'CA': California(), 'TX': Texas(), 'WI': Wisconsin()}
     for state, work_cal in work_cals.items():
-        calendar[f'nwd_{state}'] = (~calendar.date.apply(work_cal.is_working_day))
+        calendar[f'nwd_{state}'] = (~calendar.date.apply(work_cal.is_working_day)).astype(int)
+    # 休日フラグを未来に向かって rolling.sum() する。
+    holiday_df = pd.DataFrame({'date': pd.date_range(start='2011-01-29', end='2016-07-30')})
+    for state, work_cal in work_cals.items():
+        holiday_df[f'nwd_{state}'] = [int(work_cal.is_working_day(d)) for d in holiday_df.date]
+    reversed_holiday_df = holiday_df.sort_values(by='date', ascending=False)
+    for state in ['CA', 'TX', 'WI']:
+        holiday_df = holiday_df.assign(**{
+            f'nwd_{state}_rolling_t7': reversed_holiday_df[f'nwd_{state}'].rolling(7).sum(),
+            f'nwd_{state}_rolling_t14': reversed_holiday_df[f'nwd_{state}'].rolling(14).sum(),
+            f'nwd_{state}_rolling_t28': reversed_holiday_df[f'nwd_{state}'].rolling(28).sum()
+        })
+    holiday_df.drop([f'nwd_{state}' for state in ['CA', 'TX', 'WI']], axis=1, inplace=True)
 
+    calendar = calendar.merge(holiday_df, how='left', on='date')
     return calendar.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='parse_sell_prices', use_cache=False)
+@cache_result(filename='parse_sell_prices', use_cache=True)
 def parse_sell_prices():
     sell_prices = pd.read_pickle('../data/reduced/sell_prices.pkl')
     # Add Release Feature.
@@ -188,23 +202,22 @@ Output: all_train_data, eval_data, submit_data
 """
 
 
-@cache_result(filename='sales_lag_and_roll', use_cache=True)
+@cache_result(filename='sales_lag_and_roll', use_cache=False)
 def sales_lag_and_roll():
     # Define variables and dataframes.
     shift_days = 28
     use_cols = ['id', 'sales']
     srd_df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
-    grouped_df = srd_df.groupby('id')
-    dst_df = pd.DataFrame()
     # Creat Features
     agg_funcs = {}
     target = 'sales'
-
+    grouped_df = srd_df.groupby('id')
+    # lag features
     lags = list(range(15))
     for i in lags:
         lag_t = shift_days + i
         agg_funcs[f'sales_lag_t{i}'] = grouped_df[target].transform(lambda x: x.shift(lag_t))
-
+    # rolling features
     num_shift = [1, 7, 14]
     num_roll = [7, 14, 30]
     for n_shift in num_shift:
@@ -214,18 +227,32 @@ def sales_lag_and_roll():
                 lambda x: x.shift(shift).rolling(i).mean())
             agg_funcs[f'sales_roll_std_t{n_shift}_{n_roll}'] = grouped_df[target].transform(
                 lambda x: x.shift(shift).rolling(i).std())
-
+            # agg_funcs[f'sales_roll_mode_t{n_shift}_{n_roll}'] = grouped_df[target].transform(
+            #     lambda x: x.shift(shift).rolling(i).apply(lambda x: x.mode()[0]))
+            agg_funcs[f'sales_roll_min_t{n_shift}_{n_roll}'] = grouped_df[target].transform(
+                lambda x: x.shift(shift).rolling(i).min())
+            agg_funcs[f'sales_roll_max_t{n_shift}_{n_roll}'] = grouped_df[target].transform(
+                lambda x: x.shift(shift).rolling(i).max())
+    # cunsum sales values
+    # agg_funcs['sales_cumsum_values'] = grouped_df[target].transform(lambda x: x.cumsum())
+    # agg_funcs['sales_cummax_values'] = grouped_df[target].transform(lambda x: x.cummax())
+    # is_zero, is_non_zero features
     for i in [7, 14, 30]:
         agg_funcs[f'sales_rolling_ZeroRatio_t{i}'] = grouped_df[target].transform(
-            lambda x: 1 - (x == 0).shift(shift_days).rolling(i).mean())
+            lambda x: (x == 0).shift(shift_days).rolling(i).mean())
         agg_funcs[f'sales_rolling_ZeroCount_t{i}'] = grouped_df[target].transform(
             lambda x: (x == 0).shift(shift_days).rolling(i).sum())
+        agg_funcs[f'sales_rolling_NonZeroRatio_t{i}'] = grouped_df[target].transform(
+            lambda x: (x != 0).shift(shift_days).rolling(i).mean())
+        agg_funcs[f'sales_rolling_NonZeroCount_t{i}'] = grouped_df[target].transform(
+            lambda x: (x != 0).shift(shift_days).rolling(i).sum())
 
     agg_funcs['sales_rolling_skew_t30'] = grouped_df[target].transform(
         lambda x: x.shift(shift_days).rolling(30).skew())
     agg_funcs['sales_rolling_kurt_t30'] = grouped_df[target].transform(
         lambda x: x.shift(shift_days).rolling(30).kurt())
 
+    dst_df = pd.DataFrame()
     dst_df = dst_df.assign(**agg_funcs)
     return dst_df.pipe(reduce_mem_usage)
 
@@ -344,6 +371,8 @@ def simple_target_encoding():
 
         df[f'enc_{target}_mean_by_{col_name}'] = df.groupby(col)[target].transform('mean')
         df[f'enc_{target}_std_by_{col_name}'] = df.groupby(col)[target].transform('std')
+        df[f'enc_{target}_is_over_mean_by_{col_name}'] = (df.groupby(
+            'id')[target].transform('mean') > df.groupby(col)[target].transform('mean'))
 
     df.drop_duplicates(subset=['id', 'dayofweek'], inplace=True)
     df = df.set_index(['id', 'dayofweek'])
@@ -352,8 +381,8 @@ def simple_target_encoding():
     return df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='simple_sales_times_price_encoding', use_cache=True)
-def simple_sales_times_price_encoding():
+@cache_result(filename='simple_total_sales_encoding', use_cache=True)
+def simple_total_sales_encoding():
     # Define variables and dataframes.
     shift_days = 28
     use_cols = [
@@ -397,6 +426,8 @@ def simple_sales_times_price_encoding():
 
         df[f'enc_{target}_mean_by_{col_name}'] = df.groupby(col)[target].transform('mean')
         df[f'enc_{target}_std_by_{col_name}'] = df.groupby(col)[target].transform('std')
+        df[f'enc_{target}_is_over_mean_by_{col_name}'] = (df.groupby(
+            'id')[target].transform('mean') > df.groupby(col)[target].transform('mean'))
 
     df.drop_duplicates(subset=['id', 'dayofweek'], inplace=True)
     df = df.set_index(['id', 'dayofweek'])
@@ -405,17 +436,37 @@ def simple_sales_times_price_encoding():
     return df.pipe(reduce_mem_usage)
 
 
+@cache_result(filename='nex_days_holiday_count', use_cache=False)
+def nex_days_holiday_count():
+    # is_weekend
+    holiday_cols = ['nwd_CA', 'nwd_TX', 'nwd_WI']
+    use_cols = ['id', 'is_weekend'] + holiday_cols
+    srd_df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
+
+    agg_funcs = {}
+    grouped_df = srd_df.groupby('id')
+    for c in holiday_cols:
+        for i in [7, 14, 28]:
+            agg_funcs[f'next_{i}days_{c}_holiday_count'] = grouped_df[c].transform(
+                lambda x: x.rolling(-i).sum())
+
+    dst_df = pd.DataFrame()
+    dst_df = dst_df.assign(**agg_funcs)
+    return dst_df.pipe(reduce_mem_usage)
+
+
 @cache_result(filename='all_data', use_cache=False)
 def run_create_features():
     # Create Feature
     df = pd.read_pickle('features/melted_and_merged_train.pkl')
     feat_funcs = [
         sales_lag_and_roll,
-        # total_sales_lag_and_roll,
+        total_sales_lag_and_roll,
         price_simple_feature,
         days_from_last_sales,
         simple_target_encoding,
-        simple_sales_times_price_encoding
+        simple_total_sales_encoding,
+        # nex_days_holiday_count
     ]
     # Join All Features.
     for f_func in feat_funcs:
@@ -710,7 +761,7 @@ def train_group_models():
         # Save Importance
         IMPORTANCE_PATH = f'result/importance/{VERSION}/{g_id}.png'
         os.makedirs(f'result/importance/{VERSION}', exist_ok=True)
-        lgb_model.save_importance(filepath=IMPORTANCE_PATH, figsize=(25, 30))
+        lgb_model.save_importance(filepath=IMPORTANCE_PATH, max_num_features=80, figsize=(25, 30))
         # Add Model
         group_models[''.join(g_id)] = lgb_model
     return group_models

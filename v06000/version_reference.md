@@ -59,10 +59,17 @@ def clip_outlier_one_percent(x):
 
 
 ### v06008
-- [ ] 翌週の休日の数
-- [ ] is_not_zero
-- [ ] is_over_mean
-- [ ] id ごとの累積売上個数
+- [x] 翌週の休日の数
+  - ラベルデータについて気をつけないと行けないかも。
+  - カレンダーのデータから生成して、map するほうが良さそう。
+- [x] is_not_zero
+- [x] id ごとの累積売上個数
+  - とりあえず全過去のみ
+  - 精度が下がったような、、
+  - なので、削った
+- [x] is_over_mean
+  - Target Encodingを利用する
+  - あるカテゴリにおいて、自身（id）は平均よりも高いかどうか
 
 
 
@@ -77,7 +84,7 @@ def clip_outlier_one_percent(x):
   - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html
 
 ### 特徴量選択を行う
-- Ridge 回帰を使ってR^2係数から変数の説明力を確認する
+- [ ] Ridge 回帰を使ってR^2係数から変数の説明力を確認する
 
 ### モデルの目的関数についての調査
 - これ以上なにも思いつかない
