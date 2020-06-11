@@ -76,13 +76,19 @@ def clip_outlier_one_percent(x):
 - [x] Hierarchical Bayesian Target Encoding
    - https://www.kaggle.com/konumaru/hierarchical-bayesian-target-encoding
 
+### v06010
+特徴量選択を行う
+
+- [ ] 特徴量のユニーク数によって削減（離散値？）
+- [ ] 単一の特徴量における分散を用いて特徴量を削減（連続値？）
+- [ ] ラベルデータとの相関の小ささを元に特徴量を削減
+- [ ] 特徴量同士の相関の強さによって特徴量を削減
 
 ## Todo
-### 特徴量選択を行う
-- [ ] Ridge 回帰を使ってR^2係数から変数の説明力を確認する
-
 ### モデルに関して
 - 正則化について導入したい
+- 重みについて
+  - 過去のZeroRatioを重みに加えたい
 
 ### 学習方法に関して
 - [ ] Train データにおいて、Cross Validation をしてみる
@@ -98,6 +104,7 @@ def clip_outlier_one_percent(x):
     - 自分で考えた不安定な手法よりも類似コンペの上位解法を参考にするほうがいいだろう（完）
     - 平均化はこれつかう
       - https://www.kaggle.com/mmotoki/generalized-weighted-mean
+
 
 ### Next Todo
 #### 特徴量を増やす
