@@ -94,24 +94,24 @@ def clip_outlier_one_percent(x):
   - 少しスコアが下がったので採用
 
 ### v06012
+https://lightgbm.readthedocs.io/en/latest/Parameters.html#lambda_l1
+
 - [x] l1 正則化の導入
   - lambda_l1=0.1, スコアが下がった。
 - [x] l2 正則化の導入
   - lambda_l2=0.1, 大きく精度が下がらなかった。特徴量選択ができなかったので気休めで採用
 
 
+### v06013
+- [ ] 特徴量生成後のデータセットをグループごとに出力する
+
 
 ## Todo
-### モデルに関して
-- 正則化について導入したい
-  - l1, l2: https://lightgbm.readthedocs.io/en/latest/Parameters.html#lambda_l1
-
 
 ### データの呼び出し
 - 加工後のデータの出力方法を見直したい
 - 設定したgroupごとのデータを吐き出すように変えたい
 - 毎回15GB以上のデータをロードするのは時間がかかりすぎる
-
 
 ### 学習方法に関して
 - [ ] XGBoost でも学習を行う
