@@ -66,7 +66,7 @@ Output: melted_and_merged_train
 """
 
 
-@cache_result(filename='parse_calendar', use_cache=False)
+@cache_result(filename='parse_calendar', use_cache=True)
 def parse_calendar():
     calendar = pd.read_pickle('../data/reduced/calendar.pkl')
     # Drop Initial Columns.
@@ -109,9 +109,12 @@ def parse_calendar():
     reversed_holiday_df = holiday_df.sort_values(by='date', ascending=False)
     for state in ['CA', 'TX', 'WI']:
         holiday_df = holiday_df.assign(**{
-            f'nwd_{state}_rolling_t7': reversed_holiday_df[f'nwd_{state}'].rolling(7).sum(),
-            f'nwd_{state}_rolling_t14': reversed_holiday_df[f'nwd_{state}'].rolling(14).sum(),
-            f'nwd_{state}_rolling_t28': reversed_holiday_df[f'nwd_{state}'].rolling(28).sum()
+            f'nwd_{state}_rolling_t7': reversed_holiday_df[f'nwd_{state}'].rolling(
+                7).sum().fillna(-1).astype(int),
+            f'nwd_{state}_rolling_t14': reversed_holiday_df[f'nwd_{state}'].rolling(
+                14).sum().fillna(-1).astype(int),
+            f'nwd_{state}_rolling_t28': reversed_holiday_df[f'nwd_{state}'].rolling(
+                28).sum().fillna(-1).astype(int)
         })
 
     calendar = calendar.merge(holiday_df, how='left', on='date')
@@ -151,7 +154,7 @@ def parse_sales_train():
     return train
 
 
-@cache_result(filename='melted_and_merged_train', use_cache=False)
+@cache_result(filename='melted_and_merged_train', use_cache=True)
 def melted_and_merged_train(n_row):
     # Load Data
     calendar = pd.read_pickle('features/parse_calendar.pkl')
@@ -160,7 +163,7 @@ def melted_and_merged_train(n_row):
     # Melt and Merge
     idx_cols = ['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
     df = pd.melt(df, id_vars=idx_cols, var_name='d', value_name='sales')
-    df = df.iloc[-n_row:, :]    # Sampling Recently data
+    # df = df.iloc[-n_row:, :]    # Sampling Recently data
     df = pd.merge(df, calendar, how='left', on='d')
     df = pd.merge(df, sell_prices, how='left', on=['store_id', 'item_id', 'wm_yr_wk'])
     # d column change type to int
@@ -189,7 +192,7 @@ def run_trainsform():
     _ = parse_sell_prices()
     _ = parse_sales_train()
     # Melt and Merge all data.
-    sample_rows = (365 * 3 + 28 * 2) * NUM_ITEMS
+    sample_rows = (365 * 3.5 + 28 * 2) * NUM_ITEMS
     _ = melted_and_merged_train(n_row=sample_rows)
 
 
@@ -323,7 +326,7 @@ def days_from_last_sales():
     return srd_df[['days_from_last_sales']]
 
 
-@cache_result(filename='simple_target_encoding', use_cache=False)
+@cache_result(filename='simple_target_encoding', use_cache=True)
 def simple_target_encoding():
     # Define variables and dataframes.
     shift_days = 28
@@ -477,7 +480,7 @@ def hierarchical_bayesian_target_encoding():
     return df[dst_cols].pipe(reduce_mem_usage)
 
 
-@cache_result(filename='all_data', use_cache=False)
+@cache_result(filename='all_data', use_cache=True)
 def run_create_features():
     # Create Feature
     df = pd.read_pickle('features/melted_and_merged_train.pkl')
@@ -496,8 +499,11 @@ def run_create_features():
         df = pd.concat([df, temp_feat_df], axis=1)
         del temp_feat_df; gc.collect()
 
-    # numeric_cols = df.select_dtypes(include=['number']).columns
-    # df = df.assign(**{num_c: df[num_c].fillna(-999) for num_c in numeric_cols})
+    sample_rows = (365 * 3 + 28 * 2) * NUM_ITEMS
+    df = df.iloc[-sample_rows:, :]    # Sampling Recently data
+
+    numeric_cols = df.select_dtypes(include=['float16']).columns
+    df = df.assign(**{num_c: df[num_c].fillna(-999) for num_c in numeric_cols})
     # Export Data
     return df
 
