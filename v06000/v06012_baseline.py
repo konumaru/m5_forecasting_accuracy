@@ -730,7 +730,9 @@ def train_group_models():
             'subsample': 0.5,  # ~v05006, 0.8
             'subsample_freq': 1,
             'feature_fraction': 0.5,  # ~v05006, 0.8
-            # 'max_bin': 100,  # 全然変わらない
+            # 'lambda_l1': 0.1, # v06012, 0.554 -> 0.561
+            'lambda_l2': 0.1,  # v06012, 0.554 -> 0.555
+            # 'max_bin': 100,  # Score did not change.
             'force_row_wise': True,
             'verbose': -1
         },

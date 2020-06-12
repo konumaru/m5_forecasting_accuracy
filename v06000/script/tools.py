@@ -6,11 +6,13 @@ import pandas as pd
 
 
 def load_pickle(filepath):
+    print(f'Load pickle from {filepath}.')
     with open(filepath, 'rb') as file:
         return pickle.load(file)
 
 
 def dump_pickle(data, filepath):
+    print(f'Dump pickle to {filepath}.')
     with open(filepath, 'wb') as file:
         pickle.dump(data, file, protocol=pickle.HIGHEST_PROTOCOL)
 
