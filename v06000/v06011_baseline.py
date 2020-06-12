@@ -763,7 +763,8 @@ def train_group_models():
         if use_weight:
             train_decayed_weight = get_decayed_weights(train_data, 90)
             weight, scale = evaluator.get_series_weight(train_data['id'])
-            train_weight = (10000 * (weight / np.sqrt(scale))) * (1.3 * train_decayed_weight)
+            train_weight = (10000 * (weight / np.sqrt(scale))) \
+                * (1.3 * train_decayed_weight + train_data['sales_rolling_NonZeroRatio_t30'].values)
 
             weight, scale = evaluator.get_series_weight(valid_data['id'])
             valid_weight = (10000 * (weight / np.sqrt(scale)))
