@@ -106,11 +106,12 @@ https://lightgbm.readthedocs.io/en/latest/Parameters.html#lambda_l1
 - [x] 特徴量生成後のデータセットをグループごとに出力する
 
 
-## Todo
-### 特徴量の作り方を見直したい
+### v06014
 - [ ] melted_and_merged_train の時点で、sell_price が null のデータに合わせて sales を null にする
 - [ ] 上記に合わせて、Target Encoding のコードをリファクタリングする。
 
+
+## Todo
 ### 学習方法に関して
 - [ ] XGBoost でも学習を行う
 
