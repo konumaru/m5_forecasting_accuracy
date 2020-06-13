@@ -25,6 +25,7 @@ tqdm = "^4.43.0"
 numba = "^0.48.0"
 jupyter = "^1.0.0"
 workalendar = "^10.0.0"
+xgboost = "^1.1.1"
 
 [tool.poetry.dev-dependencies]
 pycodestyle = "^2.5.0"

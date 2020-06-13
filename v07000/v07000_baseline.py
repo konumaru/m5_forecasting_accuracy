@@ -205,7 +205,7 @@ Output: all_train_data, eval_data, submit_data
 """
 
 
-@cache_result(filename='sales_lag_and_roll', use_cache=False)
+@cache_result(filename='sales_lag_and_roll', use_cache=True)
 def sales_lag_and_roll():
     # Define variables and dataframes.
     shift_days = 28
@@ -260,7 +260,7 @@ def sales_lag_and_roll():
     return dst_df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='total_sales_lag_and_roll', use_cache=False)
+@cache_result(filename='total_sales_lag_and_roll', use_cache=True)
 def total_sales_lag_and_roll():
     # Define variables and dataframes.
     shift_days = 28
@@ -292,7 +292,7 @@ def total_sales_lag_and_roll():
     return dst_df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='price_simple_feature', use_cache=False)
+@cache_result(filename='price_simple_feature', use_cache=True)
 def price_simple_feature():
     use_cols = ['id', 'sell_price', 'month']
     srd_df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
@@ -308,7 +308,7 @@ def price_simple_feature():
     return dst_df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='days_from_last_sales', use_cache=False)
+@cache_result(filename='days_from_last_sales', use_cache=True)
 def days_from_last_sales():
     # Define variables and dataframes.
     shift_days = 28
@@ -329,7 +329,7 @@ def days_from_last_sales():
     return srd_df[['days_from_last_sales']]
 
 
-@cache_result(filename='simple_target_encoding', use_cache=False)
+@cache_result(filename='simple_target_encoding', use_cache=True)
 def simple_target_encoding():
     # Define variables and dataframes.
     shift_days = 28
@@ -383,7 +383,7 @@ def simple_target_encoding():
     return df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='simple_total_sales_encoding', use_cache=False)
+@cache_result(filename='simple_total_sales_encoding', use_cache=True)
 def simple_total_sales_encoding():
     # Define variables and dataframes.
     shift_days = 28
@@ -432,7 +432,7 @@ def simple_total_sales_encoding():
     return df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='hierarchical_bayesian_target_encoding', use_cache=False)
+@cache_result(filename='hierarchical_bayesian_target_encoding', use_cache=True)
 def hierarchical_bayesian_target_encoding():
     use_cols = ['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id', 'sales']
     df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
