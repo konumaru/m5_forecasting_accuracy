@@ -103,7 +103,7 @@ https://lightgbm.readthedocs.io/en/latest/Parameters.html#lambda_l1
 
 
 ### v06013
-- [ ] 特徴量生成後のデータセットをグループごとに出力する
+- [x] 特徴量生成後のデータセットをグループごとに出力する
 
 
 ## Todo

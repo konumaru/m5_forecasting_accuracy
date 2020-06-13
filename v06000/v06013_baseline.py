@@ -517,13 +517,12 @@ Output: all_train_data, eval_data, submit_data
 """
 
 
-def dump_by_groups(df: pd.DataFrame, gruops: list):
+def dump_by_groups(df: pd.DataFrame, data_name: str, gruops: list):
     for i, g_id in enumerate(gruops):
-        filepath = f'features/train_data_{g_id}.pkl'
-
+        print(f'{i+1}/{len(gruops)}', end=', ')
+        filepath = f"features/{data_name}_{'_'.join(g_id)}.pkl"
         query = ''.join([f'(?=.*{i})' for i in g_id])
         isin_group = df['id'].str.contains(f'^{query}.*$')
-        print(f'\n\nGroup ID: {g_id}, {i+1}/{len(gruops)}')
         dump_pickle(df[isin_group], filepath)
 
 
@@ -531,22 +530,19 @@ def run_split_data():
     df = pd.read_pickle('features/all_data.pkl')
     print(df.info(verbose=True), '\n')
 
-    # Dump Train Data.
-    all_train_data_path = 'features/all_train_data.pkl'
-    print(f'Split all_train_data to {all_train_data_path}')
+    print(f'Dump Train Data.')
     upper_d = 1913 if IS_TEST else 1941  # Submision時は検証データも学習する
     train_mask = (df['d'] <= upper_d)
-    dump_pickle(df[train_mask], all_train_data_path)
+    dump_by_groups(df[train_mask], 'train_data', GROUPS)
 
-    # Dump Evaluation Data.
+    print(f'Dump Evaluation Data.')
     eval_data_path = 'features/eval_data.pkl'
-    print(f'Split eval_data to {eval_data_path}')
     lower_d = 1913
     upper_d = 1941
     eval_mask = (df['d'] > lower_d) & (df['d'] <= upper_d)
     dump_pickle(df[eval_mask], eval_data_path)
 
-    # Dump Submisssion Data.
+    print(f'Dump Submisssion Data.')
     submit_data_path = 'features/submit_data.pkl'
     print(f'Split submit_data to {submit_data_path}')
     lower_d = 1913
@@ -758,9 +754,7 @@ def train_group_models():
     group_models = {}
     for i, g_id in enumerate(GROUPS):
         print(f'\n\nGroup ID: {g_id}, {i+1}/{len(GROUPS)}')
-        df = pd.read_pickle('features/all_train_data.pkl')
-        query = ''.join([f'(?=.*{i})' for i in g_id])
-        df = df[df['id'].str.contains(f'^{query}.*$')]
+        df = pd.read_pickle(f"features/train_data_{'_'.join(g_id)}.pkl")
 
         drop_cols = ['id', 'd', 'sales', 'date', 'wm_yr_wk']
         features = [f for f in df.columns if f not in drop_cols]
@@ -785,7 +779,7 @@ def train_group_models():
         if is_set_fecal_weight:
             evaluator.set_feval_weight(valid_data['id'].drop_duplicates(keep='last'))
 
-        if query in 'HOBBIES':
+        if '_'.join(g_id) in 'HOBBIES':
             params['model_params']['learning_rate'] = 0.01
 
         lgb_model = LGBM_Model(
