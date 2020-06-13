@@ -22,11 +22,11 @@ def cache_result(filename, use_cache=True):
         def run_func(*args, **kwargs):
             filepath = f'features/{filename}.pkl'
             if use_cache and os.path.exists(filepath):
-                print(f'Load Cached data, {filepath}')
+                # print(f'Load Cached data, {filepath}')
                 return load_pickle(filepath)
             result = func(*args, **kwargs)
 
-            print(f'Cache to {filepath}')
+            # print(f'Cache to {filepath}')
             dump_pickle(result, filepath)
             return result
         return run_func

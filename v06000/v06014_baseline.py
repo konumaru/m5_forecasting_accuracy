@@ -168,6 +168,9 @@ def melted_and_merged_train(n_row):
     df = pd.merge(df, sell_prices, how='left', on=['store_id', 'item_id', 'wm_yr_wk'])
     # d column change type to int
     df['d'] = df['d'].str.replace('d_', '').astype(int)
+    # replace sales from 0 to nan.
+    isnan_sell_price = df['sell_price'].isnull().values
+    df.loc[isnan_sell_price, 'sales'] = np.nan
     # Label Encoding
     label_cols = ['item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
     for c in label_cols:
@@ -202,7 +205,7 @@ Output: all_train_data, eval_data, submit_data
 """
 
 
-@cache_result(filename='sales_lag_and_roll', use_cache=True)
+@cache_result(filename='sales_lag_and_roll', use_cache=False)
 def sales_lag_and_roll():
     # Define variables and dataframes.
     shift_days = 28
@@ -257,7 +260,7 @@ def sales_lag_and_roll():
     return dst_df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='total_sales_lag_and_roll', use_cache=True)
+@cache_result(filename='total_sales_lag_and_roll', use_cache=False)
 def total_sales_lag_and_roll():
     # Define variables and dataframes.
     shift_days = 28
@@ -289,7 +292,7 @@ def total_sales_lag_and_roll():
     return dst_df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='price_simple_feature', use_cache=True)
+@cache_result(filename='price_simple_feature', use_cache=False)
 def price_simple_feature():
     use_cols = ['id', 'sell_price', 'month']
     srd_df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
@@ -305,7 +308,7 @@ def price_simple_feature():
     return dst_df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='days_from_last_sales', use_cache=True)
+@cache_result(filename='days_from_last_sales', use_cache=False)
 def days_from_last_sales():
     # Define variables and dataframes.
     shift_days = 28
@@ -326,17 +329,15 @@ def days_from_last_sales():
     return srd_df[['days_from_last_sales']]
 
 
-@cache_result(filename='simple_target_encoding', use_cache=True)
+@cache_result(filename='simple_target_encoding', use_cache=False)
 def simple_target_encoding():
     # Define variables and dataframes.
     shift_days = 28
     use_cols = [
         'id', 'd', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id',
-        'sales', 'sell_price', 'dayofweek', 'nwd_CA', 'nwd_TX', 'nwd_WI'
+        'sales', 'dayofweek', 'nwd_CA', 'nwd_TX', 'nwd_WI'
     ]
     df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
-    dst_idx = df[['id', 'dayofweek']].to_records(index=False).tolist()
-    df.dropna(subset=['sell_price'], inplace=True)
 
     # df['sales_times_price'] = df['sales'] * df['sell_price']
     # Convert target to binary
@@ -378,14 +379,11 @@ def simple_target_encoding():
         df[f'enc_{target}_is_over_mean_by_{col_name}'] = (df.groupby(
             'id')[target].transform('mean') > df.groupby(col)[target].transform('mean'))
 
-    df.drop_duplicates(subset=['id', 'dayofweek'], inplace=True)
-    df = df.set_index(['id', 'dayofweek'])
-    df = df.loc[dst_idx, features]
-    df.reset_index(drop=True, inplace=True)
+    df = df.loc[:, features].reset_index(drop=True)
     return df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='simple_total_sales_encoding', use_cache=True)
+@cache_result(filename='simple_total_sales_encoding', use_cache=False)
 def simple_total_sales_encoding():
     # Define variables and dataframes.
     shift_days = 28
@@ -394,9 +392,6 @@ def simple_total_sales_encoding():
         'sales', 'sell_price', 'dayofweek'
     ]
     df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
-    dst_idx = df[['id', 'dayofweek']].to_records(index=False).tolist()
-
-    df.dropna(subset=['sell_price'], inplace=True)
     df['sales_times_price'] = df['sales'] * df['sell_price']
     # Convert target to binary
     target = 'sales_times_price'
@@ -433,21 +428,14 @@ def simple_total_sales_encoding():
         df[f'enc_{target}_is_over_mean_by_{col_name}'] = (df.groupby(
             'id')[target].transform('mean') > df.groupby(col)[target].transform('mean'))
 
-    df.drop_duplicates(subset=['id', 'dayofweek'], inplace=True)
-    df = df.set_index(['id', 'dayofweek'])
-    df = df.loc[dst_idx, features]
-    df.reset_index(drop=True, inplace=True)
+    df = df.loc[:, features].reset_index(drop=True)
     return df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='hierarchical_bayesian_target_encoding', use_cache=True)
+@cache_result(filename='hierarchical_bayesian_target_encoding', use_cache=False)
 def hierarchical_bayesian_target_encoding():
-    use_cols = ['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id', 'sales', 'sell_price']
+    use_cols = ['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id', 'sales']
     df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
-
-    isnan_sell_price = df['sell_price'].isnull().values
-    df.loc[isnan_sell_price, 'sales'] = np.nan
-    df.drop(['sell_price'], axis=1, inplace=True)
 
     groups_and_priors = {
         # singe encodings
@@ -476,11 +464,12 @@ def hierarchical_bayesian_target_encoding():
         rename_dict = {feat: f'{feat}_{agg_f.upper()}' for feat in features}
         df = df.rename(columns=rename_dict)
 
-    dst_cols = df.columns[df.columns.str.startswith('gte')]
-    return df[dst_cols].pipe(reduce_mem_usage)
+    features = df.columns[df.columns.str.startswith('gte')]
+    df = df.loc[:, features].reset_index(drop=True)
+    return df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='all_data', use_cache=True)
+@cache_result(filename='all_data', use_cache=False)
 def run_create_features():
     # Create Feature
     df = pd.read_pickle('features/melted_and_merged_train.pkl')
@@ -804,6 +793,7 @@ def train_group_models():
 
 def run_train():
     models = train_group_models()
+    print('')
     dump_pickle(models, MODEL_PATH)
 
 

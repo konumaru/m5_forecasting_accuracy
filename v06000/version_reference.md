@@ -107,8 +107,8 @@ https://lightgbm.readthedocs.io/en/latest/Parameters.html#lambda_l1
 
 
 ### v06014
-- [ ] melted_and_merged_train の時点で、sell_price が null のデータに合わせて sales を null にする
-- [ ] 上記に合わせて、Target Encoding のコードをリファクタリングする。
+- [x] melted_and_merged_train の時点で、sell_price が null のデータに合わせて sales を null にする
+- [x] 上記に合わせて、Target Encoding のコードをリファクタリングする。
 
 
 ## Todo
