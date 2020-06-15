@@ -3,86 +3,22 @@
 --- Transform ---
 
 
-Mem. usage decreased to  0.11 Mb (74.1% reduction)
-Dump pickle to features/parse_calendar.pkl.
-Mem. usage decreased to 260.97 Mb (31.0% reduction)
-Dump pickle to features/parse_sell_prices.pkl.
-Dump pickle to features/parse_sales_train.pkl.
-Mem. usage decreased to 4694.90 Mb (22.6% reduction)
-Dump pickle to features/melted_and_merged_train.pkl.
+Load pickle from features/parse_calendar.pkl.
+Load pickle from features/parse_sell_prices.pkl.
+Load pickle from features/parse_sales_train.pkl.
+Load pickle from features/melted_and_merged_train.pkl.
 
 
 --- Create Features ---
 
 
-Mem. usage decreased to 7442.98 Mb (0.0% reduction)
-Dump pickle to features/sales_lag_and_roll.pkl.
-Mem. usage decreased to 3778.74 Mb (0.0% reduction)
-Dump pickle to features/total_sales_lag_and_roll.pkl.
-Mem. usage decreased to 229.01 Mb (0.0% reduction)
-Dump pickle to features/price_simple_feature.pkl.
-Dump pickle to features/days_from_last_sales.pkl.
-Target sales
-Encoding ['state_id']
-Encoding ['store_id']
-Encoding ['cat_id']
-Encoding ['dept_id']
-Encoding ['state_id', 'cat_id']
-Encoding ['state_id', 'dept_id']
-Encoding ['store_id', 'cat_id']
-Encoding ['store_id', 'dept_id']
-Encoding ['item_id']
-Encoding ['item_id', 'state_id']
-Encoding ['item_id', 'store_id']
-Encoding ['store_id', 'dayofweek']
-Encoding ['dept_id', 'dayofweek']
-Encoding ['item_id', 'dayofweek']
-Encoding ['store_id', 'dept_id', 'dayofweek']
-Encoding ['store_id', 'item_id', 'dayofweek']
-Encoding ['store_id', 'item_id', 'nwd_CA']
-Encoding ['store_id', 'item_id', 'nwd_TX']
-Encoding ['store_id', 'item_id', 'nwd_WI']
-Mem. usage decreased to 4351.28 Mb (0.0% reduction)
-Dump pickle to features/simple_target_encoding.pkl.
-Target sales_times_price
-Encoding ['state_id']
-Encoding ['store_id']
-Encoding ['cat_id']
-Encoding ['dept_id']
-Encoding ['state_id', 'cat_id']
-Encoding ['state_id', 'dept_id']
-Encoding ['store_id', 'cat_id']
-Encoding ['store_id', 'dept_id']
-Encoding ['item_id']
-Encoding ['item_id', 'state_id']
-Encoding ['item_id', 'store_id']
-Encoding ['store_id', 'dayofweek']
-Encoding ['dept_id', 'dayofweek']
-Encoding ['item_id', 'dayofweek']
-Encoding ['store_id', 'dept_id', 'dayofweek']
-Encoding ['store_id', 'item_id', 'dayofweek']
-Mem. usage decreased to 4351.28 Mb (-18.7% reduction)
-Dump pickle to features/simple_total_sales_encoding.pkl.
-Add gte_state_id
-Add gte_store_id
-Add gte_cat_id
-Add gte_dept_id
-Add gte_item_id
-Add gte_state_id_dept_id
-Add gte_state_id_item_id
-Add gte_store_id_dept_id
-Add gte_store_id_item_id
-Add gte_state_id
-Add gte_store_id
-Add gte_cat_id
-Add gte_dept_id
-Add gte_item_id
-Add gte_state_id_dept_id
-Add gte_state_id_item_id
-Add gte_store_id_dept_id
-Add gte_store_id_item_id
-Mem. usage decreased to 5152.83 Mb (37.5% reduction)
-Dump pickle to features/hierarchical_bayesian_target_encoding.pkl.
+Load pickle from features/sales_lag_and_roll.pkl.
+Load pickle from features/total_sales_lag_and_roll.pkl.
+Load pickle from features/price_simple_feature.pkl.
+Load pickle from features/days_from_last_sales.pkl.
+Load pickle from features/simple_target_encoding.pkl.
+Load pickle from features/simple_total_sales_encoding.pkl.
+Load pickle from features/hierarchical_bayesian_target_encoding.pkl.
 Dump pickle to features/all_data.pkl.
 
 

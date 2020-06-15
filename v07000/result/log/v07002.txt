@@ -1,0 +1,504 @@
+
+
+--- Transform ---
+
+
+Load pickle from features/parse_calendar.pkl.
+Load pickle from features/parse_sell_prices.pkl.
+Load pickle from features/parse_sales_train.pkl.
+Load pickle from features/melted_and_merged_train.pkl.
+
+
+--- Create Features ---
+
+
+Load pickle from features/all_data.pkl.
+
+
+--- Split Data ---
+
+
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 35093990 entries, 24940820 to 60034809
+Data columns (total 240 columns):
+ #   Column                                                    Dtype         
+---  ------                                                    -----         
+ 0   id                                                        object        
+ 1   item_id                                                   category      
+ 2   dept_id                                                   category      
+ 3   cat_id                                                    category      
+ 4   store_id                                                  category      
+ 5   state_id                                                  category      
+ 6   d                                                         int16         
+ 7   sales                                                     float16       
+ 8   date                                                      datetime64[ns]
+ 9   wm_yr_wk                                                  int16         
+ 10  event_name_1                                              category      
+ 11  event_type_1                                              category      
+ 12  event_name_2                                              category      
+ 13  event_type_2                                              category      
+ 14  snap_CA                                                   int8          
+ 15  snap_TX                                                   int8          
+ 16  snap_WI                                                   int8          
+ 17  year                                                      int16         
+ 18  quarter                                                   int8          
+ 19  month                                                     int8          
+ 20  week                                                      int8          
+ 21  weekofyear                                                int8          
+ 22  day                                                       int8          
+ 23  dayofweek                                                 int8          
+ 24  dayofyear                                                 int16         
+ 25  is_month_end                                              bool          
+ 26  is_month_start                                            bool          
+ 27  is_weekend                                                bool          
+ 28  nwd_CA                                                    int8          
+ 29  nwd_TX                                                    int8          
+ 30  nwd_WI                                                    int8          
+ 31  nwd_CA_rolling_t7                                         int8          
+ 32  nwd_CA_rolling_t14                                        int8          
+ 33  nwd_CA_rolling_t28                                        int8          
+ 34  nwd_TX_rolling_t7                                         int8          
+ 35  nwd_TX_rolling_t14                                        int8          
+ 36  nwd_TX_rolling_t28                                        int8          
+ 37  nwd_WI_rolling_t7                                         int8          
+ 38  nwd_WI_rolling_t14                                        int8          
+ 39  nwd_WI_rolling_t28                                        int8          
+ 40  sell_price                                                float16       
+ 41  price_max                                                 float16       
+ 42  price_min                                                 float16       
+ 43  price_std                                                 float16       
+ 44  price_mean                                                float16       
+ 45  price_nunique                                             float16       
+ 46  release                                                   float16       
+ 47  id_nunique_by_price                                       float16       
+ 48  price_float                                               float16       
+ 49  price_int                                                 float16       
+ 50  price_norm                                                float16       
+ 51  sales_lag_t0                                              float16       
+ 52  sales_lag_t1                                              float16       
+ 53  sales_lag_t2                                              float16       
+ 54  sales_lag_t3                                              float16       
+ 55  sales_lag_t4                                              float16       
+ 56  sales_lag_t5                                              float16       
+ 57  sales_lag_t6                                              float16       
+ 58  sales_lag_t7                                              float16       
+ 59  sales_lag_t8                                              float16       
+ 60  sales_lag_t9                                              float16       
+ 61  sales_lag_t10                                             float16       
+ 62  sales_lag_t11                                             float16       
+ 63  sales_lag_t12                                             float16       
+ 64  sales_lag_t13                                             float16       
+ 65  sales_lag_t14                                             float16       
+ 66  sales_roll_mean_t1_7                                      float16       
+ 67  sales_roll_std_t1_7                                       float16       
+ 68  sales_roll_min_t1_7                                       float16       
+ 69  sales_roll_max_t1_7                                       float16       
+ 70  sales_roll_mean_t1_14                                     float16       
+ 71  sales_roll_std_t1_14                                      float16       
+ 72  sales_roll_min_t1_14                                      float16       
+ 73  sales_roll_max_t1_14                                      float16       
+ 74  sales_roll_mean_t1_30                                     float16       
+ 75  sales_roll_std_t1_30                                      float16       
+ 76  sales_roll_min_t1_30                                      float16       
+ 77  sales_roll_max_t1_30                                      float16       
+ 78  sales_roll_mean_t7_7                                      float16       
+ 79  sales_roll_std_t7_7                                       float16       
+ 80  sales_roll_min_t7_7                                       float16       
+ 81  sales_roll_max_t7_7                                       float16       
+ 82  sales_roll_mean_t7_14                                     float16       
+ 83  sales_roll_std_t7_14                                      float16       
+ 84  sales_roll_min_t7_14                                      float16       
+ 85  sales_roll_max_t7_14                                      float16       
+ 86  sales_roll_mean_t7_30                                     float16       
+ 87  sales_roll_std_t7_30                                      float16       
+ 88  sales_roll_min_t7_30                                      float16       
+ 89  sales_roll_max_t7_30                                      float16       
+ 90  sales_roll_mean_t14_7                                     float16       
+ 91  sales_roll_std_t14_7                                      float16       
+ 92  sales_roll_min_t14_7                                      float16       
+ 93  sales_roll_max_t14_7                                      float16       
+ 94  sales_roll_mean_t14_14                                    float16       
+ 95  sales_roll_std_t14_14                                     float16       
+ 96  sales_roll_min_t14_14                                     float16       
+ 97  sales_roll_max_t14_14                                     float16       
+ 98  sales_roll_mean_t14_30                                    float16       
+ 99  sales_roll_std_t14_30                                     float16       
+ 100 sales_roll_min_t14_30                                     float16       
+ 101 sales_roll_max_t14_30                                     float16       
+ 102 sales_rolling_ZeroRatio_t7                                float16       
+ 103 sales_rolling_ZeroCount_t7                                float16       
+ 104 sales_rolling_NonZeroRatio_t7                             float16       
+ 105 sales_rolling_NonZeroCount_t7                             float16       
+ 106 sales_rolling_ZeroRatio_t14                               float16       
+ 107 sales_rolling_ZeroCount_t14                               float16       
+ 108 sales_rolling_NonZeroRatio_t14                            float16       
+ 109 sales_rolling_NonZeroCount_t14                            float16       
+ 110 sales_rolling_ZeroRatio_t30                               float16       
+ 111 sales_rolling_ZeroCount_t30                               float16       
+ 112 sales_rolling_NonZeroRatio_t30                            float16       
+ 113 sales_rolling_NonZeroCount_t30                            float16       
+ 114 sales_rolling_skew_t30                                    float16       
+ 115 sales_rolling_kurt_t30                                    float16       
+ 116 total_sales_lag_t0                                        float16       
+ 117 total_sales_lag_t1                                        float16       
+ 118 total_sales_lag_t2                                        float16       
+ 119 total_sales_lag_t3                                        float16       
+ 120 total_sales_lag_t4                                        float16       
+ 121 total_sales_lag_t5                                        float16       
+ 122 total_sales_lag_t6                                        float16       
+ 123 total_sales_lag_t7                                        float16       
+ 124 total_sales_lag_t8                                        float16       
+ 125 total_sales_lag_t9                                        float16       
+ 126 total_sales_lag_t10                                       float16       
+ 127 total_sales_lag_t11                                       float16       
+ 128 total_sales_lag_t12                                       float16       
+ 129 total_sales_lag_t13                                       float16       
+ 130 total_sales_lag_t14                                       float16       
+ 131 total_sales_roll_mean_t1_7                                float16       
+ 132 total_sales_roll_std_t1_7                                 float16       
+ 133 total_sales_roll_mean_t1_14                               float16       
+ 134 total_sales_roll_std_t1_14                                float16       
+ 135 total_sales_roll_mean_t1_30                               float16       
+ 136 total_sales_roll_std_t1_30                                float16       
+ 137 total_sales_roll_mean_t7_7                                float16       
+ 138 total_sales_roll_std_t7_7                                 float16       
+ 139 total_sales_roll_mean_t7_14                               float16       
+ 140 total_sales_roll_std_t7_14                                float16       
+ 141 total_sales_roll_mean_t7_30                               float16       
+ 142 total_sales_roll_std_t7_30                                float16       
+ 143 total_sales_roll_mean_t14_7                               float16       
+ 144 total_sales_roll_std_t14_7                                float16       
+ 145 total_sales_roll_mean_t14_14                              float16       
+ 146 total_sales_roll_std_t14_14                               float16       
+ 147 total_sales_roll_mean_t14_30                              float16       
+ 148 total_sales_roll_std_t14_30                               float16       
+ 149 price_momentum                                            float16       
+ 150 price_momentum_m                                          float16       
+ 151 days_from_last_sales                                      int16         
+ 152 enc_sales_mean_by_state_id                                float16       
+ 153 enc_sales_std_by_state_id                                 float16       
+ 154 enc_sales_mean_by_store_id                                float16       
+ 155 enc_sales_std_by_store_id                                 float16       
+ 156 enc_sales_mean_by_cat_id                                  float16       
+ 157 enc_sales_std_by_cat_id                                   float16       
+ 158 enc_sales_mean_by_dept_id                                 float16       
+ 159 enc_sales_std_by_dept_id                                  float16       
+ 160 enc_sales_mean_by_state_id_cat_id                         float16       
+ 161 enc_sales_std_by_state_id_cat_id                          float16       
+ 162 enc_sales_mean_by_state_id_dept_id                        float16       
+ 163 enc_sales_std_by_state_id_dept_id                         float16       
+ 164 enc_sales_mean_by_store_id_cat_id                         float16       
+ 165 enc_sales_std_by_store_id_cat_id                          float16       
+ 166 enc_sales_mean_by_store_id_dept_id                        float16       
+ 167 enc_sales_std_by_store_id_dept_id                         float16       
+ 168 enc_sales_mean_by_item_id                                 float16       
+ 169 enc_sales_std_by_item_id                                  float16       
+ 170 enc_sales_mean_by_item_id_state_id                        float16       
+ 171 enc_sales_std_by_item_id_state_id                         float16       
+ 172 enc_sales_mean_by_item_id_store_id                        float16       
+ 173 enc_sales_std_by_item_id_store_id                         float16       
+ 174 enc_sales_mean_by_store_id_dayofweek                      float16       
+ 175 enc_sales_std_by_store_id_dayofweek                       float16       
+ 176 enc_sales_mean_by_dept_id_dayofweek                       float16       
+ 177 enc_sales_std_by_dept_id_dayofweek                        float16       
+ 178 enc_sales_mean_by_item_id_dayofweek                       float16       
+ 179 enc_sales_std_by_item_id_dayofweek                        float16       
+ 180 enc_sales_mean_by_store_id_dept_id_dayofweek              float16       
+ 181 enc_sales_std_by_store_id_dept_id_dayofweek               float16       
+ 182 enc_sales_mean_by_store_id_item_id_dayofweek              float16       
+ 183 enc_sales_std_by_store_id_item_id_dayofweek               float16       
+ 184 enc_sales_mean_by_store_id_item_id_nwd_CA                 float16       
+ 185 enc_sales_std_by_store_id_item_id_nwd_CA                  float16       
+ 186 enc_sales_mean_by_store_id_item_id_nwd_TX                 float16       
+ 187 enc_sales_std_by_store_id_item_id_nwd_TX                  float16       
+ 188 enc_sales_mean_by_store_id_item_id_nwd_WI                 float16       
+ 189 enc_sales_std_by_store_id_item_id_nwd_WI                  float16       
+ 190 enc_sales_times_price_mean_by_state_id                    float16       
+ 191 enc_sales_times_price_std_by_state_id                     float16       
+ 192 enc_sales_times_price_mean_by_store_id                    float16       
+ 193 enc_sales_times_price_std_by_store_id                     float16       
+ 194 enc_sales_times_price_mean_by_cat_id                      float16       
+ 195 enc_sales_times_price_std_by_cat_id                       float16       
+ 196 enc_sales_times_price_mean_by_dept_id                     float16       
+ 197 enc_sales_times_price_std_by_dept_id                      float16       
+ 198 enc_sales_times_price_mean_by_state_id_cat_id             float16       
+ 199 enc_sales_times_price_std_by_state_id_cat_id              float16       
+ 200 enc_sales_times_price_mean_by_state_id_dept_id            float16       
+ 201 enc_sales_times_price_std_by_state_id_dept_id             float16       
+ 202 enc_sales_times_price_mean_by_store_id_cat_id             float16       
+ 203 enc_sales_times_price_std_by_store_id_cat_id              float16       
+ 204 enc_sales_times_price_mean_by_store_id_dept_id            float16       
+ 205 enc_sales_times_price_std_by_store_id_dept_id             float16       
+ 206 enc_sales_times_price_mean_by_item_id                     float16       
+ 207 enc_sales_times_price_std_by_item_id                      float16       
+ 208 enc_sales_times_price_mean_by_item_id_state_id            float16       
+ 209 enc_sales_times_price_std_by_item_id_state_id             float16       
+ 210 enc_sales_times_price_mean_by_item_id_store_id            float16       
+ 211 enc_sales_times_price_std_by_item_id_store_id             float64       
+ 212 enc_sales_times_price_mean_by_store_id_dayofweek          float16       
+ 213 enc_sales_times_price_std_by_store_id_dayofweek           float16       
+ 214 enc_sales_times_price_mean_by_dept_id_dayofweek           float16       
+ 215 enc_sales_times_price_std_by_dept_id_dayofweek            float16       
+ 216 enc_sales_times_price_mean_by_item_id_dayofweek           float16       
+ 217 enc_sales_times_price_std_by_item_id_dayofweek            float16       
+ 218 enc_sales_times_price_mean_by_store_id_dept_id_dayofweek  float16       
+ 219 enc_sales_times_price_std_by_store_id_dept_id_dayofweek   float16       
+ 220 enc_sales_times_price_mean_by_store_id_item_id_dayofweek  float16       
+ 221 enc_sales_times_price_std_by_store_id_item_id_dayofweek   float64       
+ 222 gte_state_id_MEAN                                         float64       
+ 223 gte_store_id_MEAN                                         float64       
+ 224 gte_cat_id_MEAN                                           float64       
+ 225 gte_dept_id_MEAN                                          float64       
+ 226 gte_item_id_MEAN                                          float64       
+ 227 gte_state_id_dept_id_MEAN                                 float64       
+ 228 gte_state_id_item_id_MEAN                                 float64       
+ 229 gte_store_id_dept_id_MEAN                                 float64       
+ 230 gte_store_id_item_id_MEAN                                 float64       
+ 231 gte_state_id_VAR                                          float16       
+ 232 gte_store_id_VAR                                          float16       
+ 233 gte_cat_id_VAR                                            float16       
+ 234 gte_dept_id_VAR                                           float16       
+ 235 gte_item_id_VAR                                           float16       
+ 236 gte_state_id_dept_id_VAR                                  float16       
+ 237 gte_state_id_item_id_VAR                                  float16       
+ 238 gte_store_id_dept_id_VAR                                  float16       
+ 239 gte_store_id_item_id_VAR                                  float16       
+dtypes: bool(3), category(9), datetime64[ns](1), float16(189), float64(11), int16(5), int8(21), object(1)
+memory usage: 17.2+ GB
+None 
+
+Dump Train Data.
+1/7, Dump pickle to features/train_data_FOODS_1.pkl.
+2/7, Dump pickle to features/train_data_FOODS_2.pkl.
+3/7, Dump pickle to features/train_data_FOODS_3.pkl.
+4/7, Dump pickle to features/train_data_HOBBIES_1.pkl.
+5/7, Dump pickle to features/train_data_HOBBIES_2.pkl.
+6/7, Dump pickle to features/train_data_HOUSEHOLD_1.pkl.
+7/7, Dump pickle to features/train_data_HOUSEHOLD_2.pkl.
+Dump Evaluation Data.
+Dump pickle to features/eval_data.pkl.
+Dump Submisssion Data.
+Split submit_data to features/submit_data.pkl
+Dump pickle to features/submit_data.pkl.
+
+
+--- Define Evaluator ---
+
+
+Dump pickle to features/evaluator.pkl.
+
+
+--- Train ---
+
+
+Load pickle from features/evaluator.pkl.
+
+Parameters:
+ {
+    "booster": "gbtree",
+    "objective": "reg:tweedie",
+    "tweedie_variance_power": 1.1,
+    "disable_default_eval_metric": 1,
+    "max_depth": 7,
+    "max_leaves": 127,
+    "min_child_weight": 20,
+    "seed": 42,
+    "eta": 0.03,
+    "subsample": 0.5,
+    "lambda": 0.1,
+    "verbose": -1
+} 
+
+
+
+Group ID: ('FOODS_1',), 1/7
+Dump pickle to result/feature_cols/v07002.pkl.
+[23:05:44] WARNING: /Users/travis/build/dmlc/xgboost/src/learner.cc:480: 
+Parameters: { verbose } might not be used.
+
+  This may not be accurate due to some parameters are only used in language bindings but
+  passed down to XGBoost core.  Or some parameters are not used but slip through this
+  verification. Please open an issue if you find above cases.
+
+
+[0]	valid-WRMSSE:0.08973
+Will train until valid-WRMSSE hasn't improved in 100 rounds.
+[100]	valid-WRMSSE:0.05640
+[200]	valid-WRMSSE:0.05591
+Stopping. Best iteration:
+[138]	valid-WRMSSE:0.05566
+
+
+
+Group ID: ('FOODS_2',), 2/7
+Dump pickle to result/feature_cols/v07002.pkl.
+[23:42:07] WARNING: /Users/travis/build/dmlc/xgboost/src/learner.cc:480: 
+Parameters: { verbose } might not be used.
+
+  This may not be accurate due to some parameters are only used in language bindings but
+  passed down to XGBoost core.  Or some parameters are not used but slip through this
+  verification. Please open an issue if you find above cases.
+
+
+[0]	valid-WRMSSE:0.20977
+Will train until valid-WRMSSE hasn't improved in 100 rounds.
+[100]	valid-WRMSSE:0.14273
+[200]	valid-WRMSSE:0.14110
+[300]	valid-WRMSSE:0.14137
+Stopping. Best iteration:
+[205]	valid-WRMSSE:0.14107
+
+
+
+Group ID: ('FOODS_3',), 3/7
+Dump pickle to result/feature_cols/v07002.pkl.
+[00:51:36] WARNING: /Users/travis/build/dmlc/xgboost/src/learner.cc:480: 
+Parameters: { verbose } might not be used.
+
+  This may not be accurate due to some parameters are only used in language bindings but
+  passed down to XGBoost core.  Or some parameters are not used but slip through this
+  verification. Please open an issue if you find above cases.
+
+
+[00:51:37] WARNING: /Users/travis/build/dmlc/xgboost/src/gbm/gbtree.cc:139: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[0]	valid-WRMSSE:0.53911
+Will train until valid-WRMSSE hasn't improved in 100 rounds.
+[100]	valid-WRMSSE:0.30482
+[200]	valid-WRMSSE:0.30031
+[300]	valid-WRMSSE:0.30042
+Stopping. Best iteration:
+[260]	valid-WRMSSE:0.30005
+
+
+
+Group ID: ('HOBBIES_1',), 4/7
+Dump pickle to result/feature_cols/v07002.pkl.
+[05:01:43] WARNING: /Users/travis/build/dmlc/xgboost/src/learner.cc:480: 
+Parameters: { verbose } might not be used.
+
+  This may not be accurate due to some parameters are only used in language bindings but
+  passed down to XGBoost core.  Or some parameters are not used but slip through this
+  verification. Please open an issue if you find above cases.
+
+
+[0]	valid-WRMSSE:0.13222
+Will train until valid-WRMSSE hasn't improved in 100 rounds.
+[100]	valid-WRMSSE:0.09857
+[200]	valid-WRMSSE:0.09884
+Stopping. Best iteration:
+[101]	valid-WRMSSE:0.09856
+
+
+
+Group ID: ('HOBBIES_2',), 5/7
+Dump pickle to result/feature_cols/v07002.pkl.
+[05:49:50] WARNING: /Users/travis/build/dmlc/xgboost/src/learner.cc:480: 
+Parameters: { verbose } might not be used.
+
+  This may not be accurate due to some parameters are only used in language bindings but
+  passed down to XGBoost core.  Or some parameters are not used but slip through this
+  verification. Please open an issue if you find above cases.
+
+
+[0]	valid-WRMSSE:0.00575
+Will train until valid-WRMSSE hasn't improved in 100 rounds.
+[100]	valid-WRMSSE:0.00519
+Stopping. Best iteration:
+[72]	valid-WRMSSE:0.00519
+
+
+
+Group ID: ('HOUSEHOLD_1',), 6/7
+Dump pickle to result/feature_cols/v07002.pkl.
+[06:01:25] WARNING: /Users/travis/build/dmlc/xgboost/src/learner.cc:480: 
+Parameters: { verbose } might not be used.
+
+  This may not be accurate due to some parameters are only used in language bindings but
+  passed down to XGBoost core.  Or some parameters are not used but slip through this
+  verification. Please open an issue if you find above cases.
+
+
+[0]	valid-WRMSSE:0.28183
+Will train until valid-WRMSSE hasn't improved in 100 rounds.
+[100]	valid-WRMSSE:0.20187
+[200]	valid-WRMSSE:0.20184
+Stopping. Best iteration:
+[133]	valid-WRMSSE:0.20160
+
+
+
+Group ID: ('HOUSEHOLD_2',), 7/7
+Dump pickle to result/feature_cols/v07002.pkl.
+[07:22:49] WARNING: /Users/travis/build/dmlc/xgboost/src/learner.cc:480: 
+Parameters: { verbose } might not be used.
+
+  This may not be accurate due to some parameters are only used in language bindings but
+  passed down to XGBoost core.  Or some parameters are not used but slip through this
+  verification. Please open an issue if you find above cases.
+
+
+[0]	valid-WRMSSE:0.07156
+Will train until valid-WRMSSE hasn't improved in 100 rounds.
+[100]	valid-WRMSSE:0.06245
+[200]	valid-WRMSSE:0.06228
+[300]	valid-WRMSSE:0.06229
+Stopping. Best iteration:
+[225]	valid-WRMSSE:0.06227
+
+
+Dump pickle to result/model/v07002.pkl.
+
+
+--- Evaluation ---
+
+
+Load pickle from result/model/v07002.pkl.
+Load pickle from features/evaluator.pkl.
+Load pickle from result/feature_cols/v07002.pkl.
+Load pickle from features/eval_data.pkl.
+
+Our val RMSE score is 2.1594016937646394
+Our val WRMSSE score is 0.602608442682728
+
+
+--- Submission ---
+
+
+Load pickle from result/model/v07002.pkl.
+Load pickle from result/feature_cols/v07002.pkl.
+Load pickle from features/submit_data.pkl.
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.792658  0.797539  0.698344  0.668718   
+1  HOBBIES_1_002_CA_1_validation  0.289500  0.300697  0.308936  0.362639   
+2  HOBBIES_1_003_CA_1_validation  0.282057  0.306144  0.304412  0.333025   
+3  HOBBIES_1_004_CA_1_validation  1.733778  1.292477  1.298507  1.515550   
+4  HOBBIES_1_005_CA_1_validation  1.038319  1.000439  1.099062  1.108781   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.760464  0.964312  0.819244  0.683639  0.791073  0.634862  0.690648   
+1  0.356456  0.402235  0.345961  0.286620  0.280554  0.262851  0.287521   
+2  0.459763  0.514983  0.437504  0.277320  0.279237  0.270018  0.298709   
+3  1.763141  2.277303  2.597399  1.647108  1.381316  1.294688  1.459142   
+4  1.202970  1.463172  1.536966  1.194318  1.143016  1.117907  1.063942   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.750878  0.987546  0.837286  0.715169  0.758740  0.604996  0.652769   
+1  0.295745  0.351077  0.298023  0.236763  0.240377  0.241384  0.275731   
+2  0.399495  0.476520  0.365768  0.238956  0.253983  0.262477  0.310346   
+3  1.566583  2.496074  2.573571  1.601171  1.260829  1.256490  1.505054   
+4  1.160146  1.419850  1.327245  1.109789  1.047762  1.134434  1.069502   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.740758  1.059518  0.892788  0.690430  0.789910  0.601136  0.681218   
+1  0.281699  0.348365  0.294649  0.234750  0.238339  0.248185  0.271330   
+2  0.458747  0.576203  0.476970  0.309182  0.372883  0.367381  0.420601   
+3  1.601458  2.118646  2.645921  1.713870  1.300274  1.238127  1.446813   
+4  1.107574  1.416131  1.422949  0.984239  0.932991  0.995613  0.993539   
+
+        F26       F27       F28  
+0  0.738027  0.998100  0.840018  
+1  0.276775  0.343121  0.289245  
+2  0.552520  0.699749  0.596602  
+3  1.718940  2.504647  2.669053  
+4  1.095574  1.449448  1.490543  

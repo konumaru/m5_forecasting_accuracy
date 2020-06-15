@@ -30,6 +30,7 @@ from sklearn.model_selection import TimeSeriesSplit
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 
+import xgboost as xgb
 import lightgbm as lgb
 
 import warnings
@@ -520,6 +521,12 @@ def run_split_data():
     df = pd.read_pickle('features/all_data.pkl')
     print(df.info(verbose=True), '\n')
 
+    catgorical_cols = [
+        'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id',
+        'event_name_1', 'event_type_1', 'event_name_2', 'event_type_2'
+    ]
+    df[catgorical_cols] = df[catgorical_cols].astype('int64')
+
     print(f'Dump Train Data.')
     upper_d = 1913 if IS_TEST else 1941  # Submision時は検証データも学習する
     train_mask = (df['d'] <= upper_d)
@@ -546,15 +553,23 @@ def run_split_data():
 """
 
 
-class WRMSSEForLightGBM(WRMSSEEvaluator):
+class CustomWRMSSE(WRMSSEEvaluator):
 
-    def custom_feval(self, preds, dtrain):
+    def lgb_custom_feval(self, preds, dtrain):
         actual = dtrain.get_label().reshape(28, -1).T
         preds = preds.reshape(28, -1).T
 
         rmse = np.sqrt(np.mean(np.square(actual - preds), axis=1))
         score = np.sum(self.valid_feval_weight * rmse)
         return 'WRMSSE', score, False
+
+    def xgb_custom_feval(self, preds, dtrain):
+        actual = dtrain.get_label().reshape(28, -1).T
+        preds = preds.reshape(28, -1).T
+
+        rmse = np.sqrt(np.mean(np.square(actual - preds), axis=1))
+        score = np.sum(self.valid_feval_weight * rmse)
+        return 'WRMSSE', score
 
     def get_series_weight(self, data_ids):
         data_ids = data_ids.apply(lambda x: x.rsplit('_', 1)[0])
@@ -589,7 +604,7 @@ class WRMSSEForLightGBM(WRMSSEEvaluator):
 def get_evaluator():
     df = pd.read_pickle('../data/reduced/sales_train_evaluation.pkl')
     train_df = df.iloc[:, : -28] if IS_TEST else df
-    evaluator = WRMSSEForLightGBM(
+    evaluator = CustomWRMSSE(
         train_df=train_df,  # 最後の29列が重みに使われる
         valid_df=df.iloc[:, -28:],  # evaluator.scoreのときに使用されるラベルデータ
         calendar=pd.read_pickle('../data/reduced/calendar.pkl'),
@@ -673,6 +688,41 @@ class LGBM_Wrapper():
         plt.close('all')
 
 
+class XGBoost_Wrapper():
+    def __init__(self):
+        self.model = None
+
+    def fit(self, params, train_param,
+            X_train, y_train, X_valid, y_valid,
+            train_weight=None, valid_weight=None):
+        train_dataset = xgb.DMatrix(X_train, label=y_train, weight=train_weight)
+        valid_dataset = xgb.DMatrix(X_valid, label=y_valid, weight=valid_weight)
+
+        self.model = xgb.train(
+            params,
+            train_dataset,
+            evals=[(valid_dataset, 'valid')],
+            **train_param
+        )
+
+    def predict(self, data):
+        data = xgb.DMatrix(data)
+        return self.model.predict(data, ntree_limit=self.model.best_ntree_limit)
+
+    def save_importance(self, filepath, max_num_features=50, figsize=(18, 25)):
+        importance = pd.Series(self.model.get_fscore(), name='Importance').to_frame()
+        importance.sort_values(by='Importance', inplace=True)
+
+        # Plot Importance DataFrame.
+        plt.figure(figsize=figsize)
+        importance[-max_num_features:].plot(
+            kind='barh', title='Feature importance', figsize=figsize,
+            y='Importance', align="center"
+        )
+        plt.savefig(filepath)
+        plt.close('all')
+
+
 def train_valid_split(df, go_back_days=28):
     valid_duration = 28
 
@@ -701,28 +751,26 @@ def train_group_models():
 
     params = {
         'model_params': {
-            'boosting': 'gbdt',
-            'objective': 'tweedie',  # tweedie, poisson, regression
-            'tweedie_variance_power': 1,  # 1.0=poisson
-            'metric': 'custom',
-            'num_leaves': 2**7 - 1,
-            'min_data_in_leaf': 50,
+            'booster': 'gbtree',
+            'objective': 'reg:tweedie',
+            'tweedie_variance_power': 1.1,
+            # 'eval_metric': 'rmse',
+            'disable_default_eval_metric': 1,
+            'max_depth': 7,
+            'max_leaves': 2**7 - 1,
+            'min_child_weight': 20,
             'seed': SEED,
-            'learning_rate': 0.03,  # 0.1
-            'subsample': 0.5,  # ~v05006, 0.8
-            'subsample_freq': 1,
-            'feature_fraction': 0.5,  # ~v05006, 0.8
-            # 'lambda_l1': 0.1, # v06012, 0.554 -> 0.561
-            'lambda_l2': 0.1,  # v06012, 0.554 -> 0.555
+            'eta': 0.03,
+            'subsample': 0.5,
+            # 'alpha': 0.1,
+            'lambda': 0.1,
             # 'max_bin': 100,  # Score did not change.
-            'force_row_wise': True,
-            'verbose': -1
         },
         'train_params': {
             'num_boost_round': 1500,  # 2000
             'early_stopping_rounds': 100,
             'verbose_eval': 100,
-            'feval': evaluator.custom_feval
+            'feval': evaluator.xgb_custom_feval
         }
     }
     print('\nParameters:\n', json.dumps(params['model_params'], indent=4), '\n')
@@ -749,7 +797,6 @@ def train_group_models():
             weight_decayed = get_decayed_weights(train_data, 90)
             weight_pastZeroRatio = train_data['sales_rolling_NonZeroRatio_t30'].values
             weight, scale = evaluator.get_series_weight(train_data['id'])
-
             train_weight = (10000 * weight / np.sqrt(scale)) *\
                 (1.3 * weight_decayed + weight_pastZeroRatio)
 
@@ -767,8 +814,8 @@ def train_group_models():
         if '_'.join(g_id) in 'HOBBIES':
             params['model_params']['learning_rate'] = 0.01
 
-        lgb_model = LGBM_Wrapper()
-        lgb_model.fit(
+        model = XGBoost_Wrapper()
+        model.fit(
             params['model_params'],
             params['train_params'],
             X_train,
@@ -781,9 +828,9 @@ def train_group_models():
         # Save Importance
         IMPORTANCE_PATH = f'result/importance/{VERSION}/{g_id}.png'
         os.makedirs(f'result/importance/{VERSION}', exist_ok=True)
-        lgb_model.save_importance(filepath=IMPORTANCE_PATH, max_num_features=80, figsize=(25, 30))
+        model.save_importance(filepath=IMPORTANCE_PATH, max_num_features=80, figsize=(25, 30))
         # Add Model
-        group_models[''.join(g_id)] = lgb_model
+        group_models[''.join(g_id)] = model
     return group_models
 
 

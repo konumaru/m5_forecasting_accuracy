@@ -13,13 +13,18 @@
 - LightGBM のラッパーをリファクタリング
 
 ### v07002
-- [ ] XGBoost を用いた学習
+- [x] XGBoost を用いた学習
+  - XGBoost で学習が可能になったが、やはり学習時間が遅い。
+  - 一方で精度が上がっているようなん気もする。
+  - 環境を整えて、GCP 環境におけるGPUを用いた XGBoost の学習を行うことを検討したい。
+- ローカル環境では、学習時間がかかりすぎるので、一旦 LightGBM のみで学習をすすめることを検討する。
+
+### v07003
+- [ ] LightGBM の Feature Importance を gain に変える
+  - https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.plot_importance.html#lightgbm.plot_importance
 
 
 ## Todo
-### 学習方法に関して
-- [ ] XGBoost でも学習を行う
-
 ### Ensemble
 - [ ] https://www.kaggle.com/mmotoki/generalized-weighted-mean
   - 前処理ですべての値をlog1p 変換する

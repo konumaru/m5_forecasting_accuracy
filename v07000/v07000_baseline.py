@@ -490,6 +490,7 @@ def run_create_features():
 
     sample_rows = (365 * 3 + 28 * 2) * NUM_ITEMS
     df = df.iloc[-sample_rows:, :]    # Sampling Recently data
+    df['sales'].fillna(0, inplace=True)
 
     numeric_cols = df.select_dtypes(include=['float16']).columns
     df = df.assign(**{num_c: df[num_c].fillna(-999) for num_c in numeric_cols})
