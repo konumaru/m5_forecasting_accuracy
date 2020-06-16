@@ -20,8 +20,12 @@
 - ローカル環境では、学習時間がかかりすぎるので、一旦 LightGBM のみで学習をすすめることを検討する。
 
 ### v07003
-- [ ] LightGBM の Feature Importance を gain に変える
+- [x] LightGBM の Feature Importance を gain に変える
   - https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.plot_importance.html#lightgbm.plot_importance
+- [x] Target Encoding に以下を追加
+  - ['store_id', 'item_id', 'week'], ['store_id', 'item_id', 'day']
+  - 精度は上がったが怪しいので、Target Encoding の範囲から評価期間のデータを野沿いて再学習
+    - ちゃんと精度が上がったので採用。
 
 
 ## Todo

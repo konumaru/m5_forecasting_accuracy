@@ -86,7 +86,7 @@ def parse_calendar():
         "quarter",
         "month",
         "week",
-        "weekofyear",
+        # "weekofyear",
         "day",
         "dayofweek",
         "dayofyear",
@@ -144,14 +144,14 @@ def parse_sell_prices():
     return sell_prices.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='parse_sales_train', use_cache=True)
+@cache_result(filename='parse_sales_train', use_cache=False)
 def parse_sales_train():
     train = pd.read_pickle('../data/reduced/sales_train_evaluation.pkl')
     # Add Prediction Columns
     start_d = 1942
     end_d = 1969
     for i in range(start_d, end_d + 1):
-        train[f'd_{i}'] = 0
+        train[f'd_{i}'] = np.nan
     return train
 
 
@@ -330,13 +330,13 @@ def days_from_last_sales():
     return srd_df[['days_from_last_sales']]
 
 
-@cache_result(filename='simple_target_encoding', use_cache=True)
+@cache_result(filename='simple_target_encoding', use_cache=False)
 def simple_target_encoding():
     # Define variables and dataframes.
     shift_days = 28
     use_cols = [
         'id', 'd', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id',
-        'sales', 'dayofweek', 'nwd_CA', 'nwd_TX', 'nwd_WI'
+        'sales', 'dayofweek', 'week', 'day', 'nwd_CA', 'nwd_TX', 'nwd_WI'
     ]
     df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
 
@@ -362,6 +362,8 @@ def simple_target_encoding():
         ['item_id', 'dayofweek'],
         ['store_id', 'dept_id', 'dayofweek'],
         ['store_id', 'item_id', 'dayofweek'],
+        ['store_id', 'item_id', 'week'],
+        ['store_id', 'item_id', 'day'],
         # holiday
         ['store_id', 'item_id', 'nwd_CA'],
         ['store_id', 'item_id', 'nwd_TX'],
@@ -433,7 +435,7 @@ def simple_total_sales_encoding():
     return df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='hierarchical_bayesian_target_encoding', use_cache=True)
+@cache_result(filename='hierarchical_bayesian_target_encoding', use_cache=False)
 def hierarchical_bayesian_target_encoding():
     use_cols = ['id', 'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id', 'sales']
     df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
@@ -470,7 +472,7 @@ def hierarchical_bayesian_target_encoding():
     return df.pipe(reduce_mem_usage)
 
 
-@cache_result(filename='all_data', use_cache=True)
+@cache_result(filename='all_data', use_cache=False)
 def run_create_features():
     # Create Feature
     df = pd.read_pickle('features/melted_and_merged_train.pkl')
@@ -520,12 +522,6 @@ def dump_by_groups(df: pd.DataFrame, data_name: str, gruops: list):
 def run_split_data():
     df = pd.read_pickle('features/all_data.pkl')
     print(df.info(verbose=True), '\n')
-
-    catgorical_cols = [
-        'item_id', 'dept_id', 'cat_id', 'store_id', 'state_id',
-        'event_name_1', 'event_type_1', 'event_name_2', 'event_type_2'
-    ]
-    df[catgorical_cols] = df[catgorical_cols].astype('int64')
 
     print(f'Dump Train Data.')
     upper_d = 1913 if IS_TEST else 1941  # Submision時は検証データも学習する
@@ -668,15 +664,14 @@ class LGBM_Wrapper():
         return self.model.predict(data, num_iteration=self.model.best_iteration)
 
     def model_importance(self):
-        importances = list(self.model.feature_importance(
-            importance_type='gain', iteration=self.model.best_iteration))
-        imp_df = pd.DataFrame(
-            importances,
-            columns=self.model.feature_name(),
-            index=['Importance']
-        ).T
-        imp_df.sort_values(by='Importance', inplace=True)
-        return imp_df
+        model = self.model
+        f_name = model.feature_name()
+        f_imp = model.feature_importance(
+            importance_type='gain', iteration=model.best_iteration)
+
+        importance = pd.Series(dict(zip(f_name, f_imp)), name='Importance').to_frame()
+        importance.sort_values(by='Importance', inplace=True)
+        return importance
 
     def save_importance(self, filepath, max_num_features=50, figsize=(18, 25)):
         imp_df = self.model_importance()
@@ -815,7 +810,7 @@ def train_group_models():
         X_valid, y_valid = valid_data[features], valid_data['sales']
         del train_data, valid_data; gc.collect()
 
-        if '_'.join(g_id) in 'HOBBIES':
+        if '_'.join(g_id) in ['HOBBIES', 'HOUSEHOLD_1']:
             params['model_params']['learning_rate'] = 0.01
 
         model = LGBM_Wrapper()
