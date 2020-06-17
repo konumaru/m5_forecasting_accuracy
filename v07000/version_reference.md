@@ -28,6 +28,12 @@
     - ちゃんと精度が上がったので採用。
 
 
+### v07004
+- [x] 重みに使ってる scale を sqrt から log1p に変える。
+  - 少し精度が上がった。0.5179 -> 0.5129
+- [x] 28日前との sales の diff, とその統計量
+  - なんかあまり良くない動きをした気がするので不採用 
+
 ## Todo
 ### Ensemble
 - [ ] https://www.kaggle.com/mmotoki/generalized-weighted-mean
@@ -45,4 +51,3 @@
 - [ ] いくつかの特徴量の次元圧縮
   - PCAよりNMFのほうが木モデルに使いやすい次元縮約をしてくれる
   - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html
-- [ ] モデルの中の特徴量重要度を元に特徴量選択について考える
