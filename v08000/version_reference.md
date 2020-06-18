@@ -7,6 +7,21 @@
 - v07004 のコピー
 - dept_id ごとに学習、seed = 42
 
+### v08001
+- dept_id ごとに学習、seed = 422
+
+### v08002
+- dept_id ごとに学習、seed = 4222
+
+### v08003
+- store_id ごとに学習、seed = 4222
+
+### v08003
+- store_id ごとに学習、seed = 422
+
+### v08004
+- store_id ごとに学習、seed = 42
+
 ## Todo
 ### Ensemble
 - [ ] https://www.kaggle.com/mmotoki/generalized-weighted-mean
