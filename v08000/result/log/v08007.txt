@@ -1,0 +1,1225 @@
+
+
+--- Transform ---
+
+
+Load pickle from features/parse_calendar.pkl.
+Load pickle from features/parse_sell_prices.pkl.
+Load pickle from features/parse_sales_train.pkl.
+Load pickle from features/melted_and_merged_train.pkl.
+
+
+--- Create Features ---
+
+
+Load pickle from features/all_data.pkl.
+
+
+--- Split Data ---
+
+
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 35093990 entries, 24940820 to 60034809
+Data columns (total 249 columns):
+ #   Column                                                    Dtype         
+---  ------                                                    -----         
+ 0   id                                                        object        
+ 1   item_id                                                   category      
+ 2   dept_id                                                   category      
+ 3   cat_id                                                    category      
+ 4   store_id                                                  category      
+ 5   state_id                                                  category      
+ 6   d                                                         int16         
+ 7   sales                                                     float16       
+ 8   date                                                      datetime64[ns]
+ 9   wm_yr_wk                                                  int16         
+ 10  event_name_1                                              category      
+ 11  event_type_1                                              category      
+ 12  event_name_2                                              category      
+ 13  event_type_2                                              category      
+ 14  snap_CA                                                   int8          
+ 15  snap_TX                                                   int8          
+ 16  snap_WI                                                   int8          
+ 17  year                                                      int16         
+ 18  quarter                                                   int8          
+ 19  month                                                     int8          
+ 20  week                                                      int8          
+ 21  day                                                       int8          
+ 22  dayofweek                                                 int8          
+ 23  dayofyear                                                 int16         
+ 24  is_month_end                                              bool          
+ 25  is_month_start                                            bool          
+ 26  is_weekend                                                bool          
+ 27  nwd_CA                                                    int8          
+ 28  nwd_TX                                                    int8          
+ 29  nwd_WI                                                    int8          
+ 30  nwd_CA_rolling_t7                                         int8          
+ 31  nwd_CA_rolling_t14                                        int8          
+ 32  nwd_CA_rolling_t28                                        int8          
+ 33  nwd_TX_rolling_t7                                         int8          
+ 34  nwd_TX_rolling_t14                                        int8          
+ 35  nwd_TX_rolling_t28                                        int8          
+ 36  nwd_WI_rolling_t7                                         int8          
+ 37  nwd_WI_rolling_t14                                        int8          
+ 38  nwd_WI_rolling_t28                                        int8          
+ 39  sell_price                                                float16       
+ 40  price_max                                                 float16       
+ 41  price_min                                                 float16       
+ 42  price_std                                                 float16       
+ 43  price_mean                                                float16       
+ 44  price_nunique                                             float16       
+ 45  release                                                   float16       
+ 46  id_nunique_by_price                                       float16       
+ 47  price_float                                               float16       
+ 48  price_int                                                 float16       
+ 49  price_norm                                                float16       
+ 50  sales_lag_t0                                              float16       
+ 51  sales_lag_t1                                              float16       
+ 52  sales_lag_t2                                              float16       
+ 53  sales_lag_t3                                              float16       
+ 54  sales_lag_t4                                              float16       
+ 55  sales_lag_t5                                              float16       
+ 56  sales_lag_t6                                              float16       
+ 57  sales_lag_t7                                              float16       
+ 58  sales_lag_t8                                              float16       
+ 59  sales_lag_t9                                              float16       
+ 60  sales_lag_t10                                             float16       
+ 61  sales_lag_t11                                             float16       
+ 62  sales_lag_t12                                             float16       
+ 63  sales_lag_t13                                             float16       
+ 64  sales_lag_t14                                             float16       
+ 65  sales_roll_mean_t1_7                                      float16       
+ 66  sales_roll_std_t1_7                                       float16       
+ 67  sales_roll_min_t1_7                                       float16       
+ 68  sales_roll_max_t1_7                                       float16       
+ 69  sales_roll_mean_t1_14                                     float16       
+ 70  sales_roll_std_t1_14                                      float16       
+ 71  sales_roll_min_t1_14                                      float16       
+ 72  sales_roll_max_t1_14                                      float16       
+ 73  sales_roll_mean_t1_30                                     float16       
+ 74  sales_roll_std_t1_30                                      float16       
+ 75  sales_roll_min_t1_30                                      float16       
+ 76  sales_roll_max_t1_30                                      float16       
+ 77  sales_roll_mean_t7_7                                      float16       
+ 78  sales_roll_std_t7_7                                       float16       
+ 79  sales_roll_min_t7_7                                       float16       
+ 80  sales_roll_max_t7_7                                       float16       
+ 81  sales_roll_mean_t7_14                                     float16       
+ 82  sales_roll_std_t7_14                                      float16       
+ 83  sales_roll_min_t7_14                                      float16       
+ 84  sales_roll_max_t7_14                                      float16       
+ 85  sales_roll_mean_t7_30                                     float16       
+ 86  sales_roll_std_t7_30                                      float16       
+ 87  sales_roll_min_t7_30                                      float16       
+ 88  sales_roll_max_t7_30                                      float16       
+ 89  sales_roll_mean_t14_7                                     float16       
+ 90  sales_roll_std_t14_7                                      float16       
+ 91  sales_roll_min_t14_7                                      float16       
+ 92  sales_roll_max_t14_7                                      float16       
+ 93  sales_roll_mean_t14_14                                    float16       
+ 94  sales_roll_std_t14_14                                     float16       
+ 95  sales_roll_min_t14_14                                     float16       
+ 96  sales_roll_max_t14_14                                     float16       
+ 97  sales_roll_mean_t14_30                                    float16       
+ 98  sales_roll_std_t14_30                                     float16       
+ 99  sales_roll_min_t14_30                                     float16       
+ 100 sales_roll_max_t14_30                                     float16       
+ 101 sales_rolling_ZeroRatio_t7                                float16       
+ 102 sales_rolling_ZeroCount_t7                                float16       
+ 103 sales_rolling_NonZeroRatio_t7                             float16       
+ 104 sales_rolling_NonZeroCount_t7                             float16       
+ 105 sales_rolling_ZeroRatio_t14                               float16       
+ 106 sales_rolling_ZeroCount_t14                               float16       
+ 107 sales_rolling_NonZeroRatio_t14                            float16       
+ 108 sales_rolling_NonZeroCount_t14                            float16       
+ 109 sales_rolling_ZeroRatio_t30                               float16       
+ 110 sales_rolling_ZeroCount_t30                               float16       
+ 111 sales_rolling_NonZeroRatio_t30                            float16       
+ 112 sales_rolling_NonZeroCount_t30                            float16       
+ 113 sales_rolling_skew_t30                                    float16       
+ 114 sales_rolling_kurt_t30                                    float16       
+ 115 total_sales_lag_t0                                        float16       
+ 116 total_sales_lag_t1                                        float16       
+ 117 total_sales_lag_t2                                        float16       
+ 118 total_sales_lag_t3                                        float16       
+ 119 total_sales_lag_t4                                        float16       
+ 120 total_sales_lag_t5                                        float16       
+ 121 total_sales_lag_t6                                        float16       
+ 122 total_sales_lag_t7                                        float16       
+ 123 total_sales_lag_t8                                        float16       
+ 124 total_sales_lag_t9                                        float16       
+ 125 total_sales_lag_t10                                       float16       
+ 126 total_sales_lag_t11                                       float16       
+ 127 total_sales_lag_t12                                       float16       
+ 128 total_sales_lag_t13                                       float16       
+ 129 total_sales_lag_t14                                       float16       
+ 130 total_sales_roll_mean_t1_7                                float16       
+ 131 total_sales_roll_std_t1_7                                 float16       
+ 132 total_sales_roll_mean_t1_14                               float16       
+ 133 total_sales_roll_std_t1_14                                float16       
+ 134 total_sales_roll_mean_t1_30                               float16       
+ 135 total_sales_roll_std_t1_30                                float16       
+ 136 total_sales_roll_mean_t7_7                                float16       
+ 137 total_sales_roll_std_t7_7                                 float16       
+ 138 total_sales_roll_mean_t7_14                               float16       
+ 139 total_sales_roll_std_t7_14                                float16       
+ 140 total_sales_roll_mean_t7_30                               float16       
+ 141 total_sales_roll_std_t7_30                                float16       
+ 142 total_sales_roll_mean_t14_7                               float16       
+ 143 total_sales_roll_std_t14_7                                float16       
+ 144 total_sales_roll_mean_t14_14                              float16       
+ 145 total_sales_roll_std_t14_14                               float16       
+ 146 total_sales_roll_mean_t14_30                              float16       
+ 147 total_sales_roll_std_t14_30                               float16       
+ 148 price_momentum                                            float16       
+ 149 price_momentum_m                                          float16       
+ 150 days_from_last_sales                                      int16         
+ 151 enc_sales_mean_by_state_id                                float16       
+ 152 enc_sales_std_by_state_id                                 float16       
+ 153 enc_sales_mean_by_store_id                                float16       
+ 154 enc_sales_std_by_store_id                                 float16       
+ 155 enc_sales_mean_by_cat_id                                  float16       
+ 156 enc_sales_std_by_cat_id                                   float16       
+ 157 enc_sales_mean_by_dept_id                                 float16       
+ 158 enc_sales_std_by_dept_id                                  float16       
+ 159 enc_sales_mean_by_state_id_cat_id                         float16       
+ 160 enc_sales_std_by_state_id_cat_id                          float16       
+ 161 enc_sales_mean_by_state_id_dept_id                        float16       
+ 162 enc_sales_std_by_state_id_dept_id                         float16       
+ 163 enc_sales_mean_by_store_id_cat_id                         float16       
+ 164 enc_sales_std_by_store_id_cat_id                          float16       
+ 165 enc_sales_mean_by_store_id_dept_id                        float16       
+ 166 enc_sales_std_by_store_id_dept_id                         float16       
+ 167 enc_sales_mean_by_item_id                                 float16       
+ 168 enc_sales_std_by_item_id                                  float16       
+ 169 enc_sales_mean_by_item_id_state_id                        float16       
+ 170 enc_sales_std_by_item_id_state_id                         float16       
+ 171 enc_sales_mean_by_item_id_store_id                        float16       
+ 172 enc_sales_std_by_item_id_store_id                         float16       
+ 173 enc_sales_mean_by_store_id_dayofweek                      float16       
+ 174 enc_sales_std_by_store_id_dayofweek                       float16       
+ 175 enc_sales_mean_by_dept_id_dayofweek                       float16       
+ 176 enc_sales_std_by_dept_id_dayofweek                        float16       
+ 177 enc_sales_mean_by_item_id_dayofweek                       float16       
+ 178 enc_sales_std_by_item_id_dayofweek                        float16       
+ 179 enc_sales_mean_by_store_id_dept_id_dayofweek              float16       
+ 180 enc_sales_std_by_store_id_dept_id_dayofweek               float16       
+ 181 enc_sales_mean_by_store_id_dept_id_week                   float16       
+ 182 enc_sales_std_by_store_id_dept_id_week                    float16       
+ 183 enc_sales_mean_by_store_id_dept_id_day                    float16       
+ 184 enc_sales_std_by_store_id_dept_id_day                     float16       
+ 185 enc_sales_mean_by_store_id_item_id_dayofweek              float16       
+ 186 enc_sales_std_by_store_id_item_id_dayofweek               float16       
+ 187 enc_sales_mean_by_store_id_item_id_week                   float16       
+ 188 enc_sales_std_by_store_id_item_id_week                    float16       
+ 189 enc_sales_mean_by_store_id_item_id_day                    float16       
+ 190 enc_sales_std_by_store_id_item_id_day                     float16       
+ 191 enc_sales_mean_by_store_id_item_id_nwd_CA                 float16       
+ 192 enc_sales_std_by_store_id_item_id_nwd_CA                  float16       
+ 193 enc_sales_mean_by_store_id_item_id_nwd_TX                 float16       
+ 194 enc_sales_std_by_store_id_item_id_nwd_TX                  float16       
+ 195 enc_sales_mean_by_store_id_item_id_nwd_WI                 float16       
+ 196 enc_sales_std_by_store_id_item_id_nwd_WI                  float16       
+ 197 enc_sales_mean_by_store_id_item_id_is_weekend             float16       
+ 198 enc_sales_std_by_store_id_item_id_is_weekend              float16       
+ 199 enc_sales_times_price_mean_by_state_id                    float16       
+ 200 enc_sales_times_price_std_by_state_id                     float16       
+ 201 enc_sales_times_price_mean_by_store_id                    float16       
+ 202 enc_sales_times_price_std_by_store_id                     float16       
+ 203 enc_sales_times_price_mean_by_cat_id                      float16       
+ 204 enc_sales_times_price_std_by_cat_id                       float16       
+ 205 enc_sales_times_price_mean_by_dept_id                     float16       
+ 206 enc_sales_times_price_std_by_dept_id                      float16       
+ 207 enc_sales_times_price_mean_by_state_id_cat_id             float16       
+ 208 enc_sales_times_price_std_by_state_id_cat_id              float16       
+ 209 enc_sales_times_price_mean_by_state_id_dept_id            float16       
+ 210 enc_sales_times_price_std_by_state_id_dept_id             float16       
+ 211 enc_sales_times_price_mean_by_store_id_cat_id             float16       
+ 212 enc_sales_times_price_std_by_store_id_cat_id              float16       
+ 213 enc_sales_times_price_mean_by_store_id_dept_id            float16       
+ 214 enc_sales_times_price_std_by_store_id_dept_id             float16       
+ 215 enc_sales_times_price_mean_by_item_id                     float16       
+ 216 enc_sales_times_price_std_by_item_id                      float16       
+ 217 enc_sales_times_price_mean_by_item_id_state_id            float16       
+ 218 enc_sales_times_price_std_by_item_id_state_id             float16       
+ 219 enc_sales_times_price_mean_by_item_id_store_id            float16       
+ 220 enc_sales_times_price_std_by_item_id_store_id             float64       
+ 221 enc_sales_times_price_mean_by_store_id_dayofweek          float16       
+ 222 enc_sales_times_price_std_by_store_id_dayofweek           float16       
+ 223 enc_sales_times_price_mean_by_dept_id_dayofweek           float16       
+ 224 enc_sales_times_price_std_by_dept_id_dayofweek            float16       
+ 225 enc_sales_times_price_mean_by_item_id_dayofweek           float16       
+ 226 enc_sales_times_price_std_by_item_id_dayofweek            float16       
+ 227 enc_sales_times_price_mean_by_store_id_dept_id_dayofweek  float16       
+ 228 enc_sales_times_price_std_by_store_id_dept_id_dayofweek   float16       
+ 229 enc_sales_times_price_mean_by_store_id_item_id_dayofweek  float16       
+ 230 enc_sales_times_price_std_by_store_id_item_id_dayofweek   float64       
+ 231 gte_state_id_MEAN                                         float64       
+ 232 gte_store_id_MEAN                                         float64       
+ 233 gte_cat_id_MEAN                                           float64       
+ 234 gte_dept_id_MEAN                                          float64       
+ 235 gte_item_id_MEAN                                          float64       
+ 236 gte_state_id_dept_id_MEAN                                 float64       
+ 237 gte_state_id_item_id_MEAN                                 float64       
+ 238 gte_store_id_dept_id_MEAN                                 float64       
+ 239 gte_store_id_item_id_MEAN                                 float64       
+ 240 gte_state_id_VAR                                          float16       
+ 241 gte_store_id_VAR                                          float16       
+ 242 gte_cat_id_VAR                                            float16       
+ 243 gte_dept_id_VAR                                           float16       
+ 244 gte_item_id_VAR                                           float16       
+ 245 gte_state_id_dept_id_VAR                                  float16       
+ 246 gte_state_id_item_id_VAR                                  float16       
+ 247 gte_store_id_dept_id_VAR                                  float16       
+ 248 gte_store_id_item_id_VAR                                  float16       
+dtypes: bool(3), category(9), datetime64[ns](1), float16(199), float64(11), int16(5), int8(20), object(1)
+memory usage: 17.8+ GB
+None 
+
+Dump Train Data.
+1/70, Dump pickle to features/train_data_CA_1_FOODS_1.pkl.
+2/70, Dump pickle to features/train_data_CA_1_FOODS_2.pkl.
+3/70, Dump pickle to features/train_data_CA_1_FOODS_3.pkl.
+4/70, Dump pickle to features/train_data_CA_1_HOBBIES_1.pkl.
+5/70, Dump pickle to features/train_data_CA_1_HOBBIES_2.pkl.
+6/70, Dump pickle to features/train_data_CA_1_HOUSEHOLD_1.pkl.
+7/70, Dump pickle to features/train_data_CA_1_HOUSEHOLD_2.pkl.
+8/70, Dump pickle to features/train_data_CA_2_FOODS_1.pkl.
+9/70, Dump pickle to features/train_data_CA_2_FOODS_2.pkl.
+10/70, Dump pickle to features/train_data_CA_2_FOODS_3.pkl.
+11/70, Dump pickle to features/train_data_CA_2_HOBBIES_1.pkl.
+12/70, Dump pickle to features/train_data_CA_2_HOBBIES_2.pkl.
+13/70, Dump pickle to features/train_data_CA_2_HOUSEHOLD_1.pkl.
+14/70, Dump pickle to features/train_data_CA_2_HOUSEHOLD_2.pkl.
+15/70, Dump pickle to features/train_data_CA_3_FOODS_1.pkl.
+16/70, Dump pickle to features/train_data_CA_3_FOODS_2.pkl.
+17/70, Dump pickle to features/train_data_CA_3_FOODS_3.pkl.
+18/70, Dump pickle to features/train_data_CA_3_HOBBIES_1.pkl.
+19/70, Dump pickle to features/train_data_CA_3_HOBBIES_2.pkl.
+20/70, Dump pickle to features/train_data_CA_3_HOUSEHOLD_1.pkl.
+21/70, Dump pickle to features/train_data_CA_3_HOUSEHOLD_2.pkl.
+22/70, Dump pickle to features/train_data_CA_4_FOODS_1.pkl.
+23/70, Dump pickle to features/train_data_CA_4_FOODS_2.pkl.
+24/70, Dump pickle to features/train_data_CA_4_FOODS_3.pkl.
+25/70, Dump pickle to features/train_data_CA_4_HOBBIES_1.pkl.
+26/70, Dump pickle to features/train_data_CA_4_HOBBIES_2.pkl.
+27/70, Dump pickle to features/train_data_CA_4_HOUSEHOLD_1.pkl.
+28/70, Dump pickle to features/train_data_CA_4_HOUSEHOLD_2.pkl.
+29/70, Dump pickle to features/train_data_TX_1_FOODS_1.pkl.
+30/70, Dump pickle to features/train_data_TX_1_FOODS_2.pkl.
+31/70, Dump pickle to features/train_data_TX_1_FOODS_3.pkl.
+32/70, Dump pickle to features/train_data_TX_1_HOBBIES_1.pkl.
+33/70, Dump pickle to features/train_data_TX_1_HOBBIES_2.pkl.
+34/70, Dump pickle to features/train_data_TX_1_HOUSEHOLD_1.pkl.
+35/70, Dump pickle to features/train_data_TX_1_HOUSEHOLD_2.pkl.
+36/70, Dump pickle to features/train_data_TX_2_FOODS_1.pkl.
+37/70, Dump pickle to features/train_data_TX_2_FOODS_2.pkl.
+38/70, Dump pickle to features/train_data_TX_2_FOODS_3.pkl.
+39/70, Dump pickle to features/train_data_TX_2_HOBBIES_1.pkl.
+40/70, Dump pickle to features/train_data_TX_2_HOBBIES_2.pkl.
+41/70, Dump pickle to features/train_data_TX_2_HOUSEHOLD_1.pkl.
+42/70, Dump pickle to features/train_data_TX_2_HOUSEHOLD_2.pkl.
+43/70, Dump pickle to features/train_data_TX_3_FOODS_1.pkl.
+44/70, Dump pickle to features/train_data_TX_3_FOODS_2.pkl.
+45/70, Dump pickle to features/train_data_TX_3_FOODS_3.pkl.
+46/70, Dump pickle to features/train_data_TX_3_HOBBIES_1.pkl.
+47/70, Dump pickle to features/train_data_TX_3_HOBBIES_2.pkl.
+48/70, Dump pickle to features/train_data_TX_3_HOUSEHOLD_1.pkl.
+49/70, Dump pickle to features/train_data_TX_3_HOUSEHOLD_2.pkl.
+50/70, Dump pickle to features/train_data_WI_1_FOODS_1.pkl.
+51/70, Dump pickle to features/train_data_WI_1_FOODS_2.pkl.
+52/70, Dump pickle to features/train_data_WI_1_FOODS_3.pkl.
+53/70, Dump pickle to features/train_data_WI_1_HOBBIES_1.pkl.
+54/70, Dump pickle to features/train_data_WI_1_HOBBIES_2.pkl.
+55/70, Dump pickle to features/train_data_WI_1_HOUSEHOLD_1.pkl.
+56/70, Dump pickle to features/train_data_WI_1_HOUSEHOLD_2.pkl.
+57/70, Dump pickle to features/train_data_WI_2_FOODS_1.pkl.
+58/70, Dump pickle to features/train_data_WI_2_FOODS_2.pkl.
+59/70, Dump pickle to features/train_data_WI_2_FOODS_3.pkl.
+60/70, Dump pickle to features/train_data_WI_2_HOBBIES_1.pkl.
+61/70, Dump pickle to features/train_data_WI_2_HOBBIES_2.pkl.
+62/70, Dump pickle to features/train_data_WI_2_HOUSEHOLD_1.pkl.
+63/70, Dump pickle to features/train_data_WI_2_HOUSEHOLD_2.pkl.
+64/70, Dump pickle to features/train_data_WI_3_FOODS_1.pkl.
+65/70, Dump pickle to features/train_data_WI_3_FOODS_2.pkl.
+66/70, Dump pickle to features/train_data_WI_3_FOODS_3.pkl.
+67/70, Dump pickle to features/train_data_WI_3_HOBBIES_1.pkl.
+68/70, Dump pickle to features/train_data_WI_3_HOBBIES_2.pkl.
+69/70, Dump pickle to features/train_data_WI_3_HOUSEHOLD_1.pkl.
+70/70, Dump pickle to features/train_data_WI_3_HOUSEHOLD_2.pkl.
+Dump Evaluation Data.
+Dump pickle to features/eval_data.pkl.
+Dump Submisssion Data.
+Split submit_data to features/submit_data.pkl
+Dump pickle to features/submit_data.pkl.
+
+
+--- Define Evaluator ---
+
+
+Dump pickle to features/evaluator.pkl.
+
+
+--- Train ---
+
+
+Load pickle from features/evaluator.pkl.
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 50,
+    "seed": 422,
+    "learning_rate": 0.03,
+    "subsample": 0.5,
+    "subsample_freq": 1,
+    "feature_fraction": 0.5,
+    "lambda_l2": 0.1,
+    "force_row_wise": true,
+    "verbose": -1
+} 
+
+
+
+Group ID: ('CA_1', 'FOODS_1'), 1/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00403966
+Early stopping, best iteration is:
+[65]	valid_0's WRMSSE: 0.00400446
+
+
+Group ID: ('CA_1', 'FOODS_2'), 2/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0122394
+[200]	valid_0's WRMSSE: 0.0121595
+[300]	valid_0's WRMSSE: 0.0121666
+Early stopping, best iteration is:
+[250]	valid_0's WRMSSE: 0.0121494
+
+
+Group ID: ('CA_1', 'FOODS_3'), 3/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0336426
+[200]	valid_0's WRMSSE: 0.0335417
+[300]	valid_0's WRMSSE: 0.0337221
+Early stopping, best iteration is:
+[242]	valid_0's WRMSSE: 0.0334933
+
+
+Group ID: ('CA_1', 'HOBBIES_1'), 4/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0137538
+[200]	valid_0's WRMSSE: 0.0136411
+[300]	valid_0's WRMSSE: 0.013632
+Early stopping, best iteration is:
+[240]	valid_0's WRMSSE: 0.0136161
+
+
+Group ID: ('CA_1', 'HOBBIES_2'), 5/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.000524459
+[200]	valid_0's WRMSSE: 0.000526789
+Early stopping, best iteration is:
+[119]	valid_0's WRMSSE: 0.000524303
+
+
+Group ID: ('CA_1', 'HOUSEHOLD_1'), 6/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0188441
+[200]	valid_0's WRMSSE: 0.0187662
+[300]	valid_0's WRMSSE: 0.018772
+Early stopping, best iteration is:
+[249]	valid_0's WRMSSE: 0.0187487
+
+
+Group ID: ('CA_1', 'HOUSEHOLD_2'), 7/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00649189
+[200]	valid_0's WRMSSE: 0.00644917
+[300]	valid_0's WRMSSE: 0.00645453
+Early stopping, best iteration is:
+[211]	valid_0's WRMSSE: 0.00644692
+
+
+Group ID: ('CA_2', 'FOODS_1'), 8/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00813211
+[200]	valid_0's WRMSSE: 0.00810483
+Early stopping, best iteration is:
+[156]	valid_0's WRMSSE: 0.00808919
+
+
+Group ID: ('CA_2', 'FOODS_2'), 9/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0103597
+[200]	valid_0's WRMSSE: 0.0102245
+[300]	valid_0's WRMSSE: 0.0102456
+Early stopping, best iteration is:
+[243]	valid_0's WRMSSE: 0.0102155
+
+
+Group ID: ('CA_2', 'FOODS_3'), 10/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.035834
+[200]	valid_0's WRMSSE: 0.0348943
+[300]	valid_0's WRMSSE: 0.0347035
+[400]	valid_0's WRMSSE: 0.0347174
+Early stopping, best iteration is:
+[308]	valid_0's WRMSSE: 0.0346765
+
+
+Group ID: ('CA_2', 'HOBBIES_1'), 11/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00933777
+[200]	valid_0's WRMSSE: 0.00928818
+[300]	valid_0's WRMSSE: 0.00927368
+[400]	valid_0's WRMSSE: 0.00928643
+Early stopping, best iteration is:
+[309]	valid_0's WRMSSE: 0.00927151
+
+
+Group ID: ('CA_2', 'HOBBIES_2'), 12/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.000488743
+Early stopping, best iteration is:
+[72]	valid_0's WRMSSE: 0.000488189
+
+
+Group ID: ('CA_2', 'HOUSEHOLD_1'), 13/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0220213
+[200]	valid_0's WRMSSE: 0.0219919
+Early stopping, best iteration is:
+[169]	valid_0's WRMSSE: 0.0219363
+
+
+Group ID: ('CA_2', 'HOUSEHOLD_2'), 14/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00990779
+[200]	valid_0's WRMSSE: 0.00989475
+Early stopping, best iteration is:
+[133]	valid_0's WRMSSE: 0.00988649
+
+
+Group ID: ('CA_3', 'FOODS_1'), 15/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00590983
+Early stopping, best iteration is:
+[87]	valid_0's WRMSSE: 0.0058996
+
+
+Group ID: ('CA_3', 'FOODS_2'), 16/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0164458
+[200]	valid_0's WRMSSE: 0.0162998
+[300]	valid_0's WRMSSE: 0.0162641
+[400]	valid_0's WRMSSE: 0.0162313
+[500]	valid_0's WRMSSE: 0.0162567
+Early stopping, best iteration is:
+[421]	valid_0's WRMSSE: 0.0162209
+
+
+Group ID: ('CA_3', 'FOODS_3'), 17/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0411407
+[200]	valid_0's WRMSSE: 0.0401606
+Early stopping, best iteration is:
+[196]	valid_0's WRMSSE: 0.0401386
+
+
+Group ID: ('CA_3', 'HOBBIES_1'), 18/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0141719
+[200]	valid_0's WRMSSE: 0.0141323
+[300]	valid_0's WRMSSE: 0.0141249
+Early stopping, best iteration is:
+[229]	valid_0's WRMSSE: 0.0141119
+
+
+Group ID: ('CA_3', 'HOBBIES_2'), 19/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.000737441
+[200]	valid_0's WRMSSE: 0.000741626
+Early stopping, best iteration is:
+[100]	valid_0's WRMSSE: 0.000737441
+
+
+Group ID: ('CA_3', 'HOUSEHOLD_1'), 20/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0406662
+[200]	valid_0's WRMSSE: 0.0404101
+[300]	valid_0's WRMSSE: 0.0404636
+Early stopping, best iteration is:
+[212]	valid_0's WRMSSE: 0.0403866
+
+
+Group ID: ('CA_3', 'HOUSEHOLD_2'), 21/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00980063
+[200]	valid_0's WRMSSE: 0.0097608
+[300]	valid_0's WRMSSE: 0.00976449
+Early stopping, best iteration is:
+[232]	valid_0's WRMSSE: 0.00975429
+
+
+Group ID: ('CA_4', 'FOODS_1'), 22/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00360965
+[200]	valid_0's WRMSSE: 0.00363966
+Early stopping, best iteration is:
+[102]	valid_0's WRMSSE: 0.00360847
+
+
+Group ID: ('CA_4', 'FOODS_2'), 23/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00812018
+[200]	valid_0's WRMSSE: 0.00808544
+Early stopping, best iteration is:
+[157]	valid_0's WRMSSE: 0.00807729
+
+
+Group ID: ('CA_4', 'FOODS_3'), 24/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0186455
+[200]	valid_0's WRMSSE: 0.0185897
+Early stopping, best iteration is:
+[196]	valid_0's WRMSSE: 0.0185843
+
+
+Group ID: ('CA_4', 'HOBBIES_1'), 25/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0080326
+[200]	valid_0's WRMSSE: 0.008006
+Early stopping, best iteration is:
+[185]	valid_0's WRMSSE: 0.00800146
+
+
+Group ID: ('CA_4', 'HOBBIES_2'), 26/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.000217387
+Early stopping, best iteration is:
+[59]	valid_0's WRMSSE: 0.000216602
+
+
+Group ID: ('CA_4', 'HOUSEHOLD_1'), 27/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0108705
+[200]	valid_0's WRMSSE: 0.0108287
+Early stopping, best iteration is:
+[170]	valid_0's WRMSSE: 0.0108251
+
+
+Group ID: ('CA_4', 'HOUSEHOLD_2'), 28/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00443584
+[200]	valid_0's WRMSSE: 0.00442031
+[300]	valid_0's WRMSSE: 0.00442521
+Early stopping, best iteration is:
+[248]	valid_0's WRMSSE: 0.00441636
+
+
+Group ID: ('TX_1', 'FOODS_1'), 29/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00407974
+[200]	valid_0's WRMSSE: 0.00407087
+Early stopping, best iteration is:
+[186]	valid_0's WRMSSE: 0.00406416
+
+
+Group ID: ('TX_1', 'FOODS_2'), 30/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00797032
+[200]	valid_0's WRMSSE: 0.00793152
+[300]	valid_0's WRMSSE: 0.00791772
+[400]	valid_0's WRMSSE: 0.00791065
+Early stopping, best iteration is:
+[341]	valid_0's WRMSSE: 0.00790506
+
+
+Group ID: ('TX_1', 'FOODS_3'), 31/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0231298
+[200]	valid_0's WRMSSE: 0.0229008
+Early stopping, best iteration is:
+[144]	valid_0's WRMSSE: 0.0228741
+
+
+Group ID: ('TX_1', 'HOBBIES_1'), 32/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00690405
+[200]	valid_0's WRMSSE: 0.00690461
+Early stopping, best iteration is:
+[177]	valid_0's WRMSSE: 0.00689398
+
+
+Group ID: ('TX_1', 'HOBBIES_2'), 33/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.000435188
+Early stopping, best iteration is:
+[86]	valid_0's WRMSSE: 0.000434416
+
+
+Group ID: ('TX_1', 'HOUSEHOLD_1'), 34/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0170101
+[200]	valid_0's WRMSSE: 0.017038
+Early stopping, best iteration is:
+[132]	valid_0's WRMSSE: 0.0169912
+
+
+Group ID: ('TX_1', 'HOUSEHOLD_2'), 35/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00527371
+[200]	valid_0's WRMSSE: 0.00525936
+Early stopping, best iteration is:
+[162]	valid_0's WRMSSE: 0.00525413
+
+
+Group ID: ('TX_2', 'FOODS_1'), 36/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00349474
+[200]	valid_0's WRMSSE: 0.00348387
+Early stopping, best iteration is:
+[167]	valid_0's WRMSSE: 0.00347921
+
+
+Group ID: ('TX_2', 'FOODS_2'), 37/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00889285
+[200]	valid_0's WRMSSE: 0.00887683
+[300]	valid_0's WRMSSE: 0.00891527
+Early stopping, best iteration is:
+[210]	valid_0's WRMSSE: 0.00887144
+
+
+Group ID: ('TX_2', 'FOODS_3'), 38/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0265803
+[200]	valid_0's WRMSSE: 0.0264989
+Early stopping, best iteration is:
+[128]	valid_0's WRMSSE: 0.0263828
+
+
+Group ID: ('TX_2', 'HOBBIES_1'), 39/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0106981
+Early stopping, best iteration is:
+[76]	valid_0's WRMSSE: 0.01065
+
+
+Group ID: ('TX_2', 'HOBBIES_2'), 40/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.000485631
+Early stopping, best iteration is:
+[87]	valid_0's WRMSSE: 0.000484707
+
+
+Group ID: ('TX_2', 'HOUSEHOLD_1'), 41/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0185818
+[200]	valid_0's WRMSSE: 0.0187493
+Early stopping, best iteration is:
+[118]	valid_0's WRMSSE: 0.0185655
+
+
+Group ID: ('TX_2', 'HOUSEHOLD_2'), 42/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00537489
+[200]	valid_0's WRMSSE: 0.00536685
+Early stopping, best iteration is:
+[162]	valid_0's WRMSSE: 0.00536459
+
+
+Group ID: ('TX_3', 'FOODS_1'), 43/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00582359
+[200]	valid_0's WRMSSE: 0.00577014
+Early stopping, best iteration is:
+[166]	valid_0's WRMSSE: 0.00575753
+
+
+Group ID: ('TX_3', 'FOODS_2'), 44/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0111453
+[200]	valid_0's WRMSSE: 0.0110992
+Early stopping, best iteration is:
+[189]	valid_0's WRMSSE: 0.0110909
+
+
+Group ID: ('TX_3', 'FOODS_3'), 45/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0249952
+[200]	valid_0's WRMSSE: 0.0251888
+Early stopping, best iteration is:
+[107]	valid_0's WRMSSE: 0.0249499
+
+
+Group ID: ('TX_3', 'HOBBIES_1'), 46/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0141175
+[200]	valid_0's WRMSSE: 0.0143357
+Early stopping, best iteration is:
+[109]	valid_0's WRMSSE: 0.0140622
+
+
+Group ID: ('TX_3', 'HOBBIES_2'), 47/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.000805694
+Early stopping, best iteration is:
+[94]	valid_0's WRMSSE: 0.000805297
+
+
+Group ID: ('TX_3', 'HOUSEHOLD_1'), 48/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.019572
+Early stopping, best iteration is:
+[92]	valid_0's WRMSSE: 0.0195668
+
+
+Group ID: ('TX_3', 'HOUSEHOLD_2'), 49/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00483863
+[200]	valid_0's WRMSSE: 0.00483157
+Early stopping, best iteration is:
+[178]	valid_0's WRMSSE: 0.00482828
+
+
+Group ID: ('WI_1', 'FOODS_1'), 50/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00511505
+[200]	valid_0's WRMSSE: 0.00513535
+Early stopping, best iteration is:
+[146]	valid_0's WRMSSE: 0.00509648
+
+
+Group ID: ('WI_1', 'FOODS_2'), 51/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0146427
+[200]	valid_0's WRMSSE: 0.0145769
+Early stopping, best iteration is:
+[151]	valid_0's WRMSSE: 0.0145495
+
+
+Group ID: ('WI_1', 'FOODS_3'), 52/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0255752
+[200]	valid_0's WRMSSE: 0.0254024
+Early stopping, best iteration is:
+[156]	valid_0's WRMSSE: 0.0253588
+
+
+Group ID: ('WI_1', 'HOBBIES_1'), 53/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00788047
+[200]	valid_0's WRMSSE: 0.00786228
+Early stopping, best iteration is:
+[134]	valid_0's WRMSSE: 0.00786038
+
+
+Group ID: ('WI_1', 'HOBBIES_2'), 54/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.000461516
+Early stopping, best iteration is:
+[85]	valid_0's WRMSSE: 0.000460747
+
+
+Group ID: ('WI_1', 'HOUSEHOLD_1'), 55/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0132915
+[200]	valid_0's WRMSSE: 0.0132244
+[300]	valid_0's WRMSSE: 0.0132167
+[400]	valid_0's WRMSSE: 0.0132107
+[500]	valid_0's WRMSSE: 0.0132228
+Early stopping, best iteration is:
+[428]	valid_0's WRMSSE: 0.0132063
+
+
+Group ID: ('WI_1', 'HOUSEHOLD_2'), 56/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00499832
+[200]	valid_0's WRMSSE: 0.00499657
+Early stopping, best iteration is:
+[114]	valid_0's WRMSSE: 0.00499536
+
+
+Group ID: ('WI_2', 'FOODS_1'), 57/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00815292
+[200]	valid_0's WRMSSE: 0.00822161
+Early stopping, best iteration is:
+[107]	valid_0's WRMSSE: 0.00809475
+
+
+Group ID: ('WI_2', 'FOODS_2'), 58/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0316484
+[200]	valid_0's WRMSSE: 0.0315554
+Early stopping, best iteration is:
+[159]	valid_0's WRMSSE: 0.0314043
+
+
+Group ID: ('WI_2', 'FOODS_3'), 59/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0402464
+[200]	valid_0's WRMSSE: 0.0392511
+[300]	valid_0's WRMSSE: 0.0393079
+Early stopping, best iteration is:
+[232]	valid_0's WRMSSE: 0.0392083
+
+
+Group ID: ('WI_2', 'HOBBIES_1'), 60/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00649885
+[200]	valid_0's WRMSSE: 0.00652104
+Early stopping, best iteration is:
+[109]	valid_0's WRMSSE: 0.00649161
+
+
+Group ID: ('WI_2', 'HOBBIES_2'), 61/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.000437641
+Early stopping, best iteration is:
+[58]	valid_0's WRMSSE: 0.000436796
+
+
+Group ID: ('WI_2', 'HOUSEHOLD_1'), 62/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0208702
+[200]	valid_0's WRMSSE: 0.0207931
+Early stopping, best iteration is:
+[171]	valid_0's WRMSSE: 0.0207741
+
+
+Group ID: ('WI_2', 'HOUSEHOLD_2'), 63/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00404489
+[200]	valid_0's WRMSSE: 0.0040454
+Early stopping, best iteration is:
+[148]	valid_0's WRMSSE: 0.00403973
+
+
+Group ID: ('WI_3', 'FOODS_1'), 64/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0049484
+[200]	valid_0's WRMSSE: 0.00495711
+Early stopping, best iteration is:
+[135]	valid_0's WRMSSE: 0.0048722
+
+
+Group ID: ('WI_3', 'FOODS_2'), 65/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0141972
+[200]	valid_0's WRMSSE: 0.0141077
+[300]	valid_0's WRMSSE: 0.014135
+Early stopping, best iteration is:
+[228]	valid_0's WRMSSE: 0.0141052
+
+
+Group ID: ('WI_3', 'FOODS_3'), 66/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0280649
+[200]	valid_0's WRMSSE: 0.0277949
+Early stopping, best iteration is:
+[155]	valid_0's WRMSSE: 0.0277207
+
+
+Group ID: ('WI_3', 'HOBBIES_1'), 67/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00547295
+[200]	valid_0's WRMSSE: 0.00545798
+Early stopping, best iteration is:
+[192]	valid_0's WRMSSE: 0.00545593
+
+
+Group ID: ('WI_3', 'HOBBIES_2'), 68/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.000452131
+Early stopping, best iteration is:
+[76]	valid_0's WRMSSE: 0.000451645
+
+
+Group ID: ('WI_3', 'HOUSEHOLD_1'), 69/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0139917
+[200]	valid_0's WRMSSE: 0.0139501
+Early stopping, best iteration is:
+[185]	valid_0's WRMSSE: 0.0139471
+
+
+Group ID: ('WI_3', 'HOUSEHOLD_2'), 70/70
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.00522463
+[200]	valid_0's WRMSSE: 0.00522674
+Early stopping, best iteration is:
+[160]	valid_0's WRMSSE: 0.00522087
+
+Dump pickle to result/model/v08007.pkl.
+
+
+--- Evaluation ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from features/evaluator.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/eval_data.pkl.
+
+Our val RMSE score is 2.1091577801978967
+Our val WRMSSE score is 0.553946545801339
+
+
+--- Submission ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/submit_data.pkl.
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.741621  0.771807  0.841620  1.073745   
+1  HOBBIES_1_002_CA_1_validation  0.196623  0.158484  0.201887  0.231084   
+2  HOBBIES_1_003_CA_1_validation  0.278968  0.345291  0.383478  0.340365   
+3  HOBBIES_1_004_CA_1_validation  1.617027  1.440230  1.430731  1.547960   
+4  HOBBIES_1_005_CA_1_validation  0.776809  0.584471  0.799976  0.745626   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.906830  1.385899  1.660401  0.538184  0.570389  0.631194  0.450763   
+1  0.223917  0.235513  0.270652  0.273556  0.372502  0.337585  0.241964   
+2  0.404132  0.417355  0.519018  0.323900  0.330911  0.268056  0.418590   
+3  1.898365  2.258672  3.746110  1.803571  1.615909  1.462318  1.627954   
+4  0.783660  1.086886  1.033427  1.091651  0.917066  0.786776  0.689842   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.638394  1.027212  0.724608  0.819797  0.551367  0.593571  0.736220   
+1  0.347823  0.339630  0.339161  0.245943  0.271349  0.285567  0.265935   
+2  0.348711  0.719544  0.603608  0.356478  0.451282  0.443248  0.459471   
+3  1.843640  3.491840  3.225080  1.511139  1.179173  1.266856  1.305010   
+4  0.879837  1.720224  1.344658  0.567470  0.545512  0.559247  0.546419   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.673930  1.175737  0.667796  0.631807  0.534655  0.440567  0.597176   
+1  0.193687  0.374130  0.374128  0.276983  0.270936  0.256725  0.306116   
+2  0.581752  0.550210  0.621258  0.440273  0.321663  0.401233  0.693678   
+3  1.278288  2.331932  2.630829  1.919252  1.608655  1.720508  1.522470   
+4  0.635689  0.886191  0.818694  1.139917  0.966329  1.257465  1.193773   
+
+        F26       F27       F28  
+0  0.731065  0.757851  0.843056  
+1  0.302622  0.350973  0.385868  
+2  0.633281  0.534692  0.753836  
+3  2.082750  3.481063  3.849392  
+4  1.317446  2.069880  1.994549  
