@@ -5,42 +5,42 @@
 ## Experiments
 ### v08000
 - v07004 のコピー
-- dept_id ごとに学習、seed = 42
+- store_id ごとに学習、seed = 42
+- sample_weight を 1.3  倍するのをやめた。
+  - 0.5145 -> 0.514
+- tweedie の parameter を 1.1 にする
+  - 少し精度が下がったので1.0にする
+- 'boost_from_average': False
+  - 少し精度が下がったので不採用
+
 
 ### v08001
-- dept_id ごとに学習、seed = 422
+- v08000, model by dept_ids, rand_seed=3
 
 ### v08002
-- dept_id ごとに学習、seed = 4222
+- v08000, model by store_ids, rand_seed=3
 
 ### v08003
-- store_id ごとに学習、seed = 4222
+- v08000, model by dept_ids, rand_seed=3
+- データを１年に削減
 
 ### v08004
-- store_id ごとに学習、seed = 422
+- v08000, model by dept_ids, rand_seed=3
+- データを2年に削減
 
 ### v08005
-- store_id ごとに学習、seed = 42
+- [ ] v08001, model by dept_ids, rand_seed=10
+- [ ] IS_TEST = False
 
 ### v08006
-- store_id, dept_id ごとに学習、seed = 42
+- [ ] 特徴量生成前に、out of stock のデータを null にする
+  - 7日以上売上個数が0のデータをnullに変換
 
-### v08007
-- store_id, dept_id ごとに学習、seed = 422
 
-### v08008
-- store_id, dept_id ごとに学習、seed = 4222
 
 ## Todo
 ### Ensemble
-- [ ] https://www.kaggle.com/mmotoki/generalized-weighted-mean
-  - 前処理ですべての値をlog1p 変換する
-    - 学習時にlog1pしてうまくいかなかったので、ensenbleでもやらなくてもいいかも？
-  - 上記の手法を使って重みを予測
-  - Stacking じゃなくていいの？
-    - 自分で考えた不安定な手法よりも類似コンペの上位解法を参考にするほうがいいだろう（完）
-    - 平均化はこれつかう
-      - https://www.kaggle.com/mmotoki/generalized-weighted-mean
+- [ ] 今の実力ではアンサンブルを行うことができないので、全体平均を使う。
 
 
 ### Next Todo

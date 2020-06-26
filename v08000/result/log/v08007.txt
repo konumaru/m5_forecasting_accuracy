@@ -19,7 +19,7 @@ Load pickle from features/all_data.pkl.
 
 
 <class 'pandas.core.frame.DataFrame'>
-RangeIndex: 35093990 entries, 24940820 to 60034809
+RangeIndex: 23965140 entries, 36069670 to 60034809
 Data columns (total 249 columns):
  #   Column                                                    Dtype         
 ---  ------                                                    -----         
@@ -273,80 +273,20 @@ Data columns (total 249 columns):
  247 gte_store_id_dept_id_VAR                                  float16       
  248 gte_store_id_item_id_VAR                                  float16       
 dtypes: bool(3), category(9), datetime64[ns](1), float16(199), float64(11), int16(5), int8(20), object(1)
-memory usage: 17.8+ GB
+memory usage: 12.2+ GB
 None 
 
 Dump Train Data.
-1/70, Dump pickle to features/train_data_CA_1_FOODS_1.pkl.
-2/70, Dump pickle to features/train_data_CA_1_FOODS_2.pkl.
-3/70, Dump pickle to features/train_data_CA_1_FOODS_3.pkl.
-4/70, Dump pickle to features/train_data_CA_1_HOBBIES_1.pkl.
-5/70, Dump pickle to features/train_data_CA_1_HOBBIES_2.pkl.
-6/70, Dump pickle to features/train_data_CA_1_HOUSEHOLD_1.pkl.
-7/70, Dump pickle to features/train_data_CA_1_HOUSEHOLD_2.pkl.
-8/70, Dump pickle to features/train_data_CA_2_FOODS_1.pkl.
-9/70, Dump pickle to features/train_data_CA_2_FOODS_2.pkl.
-10/70, Dump pickle to features/train_data_CA_2_FOODS_3.pkl.
-11/70, Dump pickle to features/train_data_CA_2_HOBBIES_1.pkl.
-12/70, Dump pickle to features/train_data_CA_2_HOBBIES_2.pkl.
-13/70, Dump pickle to features/train_data_CA_2_HOUSEHOLD_1.pkl.
-14/70, Dump pickle to features/train_data_CA_2_HOUSEHOLD_2.pkl.
-15/70, Dump pickle to features/train_data_CA_3_FOODS_1.pkl.
-16/70, Dump pickle to features/train_data_CA_3_FOODS_2.pkl.
-17/70, Dump pickle to features/train_data_CA_3_FOODS_3.pkl.
-18/70, Dump pickle to features/train_data_CA_3_HOBBIES_1.pkl.
-19/70, Dump pickle to features/train_data_CA_3_HOBBIES_2.pkl.
-20/70, Dump pickle to features/train_data_CA_3_HOUSEHOLD_1.pkl.
-21/70, Dump pickle to features/train_data_CA_3_HOUSEHOLD_2.pkl.
-22/70, Dump pickle to features/train_data_CA_4_FOODS_1.pkl.
-23/70, Dump pickle to features/train_data_CA_4_FOODS_2.pkl.
-24/70, Dump pickle to features/train_data_CA_4_FOODS_3.pkl.
-25/70, Dump pickle to features/train_data_CA_4_HOBBIES_1.pkl.
-26/70, Dump pickle to features/train_data_CA_4_HOBBIES_2.pkl.
-27/70, Dump pickle to features/train_data_CA_4_HOUSEHOLD_1.pkl.
-28/70, Dump pickle to features/train_data_CA_4_HOUSEHOLD_2.pkl.
-29/70, Dump pickle to features/train_data_TX_1_FOODS_1.pkl.
-30/70, Dump pickle to features/train_data_TX_1_FOODS_2.pkl.
-31/70, Dump pickle to features/train_data_TX_1_FOODS_3.pkl.
-32/70, Dump pickle to features/train_data_TX_1_HOBBIES_1.pkl.
-33/70, Dump pickle to features/train_data_TX_1_HOBBIES_2.pkl.
-34/70, Dump pickle to features/train_data_TX_1_HOUSEHOLD_1.pkl.
-35/70, Dump pickle to features/train_data_TX_1_HOUSEHOLD_2.pkl.
-36/70, Dump pickle to features/train_data_TX_2_FOODS_1.pkl.
-37/70, Dump pickle to features/train_data_TX_2_FOODS_2.pkl.
-38/70, Dump pickle to features/train_data_TX_2_FOODS_3.pkl.
-39/70, Dump pickle to features/train_data_TX_2_HOBBIES_1.pkl.
-40/70, Dump pickle to features/train_data_TX_2_HOBBIES_2.pkl.
-41/70, Dump pickle to features/train_data_TX_2_HOUSEHOLD_1.pkl.
-42/70, Dump pickle to features/train_data_TX_2_HOUSEHOLD_2.pkl.
-43/70, Dump pickle to features/train_data_TX_3_FOODS_1.pkl.
-44/70, Dump pickle to features/train_data_TX_3_FOODS_2.pkl.
-45/70, Dump pickle to features/train_data_TX_3_FOODS_3.pkl.
-46/70, Dump pickle to features/train_data_TX_3_HOBBIES_1.pkl.
-47/70, Dump pickle to features/train_data_TX_3_HOBBIES_2.pkl.
-48/70, Dump pickle to features/train_data_TX_3_HOUSEHOLD_1.pkl.
-49/70, Dump pickle to features/train_data_TX_3_HOUSEHOLD_2.pkl.
-50/70, Dump pickle to features/train_data_WI_1_FOODS_1.pkl.
-51/70, Dump pickle to features/train_data_WI_1_FOODS_2.pkl.
-52/70, Dump pickle to features/train_data_WI_1_FOODS_3.pkl.
-53/70, Dump pickle to features/train_data_WI_1_HOBBIES_1.pkl.
-54/70, Dump pickle to features/train_data_WI_1_HOBBIES_2.pkl.
-55/70, Dump pickle to features/train_data_WI_1_HOUSEHOLD_1.pkl.
-56/70, Dump pickle to features/train_data_WI_1_HOUSEHOLD_2.pkl.
-57/70, Dump pickle to features/train_data_WI_2_FOODS_1.pkl.
-58/70, Dump pickle to features/train_data_WI_2_FOODS_2.pkl.
-59/70, Dump pickle to features/train_data_WI_2_FOODS_3.pkl.
-60/70, Dump pickle to features/train_data_WI_2_HOBBIES_1.pkl.
-61/70, Dump pickle to features/train_data_WI_2_HOBBIES_2.pkl.
-62/70, Dump pickle to features/train_data_WI_2_HOUSEHOLD_1.pkl.
-63/70, Dump pickle to features/train_data_WI_2_HOUSEHOLD_2.pkl.
-64/70, Dump pickle to features/train_data_WI_3_FOODS_1.pkl.
-65/70, Dump pickle to features/train_data_WI_3_FOODS_2.pkl.
-66/70, Dump pickle to features/train_data_WI_3_FOODS_3.pkl.
-67/70, Dump pickle to features/train_data_WI_3_HOBBIES_1.pkl.
-68/70, Dump pickle to features/train_data_WI_3_HOBBIES_2.pkl.
-69/70, Dump pickle to features/train_data_WI_3_HOUSEHOLD_1.pkl.
-70/70, Dump pickle to features/train_data_WI_3_HOUSEHOLD_2.pkl.
+1/10, Dump pickle to features/train_data_CA_1.pkl.
+2/10, Dump pickle to features/train_data_CA_2.pkl.
+3/10, Dump pickle to features/train_data_CA_3.pkl.
+4/10, Dump pickle to features/train_data_CA_4.pkl.
+5/10, Dump pickle to features/train_data_TX_1.pkl.
+6/10, Dump pickle to features/train_data_TX_2.pkl.
+7/10, Dump pickle to features/train_data_TX_3.pkl.
+8/10, Dump pickle to features/train_data_WI_1.pkl.
+9/10, Dump pickle to features/train_data_WI_2.pkl.
+10/10, Dump pickle to features/train_data_WI_3.pkl.
 Dump Evaluation Data.
 Dump pickle to features/eval_data.pkl.
 Dump Submisssion Data.
@@ -358,6 +298,12 @@ Dump pickle to features/submit_data.pkl.
 
 
 Dump pickle to features/evaluator.pkl.
+
+
+
+#########################
+##### Fold 1 / 10
+#########################
 
 
 --- Train ---
@@ -373,799 +319,142 @@ Parameters:
     "metric": "custom",
     "num_leaves": 127,
     "min_data_in_leaf": 50,
-    "seed": 422,
+    "seed": 42,
     "learning_rate": 0.03,
-    "subsample": 0.5,
+    "subsample": 0.7,
     "subsample_freq": 1,
-    "feature_fraction": 0.5,
+    "feature_fraction": 0.8,
     "lambda_l2": 0.1,
+    "max_bin": 100,
     "force_row_wise": true,
     "verbose": -1
 } 
 
 
 
-Group ID: ('CA_1', 'FOODS_1'), 1/70
+Group ID: ('CA_1',), 1/10
 Dump pickle to result/feature_cols/v08007.pkl.
 [LightGBM] [Info] Saving data to binary file tmp_train_set.bin
 [LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
 Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00403966
+[100]	valid_0's WRMSSE: 0.0928353
+[200]	valid_0's WRMSSE: 0.0920765
+[300]	valid_0's WRMSSE: 0.0921571
 Early stopping, best iteration is:
-[65]	valid_0's WRMSSE: 0.00400446
+[222]	valid_0's WRMSSE: 0.0920336
 
 
-Group ID: ('CA_1', 'FOODS_2'), 2/70
+Group ID: ('CA_2',), 2/10
 Dump pickle to result/feature_cols/v08007.pkl.
 [LightGBM] [Info] Saving data to binary file tmp_train_set.bin
 [LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
 Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0122394
-[200]	valid_0's WRMSSE: 0.0121595
-[300]	valid_0's WRMSSE: 0.0121666
+[100]	valid_0's WRMSSE: 0.0986215
+[200]	valid_0's WRMSSE: 0.0969568
+[300]	valid_0's WRMSSE: 0.0966373
+[400]	valid_0's WRMSSE: 0.0965174
 Early stopping, best iteration is:
-[250]	valid_0's WRMSSE: 0.0121494
+[381]	valid_0's WRMSSE: 0.0964963
 
 
-Group ID: ('CA_1', 'FOODS_3'), 3/70
+Group ID: ('CA_3',), 3/10
 Dump pickle to result/feature_cols/v08007.pkl.
 [LightGBM] [Info] Saving data to binary file tmp_train_set.bin
 [LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
 Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0336426
-[200]	valid_0's WRMSSE: 0.0335417
-[300]	valid_0's WRMSSE: 0.0337221
+[100]	valid_0's WRMSSE: 0.128331
+[200]	valid_0's WRMSSE: 0.126919
+[300]	valid_0's WRMSSE: 0.126664
+[400]	valid_0's WRMSSE: 0.126661
+[500]	valid_0's WRMSSE: 0.126567
+[600]	valid_0's WRMSSE: 0.126575
 Early stopping, best iteration is:
-[242]	valid_0's WRMSSE: 0.0334933
+[543]	valid_0's WRMSSE: 0.126536
 
 
-Group ID: ('CA_1', 'HOBBIES_1'), 4/70
+Group ID: ('CA_4',), 4/10
 Dump pickle to result/feature_cols/v08007.pkl.
 [LightGBM] [Info] Saving data to binary file tmp_train_set.bin
 [LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
 Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0137538
-[200]	valid_0's WRMSSE: 0.0136411
-[300]	valid_0's WRMSSE: 0.013632
+[100]	valid_0's WRMSSE: 0.0548671
+[200]	valid_0's WRMSSE: 0.0545124
+[300]	valid_0's WRMSSE: 0.0545658
 Early stopping, best iteration is:
-[240]	valid_0's WRMSSE: 0.0136161
+[201]	valid_0's WRMSSE: 0.0545082
 
 
-Group ID: ('CA_1', 'HOBBIES_2'), 5/70
+Group ID: ('TX_1',), 5/10
 Dump pickle to result/feature_cols/v08007.pkl.
 [LightGBM] [Info] Saving data to binary file tmp_train_set.bin
 [LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
 Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.000524459
-[200]	valid_0's WRMSSE: 0.000526789
+[100]	valid_0's WRMSSE: 0.0665848
+[200]	valid_0's WRMSSE: 0.0659057
+[300]	valid_0's WRMSSE: 0.0660087
 Early stopping, best iteration is:
-[119]	valid_0's WRMSSE: 0.000524303
+[200]	valid_0's WRMSSE: 0.0659057
 
 
-Group ID: ('CA_1', 'HOUSEHOLD_1'), 6/70
+Group ID: ('TX_2',), 6/10
 Dump pickle to result/feature_cols/v08007.pkl.
 [LightGBM] [Info] Saving data to binary file tmp_train_set.bin
 [LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
 Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0188441
-[200]	valid_0's WRMSSE: 0.0187662
-[300]	valid_0's WRMSSE: 0.018772
+[100]	valid_0's WRMSSE: 0.0753399
+[200]	valid_0's WRMSSE: 0.0743041
+[300]	valid_0's WRMSSE: 0.0742413
 Early stopping, best iteration is:
-[249]	valid_0's WRMSSE: 0.0187487
+[265]	valid_0's WRMSSE: 0.074207
 
 
-Group ID: ('CA_1', 'HOUSEHOLD_2'), 7/70
+Group ID: ('TX_3',), 7/10
 Dump pickle to result/feature_cols/v08007.pkl.
 [LightGBM] [Info] Saving data to binary file tmp_train_set.bin
 [LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
 Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00649189
-[200]	valid_0's WRMSSE: 0.00644917
-[300]	valid_0's WRMSSE: 0.00645453
+[100]	valid_0's WRMSSE: 0.0904039
+[200]	valid_0's WRMSSE: 0.0893713
+[300]	valid_0's WRMSSE: 0.0893616
 Early stopping, best iteration is:
-[211]	valid_0's WRMSSE: 0.00644692
+[227]	valid_0's WRMSSE: 0.0892806
 
 
-Group ID: ('CA_2', 'FOODS_1'), 8/70
+Group ID: ('WI_1',), 8/10
 Dump pickle to result/feature_cols/v08007.pkl.
 [LightGBM] [Info] Saving data to binary file tmp_train_set.bin
 [LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
 Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00813211
-[200]	valid_0's WRMSSE: 0.00810483
+[100]	valid_0's WRMSSE: 0.0725895
+[200]	valid_0's WRMSSE: 0.0716584
+[300]	valid_0's WRMSSE: 0.0715635
+[400]	valid_0's WRMSSE: 0.0715415
 Early stopping, best iteration is:
-[156]	valid_0's WRMSSE: 0.00808919
+[380]	valid_0's WRMSSE: 0.0714928
 
 
-Group ID: ('CA_2', 'FOODS_2'), 9/70
+Group ID: ('WI_2',), 9/10
 Dump pickle to result/feature_cols/v08007.pkl.
 [LightGBM] [Info] Saving data to binary file tmp_train_set.bin
 [LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
 Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0103597
-[200]	valid_0's WRMSSE: 0.0102245
-[300]	valid_0's WRMSSE: 0.0102456
+[100]	valid_0's WRMSSE: 0.108445
+[200]	valid_0's WRMSSE: 0.107432
 Early stopping, best iteration is:
-[243]	valid_0's WRMSSE: 0.0102155
+[197]	valid_0's WRMSSE: 0.107349
 
 
-Group ID: ('CA_2', 'FOODS_3'), 10/70
+Group ID: ('WI_3',), 10/10
 Dump pickle to result/feature_cols/v08007.pkl.
 [LightGBM] [Info] Saving data to binary file tmp_train_set.bin
 [LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
 Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.035834
-[200]	valid_0's WRMSSE: 0.0348943
-[300]	valid_0's WRMSSE: 0.0347035
-[400]	valid_0's WRMSSE: 0.0347174
+[100]	valid_0's WRMSSE: 0.071007
+[200]	valid_0's WRMSSE: 0.0697129
+[300]	valid_0's WRMSSE: 0.0695852
+[400]	valid_0's WRMSSE: 0.0695854
 Early stopping, best iteration is:
-[308]	valid_0's WRMSSE: 0.0346765
-
-
-Group ID: ('CA_2', 'HOBBIES_1'), 11/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00933777
-[200]	valid_0's WRMSSE: 0.00928818
-[300]	valid_0's WRMSSE: 0.00927368
-[400]	valid_0's WRMSSE: 0.00928643
-Early stopping, best iteration is:
-[309]	valid_0's WRMSSE: 0.00927151
-
-
-Group ID: ('CA_2', 'HOBBIES_2'), 12/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.000488743
-Early stopping, best iteration is:
-[72]	valid_0's WRMSSE: 0.000488189
-
-
-Group ID: ('CA_2', 'HOUSEHOLD_1'), 13/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0220213
-[200]	valid_0's WRMSSE: 0.0219919
-Early stopping, best iteration is:
-[169]	valid_0's WRMSSE: 0.0219363
-
-
-Group ID: ('CA_2', 'HOUSEHOLD_2'), 14/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00990779
-[200]	valid_0's WRMSSE: 0.00989475
-Early stopping, best iteration is:
-[133]	valid_0's WRMSSE: 0.00988649
-
-
-Group ID: ('CA_3', 'FOODS_1'), 15/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00590983
-Early stopping, best iteration is:
-[87]	valid_0's WRMSSE: 0.0058996
-
-
-Group ID: ('CA_3', 'FOODS_2'), 16/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0164458
-[200]	valid_0's WRMSSE: 0.0162998
-[300]	valid_0's WRMSSE: 0.0162641
-[400]	valid_0's WRMSSE: 0.0162313
-[500]	valid_0's WRMSSE: 0.0162567
-Early stopping, best iteration is:
-[421]	valid_0's WRMSSE: 0.0162209
-
-
-Group ID: ('CA_3', 'FOODS_3'), 17/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0411407
-[200]	valid_0's WRMSSE: 0.0401606
-Early stopping, best iteration is:
-[196]	valid_0's WRMSSE: 0.0401386
-
-
-Group ID: ('CA_3', 'HOBBIES_1'), 18/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0141719
-[200]	valid_0's WRMSSE: 0.0141323
-[300]	valid_0's WRMSSE: 0.0141249
-Early stopping, best iteration is:
-[229]	valid_0's WRMSSE: 0.0141119
-
-
-Group ID: ('CA_3', 'HOBBIES_2'), 19/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.000737441
-[200]	valid_0's WRMSSE: 0.000741626
-Early stopping, best iteration is:
-[100]	valid_0's WRMSSE: 0.000737441
-
-
-Group ID: ('CA_3', 'HOUSEHOLD_1'), 20/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0406662
-[200]	valid_0's WRMSSE: 0.0404101
-[300]	valid_0's WRMSSE: 0.0404636
-Early stopping, best iteration is:
-[212]	valid_0's WRMSSE: 0.0403866
-
-
-Group ID: ('CA_3', 'HOUSEHOLD_2'), 21/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00980063
-[200]	valid_0's WRMSSE: 0.0097608
-[300]	valid_0's WRMSSE: 0.00976449
-Early stopping, best iteration is:
-[232]	valid_0's WRMSSE: 0.00975429
-
-
-Group ID: ('CA_4', 'FOODS_1'), 22/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00360965
-[200]	valid_0's WRMSSE: 0.00363966
-Early stopping, best iteration is:
-[102]	valid_0's WRMSSE: 0.00360847
-
-
-Group ID: ('CA_4', 'FOODS_2'), 23/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00812018
-[200]	valid_0's WRMSSE: 0.00808544
-Early stopping, best iteration is:
-[157]	valid_0's WRMSSE: 0.00807729
-
-
-Group ID: ('CA_4', 'FOODS_3'), 24/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0186455
-[200]	valid_0's WRMSSE: 0.0185897
-Early stopping, best iteration is:
-[196]	valid_0's WRMSSE: 0.0185843
-
-
-Group ID: ('CA_4', 'HOBBIES_1'), 25/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0080326
-[200]	valid_0's WRMSSE: 0.008006
-Early stopping, best iteration is:
-[185]	valid_0's WRMSSE: 0.00800146
-
-
-Group ID: ('CA_4', 'HOBBIES_2'), 26/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.000217387
-Early stopping, best iteration is:
-[59]	valid_0's WRMSSE: 0.000216602
-
-
-Group ID: ('CA_4', 'HOUSEHOLD_1'), 27/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0108705
-[200]	valid_0's WRMSSE: 0.0108287
-Early stopping, best iteration is:
-[170]	valid_0's WRMSSE: 0.0108251
-
-
-Group ID: ('CA_4', 'HOUSEHOLD_2'), 28/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00443584
-[200]	valid_0's WRMSSE: 0.00442031
-[300]	valid_0's WRMSSE: 0.00442521
-Early stopping, best iteration is:
-[248]	valid_0's WRMSSE: 0.00441636
-
-
-Group ID: ('TX_1', 'FOODS_1'), 29/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00407974
-[200]	valid_0's WRMSSE: 0.00407087
-Early stopping, best iteration is:
-[186]	valid_0's WRMSSE: 0.00406416
-
-
-Group ID: ('TX_1', 'FOODS_2'), 30/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00797032
-[200]	valid_0's WRMSSE: 0.00793152
-[300]	valid_0's WRMSSE: 0.00791772
-[400]	valid_0's WRMSSE: 0.00791065
-Early stopping, best iteration is:
-[341]	valid_0's WRMSSE: 0.00790506
-
-
-Group ID: ('TX_1', 'FOODS_3'), 31/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0231298
-[200]	valid_0's WRMSSE: 0.0229008
-Early stopping, best iteration is:
-[144]	valid_0's WRMSSE: 0.0228741
-
-
-Group ID: ('TX_1', 'HOBBIES_1'), 32/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00690405
-[200]	valid_0's WRMSSE: 0.00690461
-Early stopping, best iteration is:
-[177]	valid_0's WRMSSE: 0.00689398
-
-
-Group ID: ('TX_1', 'HOBBIES_2'), 33/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.000435188
-Early stopping, best iteration is:
-[86]	valid_0's WRMSSE: 0.000434416
-
-
-Group ID: ('TX_1', 'HOUSEHOLD_1'), 34/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0170101
-[200]	valid_0's WRMSSE: 0.017038
-Early stopping, best iteration is:
-[132]	valid_0's WRMSSE: 0.0169912
-
-
-Group ID: ('TX_1', 'HOUSEHOLD_2'), 35/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00527371
-[200]	valid_0's WRMSSE: 0.00525936
-Early stopping, best iteration is:
-[162]	valid_0's WRMSSE: 0.00525413
-
-
-Group ID: ('TX_2', 'FOODS_1'), 36/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00349474
-[200]	valid_0's WRMSSE: 0.00348387
-Early stopping, best iteration is:
-[167]	valid_0's WRMSSE: 0.00347921
-
-
-Group ID: ('TX_2', 'FOODS_2'), 37/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00889285
-[200]	valid_0's WRMSSE: 0.00887683
-[300]	valid_0's WRMSSE: 0.00891527
-Early stopping, best iteration is:
-[210]	valid_0's WRMSSE: 0.00887144
-
-
-Group ID: ('TX_2', 'FOODS_3'), 38/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0265803
-[200]	valid_0's WRMSSE: 0.0264989
-Early stopping, best iteration is:
-[128]	valid_0's WRMSSE: 0.0263828
-
-
-Group ID: ('TX_2', 'HOBBIES_1'), 39/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0106981
-Early stopping, best iteration is:
-[76]	valid_0's WRMSSE: 0.01065
-
-
-Group ID: ('TX_2', 'HOBBIES_2'), 40/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.000485631
-Early stopping, best iteration is:
-[87]	valid_0's WRMSSE: 0.000484707
-
-
-Group ID: ('TX_2', 'HOUSEHOLD_1'), 41/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0185818
-[200]	valid_0's WRMSSE: 0.0187493
-Early stopping, best iteration is:
-[118]	valid_0's WRMSSE: 0.0185655
-
-
-Group ID: ('TX_2', 'HOUSEHOLD_2'), 42/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00537489
-[200]	valid_0's WRMSSE: 0.00536685
-Early stopping, best iteration is:
-[162]	valid_0's WRMSSE: 0.00536459
-
-
-Group ID: ('TX_3', 'FOODS_1'), 43/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00582359
-[200]	valid_0's WRMSSE: 0.00577014
-Early stopping, best iteration is:
-[166]	valid_0's WRMSSE: 0.00575753
-
-
-Group ID: ('TX_3', 'FOODS_2'), 44/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0111453
-[200]	valid_0's WRMSSE: 0.0110992
-Early stopping, best iteration is:
-[189]	valid_0's WRMSSE: 0.0110909
-
-
-Group ID: ('TX_3', 'FOODS_3'), 45/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0249952
-[200]	valid_0's WRMSSE: 0.0251888
-Early stopping, best iteration is:
-[107]	valid_0's WRMSSE: 0.0249499
-
-
-Group ID: ('TX_3', 'HOBBIES_1'), 46/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0141175
-[200]	valid_0's WRMSSE: 0.0143357
-Early stopping, best iteration is:
-[109]	valid_0's WRMSSE: 0.0140622
-
-
-Group ID: ('TX_3', 'HOBBIES_2'), 47/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.000805694
-Early stopping, best iteration is:
-[94]	valid_0's WRMSSE: 0.000805297
-
-
-Group ID: ('TX_3', 'HOUSEHOLD_1'), 48/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.019572
-Early stopping, best iteration is:
-[92]	valid_0's WRMSSE: 0.0195668
-
-
-Group ID: ('TX_3', 'HOUSEHOLD_2'), 49/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00483863
-[200]	valid_0's WRMSSE: 0.00483157
-Early stopping, best iteration is:
-[178]	valid_0's WRMSSE: 0.00482828
-
-
-Group ID: ('WI_1', 'FOODS_1'), 50/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00511505
-[200]	valid_0's WRMSSE: 0.00513535
-Early stopping, best iteration is:
-[146]	valid_0's WRMSSE: 0.00509648
-
-
-Group ID: ('WI_1', 'FOODS_2'), 51/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0146427
-[200]	valid_0's WRMSSE: 0.0145769
-Early stopping, best iteration is:
-[151]	valid_0's WRMSSE: 0.0145495
-
-
-Group ID: ('WI_1', 'FOODS_3'), 52/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0255752
-[200]	valid_0's WRMSSE: 0.0254024
-Early stopping, best iteration is:
-[156]	valid_0's WRMSSE: 0.0253588
-
-
-Group ID: ('WI_1', 'HOBBIES_1'), 53/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00788047
-[200]	valid_0's WRMSSE: 0.00786228
-Early stopping, best iteration is:
-[134]	valid_0's WRMSSE: 0.00786038
-
-
-Group ID: ('WI_1', 'HOBBIES_2'), 54/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.000461516
-Early stopping, best iteration is:
-[85]	valid_0's WRMSSE: 0.000460747
-
-
-Group ID: ('WI_1', 'HOUSEHOLD_1'), 55/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0132915
-[200]	valid_0's WRMSSE: 0.0132244
-[300]	valid_0's WRMSSE: 0.0132167
-[400]	valid_0's WRMSSE: 0.0132107
-[500]	valid_0's WRMSSE: 0.0132228
-Early stopping, best iteration is:
-[428]	valid_0's WRMSSE: 0.0132063
-
-
-Group ID: ('WI_1', 'HOUSEHOLD_2'), 56/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00499832
-[200]	valid_0's WRMSSE: 0.00499657
-Early stopping, best iteration is:
-[114]	valid_0's WRMSSE: 0.00499536
-
-
-Group ID: ('WI_2', 'FOODS_1'), 57/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00815292
-[200]	valid_0's WRMSSE: 0.00822161
-Early stopping, best iteration is:
-[107]	valid_0's WRMSSE: 0.00809475
-
-
-Group ID: ('WI_2', 'FOODS_2'), 58/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0316484
-[200]	valid_0's WRMSSE: 0.0315554
-Early stopping, best iteration is:
-[159]	valid_0's WRMSSE: 0.0314043
-
-
-Group ID: ('WI_2', 'FOODS_3'), 59/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0402464
-[200]	valid_0's WRMSSE: 0.0392511
-[300]	valid_0's WRMSSE: 0.0393079
-Early stopping, best iteration is:
-[232]	valid_0's WRMSSE: 0.0392083
-
-
-Group ID: ('WI_2', 'HOBBIES_1'), 60/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00649885
-[200]	valid_0's WRMSSE: 0.00652104
-Early stopping, best iteration is:
-[109]	valid_0's WRMSSE: 0.00649161
-
-
-Group ID: ('WI_2', 'HOBBIES_2'), 61/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.000437641
-Early stopping, best iteration is:
-[58]	valid_0's WRMSSE: 0.000436796
-
-
-Group ID: ('WI_2', 'HOUSEHOLD_1'), 62/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0208702
-[200]	valid_0's WRMSSE: 0.0207931
-Early stopping, best iteration is:
-[171]	valid_0's WRMSSE: 0.0207741
-
-
-Group ID: ('WI_2', 'HOUSEHOLD_2'), 63/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00404489
-[200]	valid_0's WRMSSE: 0.0040454
-Early stopping, best iteration is:
-[148]	valid_0's WRMSSE: 0.00403973
-
-
-Group ID: ('WI_3', 'FOODS_1'), 64/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0049484
-[200]	valid_0's WRMSSE: 0.00495711
-Early stopping, best iteration is:
-[135]	valid_0's WRMSSE: 0.0048722
-
-
-Group ID: ('WI_3', 'FOODS_2'), 65/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0141972
-[200]	valid_0's WRMSSE: 0.0141077
-[300]	valid_0's WRMSSE: 0.014135
-Early stopping, best iteration is:
-[228]	valid_0's WRMSSE: 0.0141052
-
-
-Group ID: ('WI_3', 'FOODS_3'), 66/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0280649
-[200]	valid_0's WRMSSE: 0.0277949
-Early stopping, best iteration is:
-[155]	valid_0's WRMSSE: 0.0277207
-
-
-Group ID: ('WI_3', 'HOBBIES_1'), 67/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00547295
-[200]	valid_0's WRMSSE: 0.00545798
-Early stopping, best iteration is:
-[192]	valid_0's WRMSSE: 0.00545593
-
-
-Group ID: ('WI_3', 'HOBBIES_2'), 68/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.000452131
-Early stopping, best iteration is:
-[76]	valid_0's WRMSSE: 0.000451645
-
-
-Group ID: ('WI_3', 'HOUSEHOLD_1'), 69/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.0139917
-[200]	valid_0's WRMSSE: 0.0139501
-Early stopping, best iteration is:
-[185]	valid_0's WRMSSE: 0.0139471
-
-
-Group ID: ('WI_3', 'HOUSEHOLD_2'), 70/70
-Dump pickle to result/feature_cols/v08007.pkl.
-[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
-[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
-Training until validation scores don't improve for 100 rounds
-[100]	valid_0's WRMSSE: 0.00522463
-[200]	valid_0's WRMSSE: 0.00522674
-Early stopping, best iteration is:
-[160]	valid_0's WRMSSE: 0.00522087
+[393]	valid_0's WRMSSE: 0.0695572
 
 Dump pickle to result/model/v08007.pkl.
 
@@ -1178,8 +467,8 @@ Load pickle from features/evaluator.pkl.
 Load pickle from result/feature_cols/v08007.pkl.
 Load pickle from features/eval_data.pkl.
 
-Our val RMSE score is 2.1091577801978967
-Our val WRMSSE score is 0.553946545801339
+Our val RMSE score is 2.0805949963319916
+Our val WRMSSE score is 0.5128812368035843
 
 
 --- Submission ---
@@ -1190,36 +479,1959 @@ Load pickle from result/feature_cols/v08007.pkl.
 Load pickle from features/submit_data.pkl.
 (60980, 29)
                               id        F1        F2        F3        F4  \
-0  HOBBIES_1_001_CA_1_validation  0.741621  0.771807  0.841620  1.073745   
-1  HOBBIES_1_002_CA_1_validation  0.196623  0.158484  0.201887  0.231084   
-2  HOBBIES_1_003_CA_1_validation  0.278968  0.345291  0.383478  0.340365   
-3  HOBBIES_1_004_CA_1_validation  1.617027  1.440230  1.430731  1.547960   
-4  HOBBIES_1_005_CA_1_validation  0.776809  0.584471  0.799976  0.745626   
+0  HOBBIES_1_001_CA_1_validation  0.831858  0.906567  0.972072  1.150461   
+1  HOBBIES_1_002_CA_1_validation  0.192274  0.147917  0.196948  0.229755   
+2  HOBBIES_1_003_CA_1_validation  0.274523  0.332463  0.369256  0.316336   
+3  HOBBIES_1_004_CA_1_validation  1.598528  1.609886  1.593477  1.596065   
+4  HOBBIES_1_005_CA_1_validation  0.826871  0.661916  0.864221  0.805534   
 
          F5        F6        F7        F8        F9       F10       F11  \
-0  0.906830  1.385899  1.660401  0.538184  0.570389  0.631194  0.450763   
-1  0.223917  0.235513  0.270652  0.273556  0.372502  0.337585  0.241964   
-2  0.404132  0.417355  0.519018  0.323900  0.330911  0.268056  0.418590   
-3  1.898365  2.258672  3.746110  1.803571  1.615909  1.462318  1.627954   
-4  0.783660  1.086886  1.033427  1.091651  0.917066  0.786776  0.689842   
+0  0.886176  1.469223  1.898813  0.594757  0.543811  0.639054  0.481738   
+1  0.216385  0.242310  0.296012  0.302092  0.415276  0.401161  0.320902   
+2  0.372609  0.451552  0.548721  0.312266  0.305955  0.277777  0.447758   
+3  1.731079  2.454373  3.776990  1.750060  1.561948  1.513015  1.835214   
+4  0.841963  1.069511  1.220494  1.222534  1.058218  0.911941  0.828075   
 
         F12       F13       F14       F15       F16       F17       F18  \
-0  0.638394  1.027212  0.724608  0.819797  0.551367  0.593571  0.736220   
-1  0.347823  0.339630  0.339161  0.245943  0.271349  0.285567  0.265935   
-2  0.348711  0.719544  0.603608  0.356478  0.451282  0.443248  0.459471   
-3  1.843640  3.491840  3.225080  1.511139  1.179173  1.266856  1.305010   
-4  0.879837  1.720224  1.344658  0.567470  0.545512  0.559247  0.546419   
+0  0.680571  1.048915  0.724821  0.804047  0.571259  0.632870  0.754610   
+1  0.408233  0.356880  0.450213  0.265762  0.274115  0.287507  0.257846   
+2  0.324644  0.813939  0.684682  0.374363  0.433647  0.434118  0.425715   
+3  2.160622  3.868940  3.165279  1.504530  1.213594  1.240617  1.302378   
+4  0.915237  1.628399  1.178705  0.585793  0.585076  0.584229  0.582676   
 
         F19       F20       F21       F22       F23       F24       F25  \
-0  0.673930  1.175737  0.667796  0.631807  0.534655  0.440567  0.597176   
-1  0.193687  0.374130  0.374128  0.276983  0.270936  0.256725  0.306116   
-2  0.581752  0.550210  0.621258  0.440273  0.321663  0.401233  0.693678   
-3  1.278288  2.331932  2.630829  1.919252  1.608655  1.720508  1.522470   
-4  0.635689  0.886191  0.818694  1.139917  0.966329  1.257465  1.193773   
+0  0.725460  1.221103  0.710123  0.627197  0.537416  0.478153  0.569729   
+1  0.189667  0.398976  0.398135  0.282251  0.266285  0.236369  0.337701   
+2  0.559232  0.531299  0.655892  0.407608  0.307937  0.389069  0.526650   
+3  1.224057  2.361929  2.478768  2.054155  1.615119  1.659760  1.464153   
+4  0.644343  0.831411  0.829323  1.196050  0.998147  1.206240  1.220286   
 
         F26       F27       F28  
-0  0.731065  0.757851  0.843056  
-1  0.302622  0.350973  0.385868  
-2  0.633281  0.534692  0.753836  
-3  2.082750  3.481063  3.849392  
-4  1.317446  2.069880  1.994549  
+0  0.634459  0.725909  0.788620  
+1  0.314142  0.376197  0.423422  
+2  0.538000  0.473116  0.787789  
+3  2.053688  3.404233  4.538638  
+4  1.320891  2.227276  2.160481  
+
+
+
+#########################
+##### Fold 2 / 10
+#########################
+
+
+--- Train ---
+
+
+Load pickle from features/evaluator.pkl.
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 50,
+    "seed": 43,
+    "learning_rate": 0.03,
+    "subsample": 0.7,
+    "subsample_freq": 1,
+    "feature_fraction": 0.8,
+    "lambda_l2": 0.1,
+    "max_bin": 100,
+    "force_row_wise": true,
+    "verbose": -1
+} 
+
+
+
+Group ID: ('CA_1',), 1/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0925466
+[200]	valid_0's WRMSSE: 0.0917568
+[300]	valid_0's WRMSSE: 0.0918418
+Early stopping, best iteration is:
+[220]	valid_0's WRMSSE: 0.0917265
+
+
+Group ID: ('CA_2',), 2/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0984495
+[200]	valid_0's WRMSSE: 0.0966407
+[300]	valid_0's WRMSSE: 0.0965354
+[400]	valid_0's WRMSSE: 0.0965786
+Early stopping, best iteration is:
+[320]	valid_0's WRMSSE: 0.0964823
+
+
+Group ID: ('CA_3',), 3/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.127728
+[200]	valid_0's WRMSSE: 0.126619
+[300]	valid_0's WRMSSE: 0.126406
+[400]	valid_0's WRMSSE: 0.126221
+[500]	valid_0's WRMSSE: 0.126184
+Early stopping, best iteration is:
+[445]	valid_0's WRMSSE: 0.126111
+
+
+Group ID: ('CA_4',), 4/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0547423
+[200]	valid_0's WRMSSE: 0.0544192
+[300]	valid_0's WRMSSE: 0.0544313
+Early stopping, best iteration is:
+[242]	valid_0's WRMSSE: 0.0544078
+
+
+Group ID: ('TX_1',), 5/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0666401
+[200]	valid_0's WRMSSE: 0.0659035
+[300]	valid_0's WRMSSE: 0.0659157
+Early stopping, best iteration is:
+[233]	valid_0's WRMSSE: 0.0658363
+
+
+Group ID: ('TX_2',), 6/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0755136
+[200]	valid_0's WRMSSE: 0.0745788
+[300]	valid_0's WRMSSE: 0.0745052
+Early stopping, best iteration is:
+[279]	valid_0's WRMSSE: 0.0744815
+
+
+Group ID: ('TX_3',), 7/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0900364
+[200]	valid_0's WRMSSE: 0.0891718
+[300]	valid_0's WRMSSE: 0.0890458
+Early stopping, best iteration is:
+[276]	valid_0's WRMSSE: 0.0890095
+
+
+Group ID: ('WI_1',), 8/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0726799
+[200]	valid_0's WRMSSE: 0.0718773
+[300]	valid_0's WRMSSE: 0.0718065
+[400]	valid_0's WRMSSE: 0.0718865
+Early stopping, best iteration is:
+[307]	valid_0's WRMSSE: 0.0717898
+
+
+Group ID: ('WI_2',), 9/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.107731
+[200]	valid_0's WRMSSE: 0.106804
+[300]	valid_0's WRMSSE: 0.106894
+Early stopping, best iteration is:
+[262]	valid_0's WRMSSE: 0.106672
+
+
+Group ID: ('WI_3',), 10/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0710988
+[200]	valid_0's WRMSSE: 0.0699213
+[300]	valid_0's WRMSSE: 0.0697738
+[400]	valid_0's WRMSSE: 0.0698351
+Early stopping, best iteration is:
+[336]	valid_0's WRMSSE: 0.0697459
+
+Dump pickle to result/model/v08007.pkl.
+
+
+--- Evaluation ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from features/evaluator.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/eval_data.pkl.
+
+Our val RMSE score is 2.080639122155824
+Our val WRMSSE score is 0.5136565312078885
+
+
+--- Submission ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/submit_data.pkl.
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.804028  0.858724  0.965306  1.164624   
+1  HOBBIES_1_002_CA_1_validation  0.185163  0.147583  0.188892  0.221467   
+2  HOBBIES_1_003_CA_1_validation  0.277483  0.332702  0.375704  0.322013   
+3  HOBBIES_1_004_CA_1_validation  1.721097  1.643849  1.637755  1.672547   
+4  HOBBIES_1_005_CA_1_validation  0.870778  0.613703  0.839600  0.832716   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.831441  1.543955  1.900490  0.584120  0.568585  0.613263  0.492078   
+1  0.213023  0.244659  0.299949  0.294414  0.422342  0.406188  0.313482   
+2  0.395624  0.475257  0.548441  0.308800  0.306573  0.271294  0.434275   
+3  1.792161  2.460792  3.494445  1.821906  1.526188  1.419269  1.711661   
+4  0.900888  1.096829  1.247643  1.235896  1.024602  0.926342  0.826571   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.615141  1.029178  0.766395  0.755869  0.544893  0.608036  0.680816   
+1  0.395801  0.338275  0.402430  0.264245  0.272629  0.299902  0.264849   
+2  0.312454  0.785618  0.645732  0.383466  0.424328  0.414486  0.415726   
+3  2.125450  3.744719  3.197415  1.486960  1.226096  1.215512  1.273517   
+4  0.900411  1.635929  1.171362  0.615982  0.567691  0.585217  0.582496   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.709864  1.253728  0.706380  0.587451  0.486459  0.443739  0.540587   
+1  0.183708  0.397842  0.397588  0.275203  0.260750  0.241222  0.342791   
+2  0.578295  0.537281  0.623164  0.402527  0.300927  0.376036  0.523718   
+3  1.183313  2.394449  2.389851  2.104639  1.522809  1.576052  1.419066   
+4  0.673464  0.830433  0.843360  1.172216  0.985919  1.230436  1.257177   
+
+        F26       F27       F28  
+0  0.615748  0.710226  0.808333  
+1  0.314876  0.376544  0.438036  
+2  0.519842  0.466811  0.713695  
+3  2.153765  3.423992  4.465566  
+4  1.357985  2.297281  2.148840  
+
+
+
+#########################
+##### Fold 3 / 10
+#########################
+
+
+--- Train ---
+
+
+Load pickle from features/evaluator.pkl.
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 50,
+    "seed": 45,
+    "learning_rate": 0.03,
+    "subsample": 0.7,
+    "subsample_freq": 1,
+    "feature_fraction": 0.8,
+    "lambda_l2": 0.1,
+    "max_bin": 100,
+    "force_row_wise": true,
+    "verbose": -1
+} 
+
+
+
+Group ID: ('CA_1',), 1/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0922826
+[200]	valid_0's WRMSSE: 0.0913895
+[300]	valid_0's WRMSSE: 0.0914228
+Early stopping, best iteration is:
+[248]	valid_0's WRMSSE: 0.0913013
+
+
+Group ID: ('CA_2',), 2/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.098547
+[200]	valid_0's WRMSSE: 0.0969996
+[300]	valid_0's WRMSSE: 0.096622
+[400]	valid_0's WRMSSE: 0.0966612
+Early stopping, best iteration is:
+[310]	valid_0's WRMSSE: 0.0965896
+
+
+Group ID: ('CA_3',), 3/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.128032
+[200]	valid_0's WRMSSE: 0.126932
+[300]	valid_0's WRMSSE: 0.126726
+[400]	valid_0's WRMSSE: 0.126501
+[500]	valid_0's WRMSSE: 0.126525
+Early stopping, best iteration is:
+[427]	valid_0's WRMSSE: 0.126456
+
+
+Group ID: ('CA_4',), 4/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0548559
+[200]	valid_0's WRMSSE: 0.0545627
+[300]	valid_0's WRMSSE: 0.0545926
+Early stopping, best iteration is:
+[247]	valid_0's WRMSSE: 0.0545459
+
+
+Group ID: ('TX_1',), 5/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.066588
+[200]	valid_0's WRMSSE: 0.0660498
+[300]	valid_0's WRMSSE: 0.0660233
+Early stopping, best iteration is:
+[243]	valid_0's WRMSSE: 0.0659738
+
+
+Group ID: ('TX_2',), 6/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0752566
+[200]	valid_0's WRMSSE: 0.0742379
+[300]	valid_0's WRMSSE: 0.0743026
+Early stopping, best iteration is:
+[247]	valid_0's WRMSSE: 0.0741837
+
+
+Group ID: ('TX_3',), 7/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0904063
+[200]	valid_0's WRMSSE: 0.0894643
+[300]	valid_0's WRMSSE: 0.0893414
+Early stopping, best iteration is:
+[234]	valid_0's WRMSSE: 0.0893138
+
+
+Group ID: ('WI_1',), 8/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0726672
+[200]	valid_0's WRMSSE: 0.0719592
+[300]	valid_0's WRMSSE: 0.0718548
+[400]	valid_0's WRMSSE: 0.0718482
+[500]	valid_0's WRMSSE: 0.0719149
+Early stopping, best iteration is:
+[406]	valid_0's WRMSSE: 0.0718393
+
+
+Group ID: ('WI_2',), 9/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.108381
+[200]	valid_0's WRMSSE: 0.107268
+[300]	valid_0's WRMSSE: 0.107464
+Early stopping, best iteration is:
+[203]	valid_0's WRMSSE: 0.107224
+
+
+Group ID: ('WI_3',), 10/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.071642
+[200]	valid_0's WRMSSE: 0.0704336
+[300]	valid_0's WRMSSE: 0.0702717
+[400]	valid_0's WRMSSE: 0.0702503
+[500]	valid_0's WRMSSE: 0.0702792
+Early stopping, best iteration is:
+[413]	valid_0's WRMSSE: 0.0702028
+
+Dump pickle to result/model/v08007.pkl.
+
+
+--- Evaluation ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from features/evaluator.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/eval_data.pkl.
+
+Our val RMSE score is 2.082700230892246
+Our val WRMSSE score is 0.5130672282609066
+
+
+--- Submission ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/submit_data.pkl.
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.788177  0.869631  0.929200  1.148433   
+1  HOBBIES_1_002_CA_1_validation  0.182171  0.144589  0.184920  0.218759   
+2  HOBBIES_1_003_CA_1_validation  0.257879  0.329057  0.371409  0.318413   
+3  HOBBIES_1_004_CA_1_validation  1.608393  1.589913  1.557596  1.717904   
+4  HOBBIES_1_005_CA_1_validation  0.812606  0.598934  0.820605  0.786433   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.840616  1.406702  1.747918  0.607616  0.569782  0.599394  0.481737   
+1  0.211383  0.237090  0.298673  0.290489  0.448111  0.416714  0.312095   
+2  0.383811  0.451471  0.536357  0.305275  0.290585  0.264150  0.433360   
+3  1.707119  2.346232  3.612709  1.613701  1.459599  1.311495  1.723375   
+4  0.838913  1.078117  1.281299  1.215211  1.009212  0.909212  0.813557   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.665827  1.065754  0.693459  0.786357  0.573729  0.622846  0.709469   
+1  0.415840  0.352147  0.405468  0.262497  0.269882  0.298716  0.261574   
+2  0.316230  0.863956  0.647379  0.371099  0.437261  0.421332  0.433023   
+3  1.986056  3.823393  3.469082  1.523983  1.187503  1.209194  1.291200   
+4  0.917785  1.771930  1.177817  0.582359  0.568072  0.578017  0.586932   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.742355  1.318802  0.712659  0.609093  0.528788  0.463316  0.566679   
+1  0.188413  0.408978  0.408039  0.271160  0.260975  0.227995  0.331925   
+2  0.575231  0.582515  0.684709  0.395804  0.285843  0.364222  0.507600   
+3  1.197878  2.415362  2.308497  1.964579  1.484271  1.579568  1.406020   
+4  0.656262  0.852407  0.842528  1.204460  1.006529  1.190739  1.255938   
+
+        F26       F27       F28  
+0  0.638114  0.740804  0.815602  
+1  0.305866  0.380576  0.429336  
+2  0.527631  0.486828  0.776210  
+3  2.016767  3.627559  5.014209  
+4  1.366920  2.463873  2.242524  
+
+
+
+#########################
+##### Fold 4 / 10
+#########################
+
+
+--- Train ---
+
+
+Load pickle from features/evaluator.pkl.
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 50,
+    "seed": 48,
+    "learning_rate": 0.03,
+    "subsample": 0.7,
+    "subsample_freq": 1,
+    "feature_fraction": 0.8,
+    "lambda_l2": 0.1,
+    "max_bin": 100,
+    "force_row_wise": true,
+    "verbose": -1
+} 
+
+
+
+Group ID: ('CA_1',), 1/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0924663
+[200]	valid_0's WRMSSE: 0.091476
+[300]	valid_0's WRMSSE: 0.0915426
+Early stopping, best iteration is:
+[227]	valid_0's WRMSSE: 0.0914614
+
+
+Group ID: ('CA_2',), 2/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0983269
+[200]	valid_0's WRMSSE: 0.0967876
+[300]	valid_0's WRMSSE: 0.0964846
+[400]	valid_0's WRMSSE: 0.096498
+Early stopping, best iteration is:
+[326]	valid_0's WRMSSE: 0.0964447
+
+
+Group ID: ('CA_3',), 3/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.127753
+[200]	valid_0's WRMSSE: 0.126313
+[300]	valid_0's WRMSSE: 0.126138
+[400]	valid_0's WRMSSE: 0.126041
+[500]	valid_0's WRMSSE: 0.125987
+Early stopping, best iteration is:
+[472]	valid_0's WRMSSE: 0.125963
+
+
+Group ID: ('CA_4',), 4/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0548694
+[200]	valid_0's WRMSSE: 0.0546008
+[300]	valid_0's WRMSSE: 0.0546129
+Early stopping, best iteration is:
+[267]	valid_0's WRMSSE: 0.0545914
+
+
+Group ID: ('TX_1',), 5/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0665433
+[200]	valid_0's WRMSSE: 0.0657643
+[300]	valid_0's WRMSSE: 0.0658529
+Early stopping, best iteration is:
+[228]	valid_0's WRMSSE: 0.0657115
+
+
+Group ID: ('TX_2',), 6/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0752688
+[200]	valid_0's WRMSSE: 0.0742814
+[300]	valid_0's WRMSSE: 0.0742558
+Early stopping, best iteration is:
+[244]	valid_0's WRMSSE: 0.0742132
+
+
+Group ID: ('TX_3',), 7/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0902084
+[200]	valid_0's WRMSSE: 0.0892042
+[300]	valid_0's WRMSSE: 0.0891891
+[400]	valid_0's WRMSSE: 0.0892236
+Early stopping, best iteration is:
+[355]	valid_0's WRMSSE: 0.0890987
+
+
+Group ID: ('WI_1',), 8/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0726422
+[200]	valid_0's WRMSSE: 0.0718955
+[300]	valid_0's WRMSSE: 0.0717594
+[400]	valid_0's WRMSSE: 0.0718074
+Early stopping, best iteration is:
+[320]	valid_0's WRMSSE: 0.0717466
+
+
+Group ID: ('WI_2',), 9/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.109067
+[200]	valid_0's WRMSSE: 0.108003
+[300]	valid_0's WRMSSE: 0.108071
+Early stopping, best iteration is:
+[219]	valid_0's WRMSSE: 0.107868
+
+
+Group ID: ('WI_3',), 10/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0712748
+[200]	valid_0's WRMSSE: 0.0699561
+[300]	valid_0's WRMSSE: 0.0698316
+[400]	valid_0's WRMSSE: 0.0698489
+Early stopping, best iteration is:
+[328]	valid_0's WRMSSE: 0.0697762
+
+Dump pickle to result/model/v08007.pkl.
+
+
+--- Evaluation ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from features/evaluator.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/eval_data.pkl.
+
+Our val RMSE score is 2.091269413225589
+Our val WRMSSE score is 0.5180191449735635
+
+
+--- Submission ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/submit_data.pkl.
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.851869  0.907628  0.986587  1.097700   
+1  HOBBIES_1_002_CA_1_validation  0.185124  0.145629  0.191092  0.217915   
+2  HOBBIES_1_003_CA_1_validation  0.265650  0.327180  0.371983  0.313906   
+3  HOBBIES_1_004_CA_1_validation  1.643798  1.517495  1.536175  1.564871   
+4  HOBBIES_1_005_CA_1_validation  0.842465  0.621868  0.843797  0.793077   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.924769  1.625197  1.936608  0.605883  0.540147  0.585901  0.477486   
+1  0.213201  0.236368  0.294944  0.292394  0.439707  0.403719  0.302206   
+2  0.379898  0.452189  0.551770  0.307432  0.289989  0.257354  0.423227   
+3  1.736150  2.354470  3.662216  1.756757  1.528709  1.395282  1.870092   
+4  0.846229  1.064267  1.250359  1.228213  1.017754  0.945609  0.851286   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.646567  1.109050  0.704171  0.768282  0.586297  0.625370  0.711187   
+1  0.396709  0.341157  0.430212  0.269337  0.271963  0.280707  0.264408   
+2  0.307193  0.828978  0.631047  0.359015  0.426409  0.408486  0.418360   
+3  2.044960  3.999912  3.495108  1.532103  1.162263  1.208444  1.242548   
+4  0.908811  1.657901  1.261056  0.563120  0.579315  0.584425  0.587964   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.764185  1.361267  0.747921  0.635967  0.521124  0.462545  0.550572   
+1  0.183946  0.400218  0.407690  0.276470  0.264599  0.242619  0.358562   
+2  0.619545  0.530485  0.661011  0.413046  0.320469  0.383134  0.572958   
+3  1.217326  2.405498  2.364442  2.030406  1.535445  1.573227  1.378174   
+4  0.655049  0.839993  0.842649  1.259033  1.075169  1.282908  1.279865   
+
+        F26       F27       F28  
+0  0.642174  0.808202  0.842281  
+1  0.317316  0.384008  0.461983  
+2  0.536759  0.493108  0.765424  
+3  2.013598  3.646743  4.719550  
+4  1.368773  2.300585  2.180598  
+
+
+
+#########################
+##### Fold 5 / 10
+#########################
+
+
+--- Train ---
+
+
+Load pickle from features/evaluator.pkl.
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 50,
+    "seed": 52,
+    "learning_rate": 0.03,
+    "subsample": 0.7,
+    "subsample_freq": 1,
+    "feature_fraction": 0.8,
+    "lambda_l2": 0.1,
+    "max_bin": 100,
+    "force_row_wise": true,
+    "verbose": -1
+} 
+
+
+
+Group ID: ('CA_1',), 1/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.09227
+[200]	valid_0's WRMSSE: 0.0916071
+[300]	valid_0's WRMSSE: 0.091686
+Early stopping, best iteration is:
+[202]	valid_0's WRMSSE: 0.0916013
+
+
+Group ID: ('CA_2',), 2/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0984457
+[200]	valid_0's WRMSSE: 0.0968401
+[300]	valid_0's WRMSSE: 0.0965721
+[400]	valid_0's WRMSSE: 0.096567
+Early stopping, best iteration is:
+[345]	valid_0's WRMSSE: 0.0965534
+
+
+Group ID: ('CA_3',), 3/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.128068
+[200]	valid_0's WRMSSE: 0.126841
+[300]	valid_0's WRMSSE: 0.126528
+[400]	valid_0's WRMSSE: 0.12638
+[500]	valid_0's WRMSSE: 0.126456
+Early stopping, best iteration is:
+[427]	valid_0's WRMSSE: 0.126362
+
+
+Group ID: ('CA_4',), 4/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0548285
+[200]	valid_0's WRMSSE: 0.0545177
+[300]	valid_0's WRMSSE: 0.0545497
+Early stopping, best iteration is:
+[232]	valid_0's WRMSSE: 0.0545087
+
+
+Group ID: ('TX_1',), 5/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0665149
+[200]	valid_0's WRMSSE: 0.0658265
+[300]	valid_0's WRMSSE: 0.0658153
+Early stopping, best iteration is:
+[240]	valid_0's WRMSSE: 0.0657564
+
+
+Group ID: ('TX_2',), 6/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0754454
+[200]	valid_0's WRMSSE: 0.0743792
+[300]	valid_0's WRMSSE: 0.0743664
+Early stopping, best iteration is:
+[240]	valid_0's WRMSSE: 0.0743191
+
+
+Group ID: ('TX_3',), 7/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0900027
+[200]	valid_0's WRMSSE: 0.0891692
+[300]	valid_0's WRMSSE: 0.0890979
+Early stopping, best iteration is:
+[272]	valid_0's WRMSSE: 0.0890131
+
+
+Group ID: ('WI_1',), 8/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0727049
+[200]	valid_0's WRMSSE: 0.0720628
+Early stopping, best iteration is:
+[198]	valid_0's WRMSSE: 0.072037
+
+
+Group ID: ('WI_2',), 9/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.108662
+[200]	valid_0's WRMSSE: 0.107566
+[300]	valid_0's WRMSSE: 0.107853
+Early stopping, best iteration is:
+[216]	valid_0's WRMSSE: 0.107512
+
+
+Group ID: ('WI_3',), 10/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.071073
+[200]	valid_0's WRMSSE: 0.0698487
+[300]	valid_0's WRMSSE: 0.0697935
+Early stopping, best iteration is:
+[244]	valid_0's WRMSSE: 0.0697559
+
+Dump pickle to result/model/v08007.pkl.
+
+
+--- Evaluation ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from features/evaluator.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/eval_data.pkl.
+
+Our val RMSE score is 2.0881135001120543
+Our val WRMSSE score is 0.5163729664357419
+
+
+--- Submission ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/submit_data.pkl.
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.806104  0.878798  0.915197  1.215446   
+1  HOBBIES_1_002_CA_1_validation  0.199388  0.161236  0.205667  0.242760   
+2  HOBBIES_1_003_CA_1_validation  0.277147  0.335329  0.368857  0.331217   
+3  HOBBIES_1_004_CA_1_validation  1.721259  1.612130  1.597278  1.611132   
+4  HOBBIES_1_005_CA_1_validation  0.838660  0.651957  0.863233  0.810816   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.901064  1.574070  1.788550  0.590099  0.519886  0.576799  0.478417   
+1  0.223856  0.255214  0.303730  0.290484  0.432103  0.408781  0.314062   
+2  0.375970  0.450461  0.515166  0.316349  0.317712  0.286545  0.441882   
+3  1.785851  2.567335  3.699606  1.779167  1.594384  1.481790  1.770197   
+4  0.853821  1.066025  1.226798  1.233101  1.018539  0.938892  0.857345   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.637265  0.988733  0.757947  0.764138  0.567030  0.604832  0.696253   
+1  0.391156  0.345962  0.412573  0.270280  0.280519  0.303781  0.274679   
+2  0.328063  0.762612  0.644620  0.385053  0.438222  0.432284  0.438852   
+3  2.094287  3.614436  3.049331  1.541502  1.255621  1.240644  1.319981   
+4  0.957605  1.574339  1.215831  0.582763  0.578253  0.567054  0.566777   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.689100  1.262827  0.737073  0.591494  0.503567  0.451516  0.537192   
+1  0.189600  0.413254  0.408292  0.281085  0.275883  0.247024  0.352035   
+2  0.556344  0.529080  0.639489  0.407123  0.308418  0.385161  0.509471   
+3  1.279521  2.380768  2.363101  2.066223  1.542221  1.621101  1.442936   
+4  0.634037  0.794443  0.784678  1.253716  1.037489  1.177607  1.216328   
+
+        F26       F27       F28  
+0  0.608139  0.716258  0.772190  
+1  0.309962  0.390585  0.426449  
+2  0.497016  0.464093  0.703597  
+3  2.031233  3.435008  4.644206  
+4  1.370319  2.184125  2.134625  
+
+
+
+#########################
+##### Fold 6 / 10
+#########################
+
+
+--- Train ---
+
+
+Load pickle from features/evaluator.pkl.
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 50,
+    "seed": 57,
+    "learning_rate": 0.03,
+    "subsample": 0.7,
+    "subsample_freq": 1,
+    "feature_fraction": 0.8,
+    "lambda_l2": 0.1,
+    "max_bin": 100,
+    "force_row_wise": true,
+    "verbose": -1
+} 
+
+
+
+Group ID: ('CA_1',), 1/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0926036
+[200]	valid_0's WRMSSE: 0.0918461
+[300]	valid_0's WRMSSE: 0.0918418
+Early stopping, best iteration is:
+[260]	valid_0's WRMSSE: 0.0917761
+
+
+Group ID: ('CA_2',), 2/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0983652
+[200]	valid_0's WRMSSE: 0.0967371
+[300]	valid_0's WRMSSE: 0.0963251
+[400]	valid_0's WRMSSE: 0.0963107
+Early stopping, best iteration is:
+[311]	valid_0's WRMSSE: 0.0962871
+
+
+Group ID: ('CA_3',), 3/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.127597
+[200]	valid_0's WRMSSE: 0.126057
+[300]	valid_0's WRMSSE: 0.125817
+[400]	valid_0's WRMSSE: 0.125702
+[500]	valid_0's WRMSSE: 0.12569
+Early stopping, best iteration is:
+[429]	valid_0's WRMSSE: 0.125665
+
+
+Group ID: ('CA_4',), 4/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0547525
+[200]	valid_0's WRMSSE: 0.0544966
+[300]	valid_0's WRMSSE: 0.054502
+Early stopping, best iteration is:
+[226]	valid_0's WRMSSE: 0.0544847
+
+
+Group ID: ('TX_1',), 5/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0666469
+[200]	valid_0's WRMSSE: 0.0659919
+[300]	valid_0's WRMSSE: 0.0660958
+Early stopping, best iteration is:
+[242]	valid_0's WRMSSE: 0.0659795
+
+
+Group ID: ('TX_2',), 6/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0755876
+[200]	valid_0's WRMSSE: 0.0745459
+[300]	valid_0's WRMSSE: 0.0744593
+[400]	valid_0's WRMSSE: 0.0745729
+Early stopping, best iteration is:
+[313]	valid_0's WRMSSE: 0.074447
+
+
+Group ID: ('TX_3',), 7/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0902371
+[200]	valid_0's WRMSSE: 0.0891351
+[300]	valid_0's WRMSSE: 0.0889819
+[400]	valid_0's WRMSSE: 0.0890413
+Early stopping, best iteration is:
+[350]	valid_0's WRMSSE: 0.0889442
+
+
+Group ID: ('WI_1',), 8/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0727128
+[200]	valid_0's WRMSSE: 0.0719163
+[300]	valid_0's WRMSSE: 0.0717643
+[400]	valid_0's WRMSSE: 0.0718334
+Early stopping, best iteration is:
+[301]	valid_0's WRMSSE: 0.0717614
+
+
+Group ID: ('WI_2',), 9/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.109069
+[200]	valid_0's WRMSSE: 0.108022
+[300]	valid_0's WRMSSE: 0.107895
+[400]	valid_0's WRMSSE: 0.108253
+Early stopping, best iteration is:
+[308]	valid_0's WRMSSE: 0.107874
+
+
+Group ID: ('WI_3',), 10/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0711305
+[200]	valid_0's WRMSSE: 0.0699929
+[300]	valid_0's WRMSSE: 0.0697732
+[400]	valid_0's WRMSSE: 0.0698426
+Early stopping, best iteration is:
+[323]	valid_0's WRMSSE: 0.0697209
+
+Dump pickle to result/model/v08007.pkl.
+
+
+--- Evaluation ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from features/evaluator.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/eval_data.pkl.
+
+Our val RMSE score is 2.082241679456949
+Our val WRMSSE score is 0.51697899688621
+
+
+--- Submission ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/submit_data.pkl.
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.774868  0.810830  0.893654  1.129437   
+1  HOBBIES_1_002_CA_1_validation  0.179457  0.138675  0.178714  0.219005   
+2  HOBBIES_1_003_CA_1_validation  0.277255  0.340181  0.371101  0.320395   
+3  HOBBIES_1_004_CA_1_validation  1.709957  1.647027  1.637351  1.690143   
+4  HOBBIES_1_005_CA_1_validation  0.820551  0.596575  0.811640  0.785443   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.860167  1.576994  1.759797  0.600323  0.527406  0.572993  0.475804   
+1  0.203784  0.221991  0.281561  0.287716  0.451943  0.417988  0.307298   
+2  0.383239  0.461978  0.556118  0.313032  0.309384  0.272944  0.450754   
+3  1.821264  2.233251  3.539588  1.736451  1.508272  1.343299  1.739633   
+4  0.855845  1.080701  1.272985  1.250171  1.047691  0.910968  0.845379   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.654441  1.037291  0.661193  0.768144  0.558157  0.591167  0.683220   
+1  0.414981  0.353548  0.403570  0.258795  0.273580  0.302505  0.259736   
+2  0.303576  0.855521  0.661562  0.388150  0.439290  0.434245  0.443353   
+3  2.132205  3.694833  3.319699  1.596342  1.249215  1.218066  1.341854   
+4  0.939768  1.712425  1.153055  0.567464  0.590166  0.588539  0.604782   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.734968  1.286314  0.703834  0.594984  0.518090  0.469376  0.556186   
+1  0.179677  0.400360  0.410312  0.277556  0.266828  0.233737  0.342159   
+2  0.574392  0.548002  0.672989  0.403513  0.307291  0.382430  0.537599   
+3  1.182038  2.478574  2.356734  2.079703  1.528157  1.561152  1.345584   
+4  0.654028  0.856054  0.842012  1.217387  1.012483  1.204076  1.232548   
+
+        F26       F27       F28  
+0  0.633005  0.766310  0.817960  
+1  0.314155  0.376083  0.418490  
+2  0.525451  0.473778  0.733892  
+3  2.090029  3.306542  4.295601  
+4  1.349163  2.325255  2.201223  
+
+
+
+#########################
+##### Fold 7 / 10
+#########################
+
+
+--- Train ---
+
+
+Load pickle from features/evaluator.pkl.
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 50,
+    "seed": 63,
+    "learning_rate": 0.03,
+    "subsample": 0.7,
+    "subsample_freq": 1,
+    "feature_fraction": 0.8,
+    "lambda_l2": 0.1,
+    "max_bin": 100,
+    "force_row_wise": true,
+    "verbose": -1
+} 
+
+
+
+Group ID: ('CA_1',), 1/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0922924
+[200]	valid_0's WRMSSE: 0.0915509
+[300]	valid_0's WRMSSE: 0.0917106
+Early stopping, best iteration is:
+[201]	valid_0's WRMSSE: 0.0915405
+
+
+Group ID: ('CA_2',), 2/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0985731
+[200]	valid_0's WRMSSE: 0.0968001
+[300]	valid_0's WRMSSE: 0.0965353
+[400]	valid_0's WRMSSE: 0.096643
+Early stopping, best iteration is:
+[322]	valid_0's WRMSSE: 0.0965058
+
+
+Group ID: ('CA_3',), 3/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.128033
+[200]	valid_0's WRMSSE: 0.126435
+[300]	valid_0's WRMSSE: 0.126039
+[400]	valid_0's WRMSSE: 0.125949
+Early stopping, best iteration is:
+[378]	valid_0's WRMSSE: 0.12591
+
+
+Group ID: ('CA_4',), 4/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0548597
+[200]	valid_0's WRMSSE: 0.0545404
+[300]	valid_0's WRMSSE: 0.0545416
+Early stopping, best iteration is:
+[208]	valid_0's WRMSSE: 0.0545222
+
+
+Group ID: ('TX_1',), 5/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0665312
+[200]	valid_0's WRMSSE: 0.0657998
+[300]	valid_0's WRMSSE: 0.065754
+[400]	valid_0's WRMSSE: 0.0658751
+Early stopping, best iteration is:
+[322]	valid_0's WRMSSE: 0.0657283
+
+
+Group ID: ('TX_2',), 6/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0753561
+[200]	valid_0's WRMSSE: 0.0743646
+[300]	valid_0's WRMSSE: 0.0743412
+Early stopping, best iteration is:
+[267]	valid_0's WRMSSE: 0.0742603
+
+
+Group ID: ('TX_3',), 7/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0903689
+[200]	valid_0's WRMSSE: 0.0893179
+[300]	valid_0's WRMSSE: 0.0892442
+Early stopping, best iteration is:
+[269]	valid_0's WRMSSE: 0.089191
+
+
+Group ID: ('WI_1',), 8/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0726199
+[200]	valid_0's WRMSSE: 0.0717642
+[300]	valid_0's WRMSSE: 0.0716769
+[400]	valid_0's WRMSSE: 0.0716481
+[500]	valid_0's WRMSSE: 0.071653
+Early stopping, best iteration is:
+[472]	valid_0's WRMSSE: 0.0716294
+
+
+Group ID: ('WI_2',), 9/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.108626
+[200]	valid_0's WRMSSE: 0.107409
+[300]	valid_0's WRMSSE: 0.107472
+Early stopping, best iteration is:
+[261]	valid_0's WRMSSE: 0.107351
+
+
+Group ID: ('WI_3',), 10/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0711391
+[200]	valid_0's WRMSSE: 0.0698705
+[300]	valid_0's WRMSSE: 0.0697472
+Early stopping, best iteration is:
+[295]	valid_0's WRMSSE: 0.0697299
+
+Dump pickle to result/model/v08007.pkl.
+
+
+--- Evaluation ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from features/evaluator.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/eval_data.pkl.
+
+Our val RMSE score is 2.0823505545719168
+Our val WRMSSE score is 0.5169011854112667
+
+
+--- Submission ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/submit_data.pkl.
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.770911  0.813429  0.912455  1.097747   
+1  HOBBIES_1_002_CA_1_validation  0.187325  0.155916  0.186809  0.214068   
+2  HOBBIES_1_003_CA_1_validation  0.267724  0.326746  0.365136  0.310947   
+3  HOBBIES_1_004_CA_1_validation  1.692988  1.707580  1.707201  1.689042   
+4  HOBBIES_1_005_CA_1_validation  0.847567  0.655174  0.839521  0.816336   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.817944  1.514010  1.827625  0.590170  0.540276  0.595227  0.509433   
+1  0.207314  0.240508  0.288749  0.298250  0.422966  0.403337  0.314844   
+2  0.367815  0.446482  0.538710  0.305716  0.297219  0.272899  0.438831   
+3  1.762461  2.323172  3.612566  1.757240  1.619461  1.456677  1.776425   
+4  0.865344  1.124915  1.251056  1.209955  1.007977  0.925459  0.835632   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.638567  1.004048  0.739689  0.801553  0.573614  0.622359  0.698543   
+1  0.390158  0.362467  0.433380  0.262564  0.277839  0.296495  0.263762   
+2  0.308014  0.787596  0.657722  0.362944  0.412028  0.439059  0.425868   
+3  2.118704  3.798269  3.387864  1.538084  1.287222  1.259534  1.310900   
+4  0.913015  1.655675  1.234602  0.580308  0.579704  0.587996  0.599440   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.727341  1.170287  0.715075  0.582367  0.512826  0.465228  0.556793   
+1  0.188336  0.403303  0.411111  0.271798  0.262119  0.239731  0.331722   
+2  0.540394  0.502308  0.637587  0.429635  0.315622  0.391893  0.532179   
+3  1.246440  2.412784  2.354733  2.137666  1.583521  1.622201  1.452079   
+4  0.639525  0.833470  0.838062  1.189877  1.033782  1.215375  1.219971   
+
+        F26       F27       F28  
+0  0.638187  0.771785  0.819371  
+1  0.308358  0.372045  0.418949  
+2  0.511480  0.471252  0.755821  
+3  2.185955  3.507849  4.380756  
+4  1.300292  2.223525  2.115167  
+
+
+
+#########################
+##### Fold 8 / 10
+#########################
+
+
+--- Train ---
+
+
+Load pickle from features/evaluator.pkl.
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 50,
+    "seed": 70,
+    "learning_rate": 0.03,
+    "subsample": 0.7,
+    "subsample_freq": 1,
+    "feature_fraction": 0.8,
+    "lambda_l2": 0.1,
+    "max_bin": 100,
+    "force_row_wise": true,
+    "verbose": -1
+} 
+
+
+
+Group ID: ('CA_1',), 1/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0923671
+[200]	valid_0's WRMSSE: 0.0917775
+[300]	valid_0's WRMSSE: 0.0918738
+Early stopping, best iteration is:
+[232]	valid_0's WRMSSE: 0.0917235
+
+
+Group ID: ('CA_2',), 2/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0985763
+[200]	valid_0's WRMSSE: 0.0969116
+[300]	valid_0's WRMSSE: 0.0965758
+[400]	valid_0's WRMSSE: 0.0965385
+Early stopping, best iteration is:
+[311]	valid_0's WRMSSE: 0.0965307
+
+
+Group ID: ('CA_3',), 3/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.127591
+[200]	valid_0's WRMSSE: 0.126332
+[300]	valid_0's WRMSSE: 0.12605
+[400]	valid_0's WRMSSE: 0.126099
+Early stopping, best iteration is:
+[317]	valid_0's WRMSSE: 0.126024
+
+
+Group ID: ('CA_4',), 4/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0548514
+[200]	valid_0's WRMSSE: 0.0545099
+[300]	valid_0's WRMSSE: 0.0545573
+Early stopping, best iteration is:
+[214]	valid_0's WRMSSE: 0.0545018
+
+
+Group ID: ('TX_1',), 5/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0667561
+[200]	valid_0's WRMSSE: 0.0661052
+[300]	valid_0's WRMSSE: 0.0661156
+Early stopping, best iteration is:
+[219]	valid_0's WRMSSE: 0.0660443
+
+
+Group ID: ('TX_2',), 6/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0753516
+[200]	valid_0's WRMSSE: 0.0744456
+[300]	valid_0's WRMSSE: 0.0744353
+Early stopping, best iteration is:
+[256]	valid_0's WRMSSE: 0.0743757
+
+
+Group ID: ('TX_3',), 7/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0902321
+[200]	valid_0's WRMSSE: 0.0892889
+[300]	valid_0's WRMSSE: 0.0891713
+Early stopping, best iteration is:
+[249]	valid_0's WRMSSE: 0.0891098
+
+
+Group ID: ('WI_1',), 8/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0723895
+[200]	valid_0's WRMSSE: 0.0716425
+[300]	valid_0's WRMSSE: 0.0715472
+[400]	valid_0's WRMSSE: 0.071541
+Early stopping, best iteration is:
+[350]	valid_0's WRMSSE: 0.0715033
+
+
+Group ID: ('WI_2',), 9/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.109053
+[200]	valid_0's WRMSSE: 0.108003
+[300]	valid_0's WRMSSE: 0.108603
+Early stopping, best iteration is:
+[202]	valid_0's WRMSSE: 0.108001
+
+
+Group ID: ('WI_3',), 10/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0710842
+[200]	valid_0's WRMSSE: 0.0697186
+[300]	valid_0's WRMSSE: 0.0695678
+[400]	valid_0's WRMSSE: 0.069774
+Early stopping, best iteration is:
+[323]	valid_0's WRMSSE: 0.0695451
+
+Dump pickle to result/model/v08007.pkl.
+
+
+--- Evaluation ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from features/evaluator.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/eval_data.pkl.
+
+Our val RMSE score is 2.0850630475068423
+Our val WRMSSE score is 0.5128155707810813
+
+
+--- Submission ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/submit_data.pkl.
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.784883  0.822213  0.897095  1.153165   
+1  HOBBIES_1_002_CA_1_validation  0.181298  0.142642  0.181000  0.215488   
+2  HOBBIES_1_003_CA_1_validation  0.264828  0.326240  0.361598  0.310611   
+3  HOBBIES_1_004_CA_1_validation  1.709915  1.547805  1.559998  1.669243   
+4  HOBBIES_1_005_CA_1_validation  0.840286  0.597162  0.862175  0.815028   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.827393  1.612641  2.031297  0.581990  0.546176  0.604657  0.461402   
+1  0.202798  0.232264  0.285448  0.298696  0.436469  0.408483  0.318662   
+2  0.378687  0.445981  0.545755  0.301164  0.298767  0.266445  0.422667   
+3  1.776039  2.337207  3.716298  1.756804  1.468497  1.362152  1.712109   
+4  0.849801  1.007822  1.212900  1.197194  1.033582  0.912636  0.840860   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.657395  1.073920  0.707772  0.773526  0.543408  0.624381  0.720667   
+1  0.406436  0.346424  0.423441  0.262577  0.279720  0.298411  0.264346   
+2  0.311073  0.782587  0.624364  0.368505  0.418386  0.415980  0.410955   
+3  2.143911  3.831143  3.371881  1.469838  1.186258  1.154793  1.276777   
+4  0.894663  1.703473  1.179157  0.590817  0.599734  0.602193  0.605517   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.740663  1.420079  0.739700  0.613193  0.529420  0.483185  0.569661   
+1  0.186447  0.403937  0.401747  0.271953  0.268021  0.238114  0.349503   
+2  0.563240  0.553708  0.635240  0.386391  0.309562  0.381046  0.516404   
+3  1.220402  2.289148  2.351708  2.094350  1.529357  1.584823  1.431891   
+4  0.664058  0.832388  0.842251  1.191745  1.026131  1.255642  1.257870   
+
+        F26       F27       F28  
+0  0.644528  0.791178  0.850990  
+1  0.314875  0.378497  0.444474  
+2  0.497981  0.479215  0.732953  
+3  2.093068  3.608520  4.819358  
+4  1.357390  2.325484  2.202023  
+
+
+
+#########################
+##### Fold 9 / 10
+#########################
+
+
+--- Train ---
+
+
+Load pickle from features/evaluator.pkl.
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 50,
+    "seed": 78,
+    "learning_rate": 0.03,
+    "subsample": 0.7,
+    "subsample_freq": 1,
+    "feature_fraction": 0.8,
+    "lambda_l2": 0.1,
+    "max_bin": 100,
+    "force_row_wise": true,
+    "verbose": -1
+} 
+
+
+
+Group ID: ('CA_1',), 1/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0922278
+[200]	valid_0's WRMSSE: 0.0914315
+[300]	valid_0's WRMSSE: 0.0914568
+Early stopping, best iteration is:
+[227]	valid_0's WRMSSE: 0.0913962
+
+
+Group ID: ('CA_2',), 2/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0983185
+[200]	valid_0's WRMSSE: 0.0966457
+[300]	valid_0's WRMSSE: 0.0963191
+Early stopping, best iteration is:
+[275]	valid_0's WRMSSE: 0.0962587
+
+
+Group ID: ('CA_3',), 3/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.128192
+[200]	valid_0's WRMSSE: 0.126857
+[300]	valid_0's WRMSSE: 0.126518
+[400]	valid_0's WRMSSE: 0.126495
+[500]	valid_0's WRMSSE: 0.12637
+[600]	valid_0's WRMSSE: 0.12636
+Early stopping, best iteration is:
+[577]	valid_0's WRMSSE: 0.126321
+
+
+Group ID: ('CA_4',), 4/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0548501
+[200]	valid_0's WRMSSE: 0.0544778
+[300]	valid_0's WRMSSE: 0.0544934
+Early stopping, best iteration is:
+[245]	valid_0's WRMSSE: 0.0544657
+
+
+Group ID: ('TX_1',), 5/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.066657
+[200]	valid_0's WRMSSE: 0.065954
+[300]	valid_0's WRMSSE: 0.0660071
+Early stopping, best iteration is:
+[227]	valid_0's WRMSSE: 0.065899
+
+
+Group ID: ('TX_2',), 6/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.075306
+[200]	valid_0's WRMSSE: 0.0743127
+[300]	valid_0's WRMSSE: 0.0743634
+Early stopping, best iteration is:
+[230]	valid_0's WRMSSE: 0.0742666
+
+
+Group ID: ('TX_3',), 7/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0897999
+[200]	valid_0's WRMSSE: 0.088742
+[300]	valid_0's WRMSSE: 0.0884788
+Early stopping, best iteration is:
+[263]	valid_0's WRMSSE: 0.0884742
+
+
+Group ID: ('WI_1',), 8/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0725028
+[200]	valid_0's WRMSSE: 0.0716578
+[300]	valid_0's WRMSSE: 0.0715966
+Early stopping, best iteration is:
+[261]	valid_0's WRMSSE: 0.0715341
+
+
+Group ID: ('WI_2',), 9/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.10838
+[200]	valid_0's WRMSSE: 0.107885
+[300]	valid_0's WRMSSE: 0.107783
+Early stopping, best iteration is:
+[260]	valid_0's WRMSSE: 0.10766
+
+
+Group ID: ('WI_3',), 10/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0715304
+[200]	valid_0's WRMSSE: 0.0702198
+[300]	valid_0's WRMSSE: 0.0700618
+Early stopping, best iteration is:
+[270]	valid_0's WRMSSE: 0.0699977
+
+Dump pickle to result/model/v08007.pkl.
+
+
+--- Evaluation ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from features/evaluator.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/eval_data.pkl.
+
+Our val RMSE score is 2.0902205804500458
+Our val WRMSSE score is 0.5113319780029069
+
+
+--- Submission ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/submit_data.pkl.
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.773715  0.859071  0.910833  1.157277   
+1  HOBBIES_1_002_CA_1_validation  0.187991  0.151420  0.181592  0.220144   
+2  HOBBIES_1_003_CA_1_validation  0.265145  0.339218  0.367822  0.319572   
+3  HOBBIES_1_004_CA_1_validation  1.620641  1.740647  1.800362  1.777065   
+4  HOBBIES_1_005_CA_1_validation  0.819140  0.628173  0.843316  0.791029   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.845346  1.527377  1.820492  0.551149  0.528867  0.583146  0.459314   
+1  0.212660  0.231645  0.277329  0.295672  0.406645  0.394851  0.311574   
+2  0.357970  0.430653  0.549528  0.308604  0.306636  0.267912  0.463912   
+3  1.739396  2.350478  3.389240  1.760799  1.559834  1.366013  1.669217   
+4  0.819303  1.041075  1.222896  1.201702  1.021732  0.933308  0.847190   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.603416  1.052888  0.660732  0.762104  0.537517  0.599975  0.682780   
+1  0.393050  0.352045  0.402588  0.269436  0.276278  0.292894  0.272055   
+2  0.309961  0.787505  0.605262  0.378742  0.458347  0.439907  0.453490   
+3  2.109467  3.729484  3.205761  1.492790  1.225151  1.299953  1.278786   
+4  0.929002  1.714758  1.174836  0.585099  0.565752  0.572296  0.573397   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.678678  1.342350  0.696765  0.570036  0.510982  0.462329  0.553823   
+1  0.190259  0.411331  0.414167  0.264949  0.252406  0.235181  0.329983   
+2  0.585815  0.533219  0.624238  0.413589  0.294754  0.382024  0.555031   
+3  1.242623  2.322867  2.350595  2.099161  1.574222  1.578869  1.441001   
+4  0.648321  0.827949  0.821569  1.220680  1.034786  1.219978  1.229878   
+
+        F26       F27       F28  
+0  0.616444  0.771305  0.764662  
+1  0.307610  0.369031  0.435514  
+2  0.528719  0.479495  0.770398  
+3  2.057558  3.261592  4.069829  
+4  1.369069  2.411206  2.235817  
+
+
+
+#########################
+##### Fold 10 / 10
+#########################
+
+
+--- Train ---
+
+
+Load pickle from features/evaluator.pkl.
+
+Parameters:
+ {
+    "boosting": "gbdt",
+    "objective": "tweedie",
+    "tweedie_variance_power": 1,
+    "metric": "custom",
+    "num_leaves": 127,
+    "min_data_in_leaf": 50,
+    "seed": 87,
+    "learning_rate": 0.03,
+    "subsample": 0.7,
+    "subsample_freq": 1,
+    "feature_fraction": 0.8,
+    "lambda_l2": 0.1,
+    "max_bin": 100,
+    "force_row_wise": true,
+    "verbose": -1
+} 
+
+
+
+Group ID: ('CA_1',), 1/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0925096
+[200]	valid_0's WRMSSE: 0.0917421
+[300]	valid_0's WRMSSE: 0.0917863
+Early stopping, best iteration is:
+[232]	valid_0's WRMSSE: 0.0916857
+
+
+Group ID: ('CA_2',), 2/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0987691
+[200]	valid_0's WRMSSE: 0.0969824
+[300]	valid_0's WRMSSE: 0.0967627
+[400]	valid_0's WRMSSE: 0.096786
+Early stopping, best iteration is:
+[348]	valid_0's WRMSSE: 0.0966837
+
+
+Group ID: ('CA_3',), 3/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.127818
+[200]	valid_0's WRMSSE: 0.126409
+[300]	valid_0's WRMSSE: 0.126151
+[400]	valid_0's WRMSSE: 0.126283
+Early stopping, best iteration is:
+[320]	valid_0's WRMSSE: 0.126135
+
+
+Group ID: ('CA_4',), 4/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.054758
+[200]	valid_0's WRMSSE: 0.0544397
+Early stopping, best iteration is:
+[193]	valid_0's WRMSSE: 0.0544278
+
+
+Group ID: ('TX_1',), 5/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0666389
+[200]	valid_0's WRMSSE: 0.0659138
+[300]	valid_0's WRMSSE: 0.0658197
+[400]	valid_0's WRMSSE: 0.0660217
+Early stopping, best iteration is:
+[309]	valid_0's WRMSSE: 0.0658103
+
+
+Group ID: ('TX_2',), 6/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0751739
+[200]	valid_0's WRMSSE: 0.0742189
+[300]	valid_0's WRMSSE: 0.0742794
+Early stopping, best iteration is:
+[213]	valid_0's WRMSSE: 0.074161
+
+
+Group ID: ('TX_3',), 7/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0908048
+[200]	valid_0's WRMSSE: 0.0897627
+[300]	valid_0's WRMSSE: 0.0896404
+Early stopping, best iteration is:
+[275]	valid_0's WRMSSE: 0.0895658
+
+
+Group ID: ('WI_1',), 8/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0725615
+[200]	valid_0's WRMSSE: 0.0718722
+[300]	valid_0's WRMSSE: 0.0717609
+Early stopping, best iteration is:
+[264]	valid_0's WRMSSE: 0.0717496
+
+
+Group ID: ('WI_2',), 9/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.108397
+[200]	valid_0's WRMSSE: 0.107576
+Early stopping, best iteration is:
+[149]	valid_0's WRMSSE: 0.107373
+
+
+Group ID: ('WI_3',), 10/10
+Dump pickle to result/feature_cols/v08007.pkl.
+[LightGBM] [Info] Saving data to binary file tmp_train_set.bin
+[LightGBM] [Info] Saving data to binary file tmp_valid_set.bin
+Training until validation scores don't improve for 100 rounds
+[100]	valid_0's WRMSSE: 0.0711466
+[200]	valid_0's WRMSSE: 0.0699731
+[300]	valid_0's WRMSSE: 0.0698279
+[400]	valid_0's WRMSSE: 0.0699392
+Early stopping, best iteration is:
+[305]	valid_0's WRMSSE: 0.0698131
+
+Dump pickle to result/model/v08007.pkl.
+
+
+--- Evaluation ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from features/evaluator.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/eval_data.pkl.
+
+Our val RMSE score is 2.0802615247502745
+Our val WRMSSE score is 0.514429017110475
+
+
+--- Submission ---
+
+
+Load pickle from result/model/v08007.pkl.
+Load pickle from result/feature_cols/v08007.pkl.
+Load pickle from features/submit_data.pkl.
+(60980, 29)
+                              id        F1        F2        F3        F4  \
+0  HOBBIES_1_001_CA_1_validation  0.820296  0.884787  0.959202  1.192866   
+1  HOBBIES_1_002_CA_1_validation  0.182162  0.142948  0.181486  0.212038   
+2  HOBBIES_1_003_CA_1_validation  0.261425  0.318249  0.367100  0.307970   
+3  HOBBIES_1_004_CA_1_validation  1.699797  1.614811  1.571326  1.647424   
+4  HOBBIES_1_005_CA_1_validation  0.821238  0.645541  0.842822  0.797249   
+
+         F5        F6        F7        F8        F9       F10       F11  \
+0  0.911577  1.454560  1.899631  0.571185  0.544840  0.595795  0.455174   
+1  0.208855  0.240648  0.281929  0.302801  0.421649  0.402575  0.318168   
+2  0.376128  0.432407  0.536771  0.291250  0.288659  0.259944  0.443662   
+3  1.807702  2.429248  3.522924  1.709227  1.556179  1.389224  1.715767   
+4  0.845954  1.101784  1.247221  1.209468  1.002116  0.930436  0.817174   
+
+        F12       F13       F14       F15       F16       F17       F18  \
+0  0.636544  1.099026  0.763564  0.801281  0.546971  0.596880  0.709896   
+1  0.396173  0.363573  0.406891  0.263538  0.280837  0.294529  0.271559   
+2  0.314669  0.808882  0.644488  0.356493  0.425702  0.430677  0.429008   
+3  2.010376  3.820048  3.281974  1.435971  1.209640  1.201447  1.309731   
+4  0.917031  1.727242  1.243540  0.584300  0.588390  0.591360  0.594860   
+
+        F19       F20       F21       F22       F23       F24       F25  \
+0  0.710300  1.305409  0.737257  0.596021  0.500810  0.434042  0.561788   
+1  0.187061  0.406545  0.410574  0.273840  0.258532  0.235115  0.335830   
+2  0.575978  0.540684  0.640871  0.391792  0.293166  0.370087  0.529883   
+3  1.255962  2.275838  2.406753  2.117087  1.550350  1.596656  1.370784   
+4  0.649916  0.852102  0.854850  1.197787  1.024646  1.203275  1.210889   
+
+        F26       F27       F28  
+0  0.632607  0.741442  0.804821  
+1  0.305158  0.378799  0.420818  
+2  0.517079  0.464609  0.736169  
+3  2.094129  3.472310  4.592490  
+4  1.308709  2.367787  2.233015  

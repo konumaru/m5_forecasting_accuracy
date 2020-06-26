@@ -26,6 +26,9 @@ numba = "^0.48.0"
 jupyter = "^1.0.0"
 workalendar = "^10.0.0"
 xgboost = "^1.1.1"
+optuna = "^1.5.0"
+catboost = "^0.23.2"
+missingno = "^0.4.2"
 
 [tool.poetry.dev-dependencies]
 pycodestyle = "^2.5.0"

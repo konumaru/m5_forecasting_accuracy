@@ -43,6 +43,7 @@ from script import cache_result
 from script import reduce_mem_usage
 from script import load_pickle, dump_pickle
 from script import get_groups
+from script.model import LightGBM_Wrapper, XGBoost_Wrapper
 
 
 # Define global Variables.
@@ -58,7 +59,7 @@ MODEL_PATH = f'result/model/{VERSION}.pkl'
 IMPORTANCE_PATH = f'result/importance/{VERSION}.png'
 SCORE_PATH = f'result/score/{VERSION}.pkl'
 
-GROUP_ID = ('store_id', 'dept_id')  # one version, one group
+GROUP_ID = ('dept_id',)  # one version, one group
 GROUPS = get_groups(GROUP_ID)
 
 """ Transform
@@ -155,6 +156,25 @@ def parse_sales_train():
     return train
 
 
+def days_from_last_sales(df: pd.DataFrame):
+    # Define variables and dataframes.
+    use_cols = ['id', 'd', 'sales']
+    srd_df = df[use_cols]
+    # Convert target to binary
+    srd_df['non_zero'] = (srd_df['sales'] > 0)
+    srd_df = srd_df.assign(
+        non_zero_lag=srd_df.groupby(['id'])['non_zero'].transform(
+            lambda x: x.shift(28).rolling(2000, 1).sum()).fillna(-1)
+    )
+
+    temp_df = srd_df[['id', 'd', 'non_zero_lag']].drop_duplicates(subset=['id', 'non_zero_lag'])
+    temp_df.columns = ['id', 'd_min', 'non_zero_lag']
+
+    srd_df = srd_df.merge(temp_df, on=['id', 'non_zero_lag'], how='left')
+    srd_df['days_from_last_sales'] = srd_df['d'] - srd_df['d_min']
+    return srd_df['days_from_last_sales']
+
+
 @cache_result(filename='melted_and_merged_train', use_cache=True)
 def melted_and_merged_train(n_row):
     # Load Data
@@ -172,6 +192,9 @@ def melted_and_merged_train(n_row):
     # replace sales from 0 to nan.
     isnan_sell_price = df['sell_price'].isnull().values
     df.loc[isnan_sell_price, 'sales'] = np.nan
+    # Fill nan Out of Stock Data
+    df['days_from_last_sales'] = days_from_last_sales(df)
+    df.loc[df['days_from_last_sales'] > 7, 'sales'] = np.nan
     # Label Encoding
     label_cols = ['item_id', 'dept_id', 'cat_id', 'store_id', 'state_id']
     for c in label_cols:
@@ -307,27 +330,6 @@ def price_simple_feature():
 
     dst_df = dst_df.reset_index(drop=True)
     return dst_df.pipe(reduce_mem_usage)
-
-
-@cache_result(filename='days_from_last_sales', use_cache=True)
-def days_from_last_sales():
-    # Define variables and dataframes.
-    shift_days = 28
-    use_cols = ['id', 'd', 'sales']
-    srd_df = pd.read_pickle('features/melted_and_merged_train.pkl')[use_cols]
-    # Convert target to binary
-    srd_df['non_zero'] = (srd_df['sales'] > 0)
-    srd_df = srd_df.assign(
-        non_zero_lag=srd_df.groupby(['id'])['non_zero'].transform(
-            lambda x: x.shift(28).rolling(2000, 1).sum()).fillna(-1)
-    )
-
-    temp_df = srd_df[['id', 'd', 'non_zero_lag']].drop_duplicates(subset=['id', 'non_zero_lag'])
-    temp_df.columns = ['id', 'd_min', 'non_zero_lag']
-
-    srd_df = srd_df.merge(temp_df, on=['id', 'non_zero_lag'], how='left')
-    srd_df['days_from_last_sales'] = srd_df['d'] - srd_df['d_min']
-    return srd_df[['days_from_last_sales']]
 
 
 @cache_result(filename='simple_target_encoding', use_cache=True)
@@ -484,7 +486,6 @@ def run_create_features():
         sales_lag_and_roll,
         total_sales_lag_and_roll,
         price_simple_feature,
-        days_from_last_sales,
         simple_target_encoding,
         simple_total_sales_encoding,
         hierarchical_bayesian_target_encoding
@@ -591,7 +592,7 @@ class CustomWRMSSE(WRMSSEEvaluator):
         fobj_weight, fojb_scale = self.get_series_weight(train_ids)
         self.custom_fobj_weight = 2 * np.square(fobj_weight) / fojb_scale
 
-    def custom_fobj(self, preds, dtrain):
+    def lgb_custom_fobj(self, preds, dtrain):
         actual = dtrain.get_label()
         weight = self.custom_fobj_weight
 
@@ -617,111 +618,6 @@ def get_evaluator():
 Input: all train data
 Output: models
 """
-
-
-class LGBM_Wrapper():
-
-    def __init__(self):
-        self.model = None
-        self.importance = None
-
-        self.train_bin_path = 'tmp_train_set.bin'
-        self.valid_bin_path = 'tmp_valid_set.bin'
-
-    def _remove_bin_file(self, filename):
-        if os.path.exists(filename):
-            os.remove(filename)
-
-    def dataset_to_binary(self, train_dataset, valid_dataset):
-        # Remove Binary Cache.
-        self._remove_bin_file(self.train_bin_path)
-        self._remove_bin_file(self.valid_bin_path)
-        # Save Binary Cache.
-        train_dataset.save_binary(self.train_bin_path)
-        valid_dataset.save_binary(self.valid_bin_path)
-        # Reload Binary Cache.
-        train_dataset = lgb.Dataset(self.train_bin_path)
-        valid_dataset = lgb.Dataset(self.valid_bin_path)
-        return train_dataset, valid_dataset
-
-    def fit(self, params, train_param,
-            X_train, y_train, X_valid, y_valid,
-            train_weight=None, valid_weight=None):
-        train_dataset = lgb.Dataset(
-            X_train, y_train, feature_name=X_train.columns.tolist(), weight=train_weight)
-        valid_dataset = lgb.Dataset(
-            X_valid, y_valid, weight=valid_weight, reference=train_dataset)
-
-        train_dataset, valid_dataset = self.dataset_to_binary(train_dataset, valid_dataset)
-
-        self.model = lgb.train(
-            params,
-            train_dataset,
-            valid_sets=[valid_dataset],
-            **train_param
-        )
-        # Remove Binary Cache.
-        self._remove_bin_file(self.train_bin_path)
-        self._remove_bin_file(self.valid_bin_path)
-
-    def predict(self, data):
-        return self.model.predict(data, num_iteration=self.model.best_iteration)
-
-    def model_importance(self):
-        model = self.model
-        f_name = model.feature_name()
-        f_imp = model.feature_importance(
-            importance_type='gain', iteration=model.best_iteration)
-
-        importance = pd.Series(dict(zip(f_name, f_imp)), name='Importance').to_frame()
-        importance.sort_values(by='Importance', inplace=True)
-        return importance
-
-    def save_importance(self, filepath, max_num_features=50, figsize=(18, 25)):
-        imp_df = self.model_importance()
-        # Plot Importance DataFrame.
-        plt.figure(figsize=figsize)
-        imp_df[-max_num_features:].plot(
-            kind='barh', title='Feature importance', figsize=figsize,
-            y='Importance', align="center"
-        )
-        plt.savefig(filepath)
-        plt.close('all')
-
-
-class XGBoost_Wrapper():
-    def __init__(self):
-        self.model = None
-
-    def fit(self, params, train_param,
-            X_train, y_train, X_valid, y_valid,
-            train_weight=None, valid_weight=None):
-        train_dataset = xgb.DMatrix(X_train, label=y_train, weight=train_weight)
-        valid_dataset = xgb.DMatrix(X_valid, label=y_valid, weight=valid_weight)
-
-        self.model = xgb.train(
-            params,
-            train_dataset,
-            evals=[(valid_dataset, 'valid')],
-            **train_param
-        )
-
-    def predict(self, data):
-        data = xgb.DMatrix(data)
-        return self.model.predict(data, ntree_limit=self.model.best_ntree_limit)
-
-    def save_importance(self, filepath, max_num_features=50, figsize=(18, 25)):
-        importance = pd.Series(self.model.get_fscore(), name='Importance').to_frame()
-        importance.sort_values(by='Importance', inplace=True)
-
-        # Plot Importance DataFrame.
-        plt.figure(figsize=figsize)
-        importance[-max_num_features:].plot(
-            kind='barh', title='Feature importance', figsize=figsize,
-            y='Importance', align="center"
-        )
-        plt.savefig(filepath)
-        plt.close('all')
 
 
 def train_valid_split(df, go_back_days=28):
@@ -765,7 +661,7 @@ def train_group_models():
             'feature_fraction': 0.5,  # ~v05006, 0.8
             # 'lambda_l1': 0.1, # v06012, 0.554 -> 0.561
             'lambda_l2': 0.1,  # v06012, 0.554 -> 0.555
-            # 'max_bin': 100,  # Score did not change.
+            'max_bin': 100,  # Score did not change.
             'force_row_wise': True,
             'verbose': -1
         },
@@ -797,17 +693,17 @@ def train_group_models():
 
         use_weight = True
         if use_weight:
-            weight_decayed = get_decayed_weights(train_data, 90)
-            weight_pastNonZeroRatio = train_data['sales_rolling_NonZeroRatio_t30'].values
             weight, scale = evaluator.get_series_weight(train_data['id'])
-            train_weight = (10000 * weight / np.log1p(scale)) *\
-                (1.3 * weight_decayed + weight_pastNonZeroRatio)
+            wrmsse_weight = 10000 * weight / np.log1p(scale)
 
-            weight, scale = evaluator.get_series_weight(valid_data['id'])
-            valid_weight = (10000 * weight / np.sqrt(scale))
+            weight_decayed = get_decayed_weights(train_data, 90)
+            pastNonZeroRatio = train_data['sales_rolling_NonZeroRatio_t30'].values
+            sample_weight = weight_decayed + pastNonZeroRatio
 
-        is_set_fecal_weight = True
-        if is_set_fecal_weight:
+            train_weight = wrmsse_weight * sample_weight
+
+        is_set_feval_weight = True
+        if is_set_feval_weight:
             evaluator.set_feval_weight(valid_data['id'].drop_duplicates(keep='last'))
 
         X_train, y_train = train_data[features], train_data['sales']
@@ -817,7 +713,7 @@ def train_group_models():
         if '_'.join(g_id) in ['HOBBIES', 'HOUSEHOLD_1']:
             params['model_params']['learning_rate'] = 0.01
 
-        model = LGBM_Wrapper()
+        model = LightGBM_Wrapper()
         model.fit(
             params['model_params'],
             params['train_params'],
@@ -826,7 +722,7 @@ def train_group_models():
             X_valid,
             y_valid,
             train_weight=train_weight,
-            # valid_weight=valid_weight
+            valid_weight=None
         )
         # Save Importance
         IMPORTANCE_PATH = f'result/importance/{VERSION}/{g_id}.png'

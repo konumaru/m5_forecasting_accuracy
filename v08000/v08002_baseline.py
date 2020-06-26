@@ -43,11 +43,12 @@ from script import cache_result
 from script import reduce_mem_usage
 from script import load_pickle, dump_pickle
 from script import get_groups
+from script.model import LightGBM_Wrapper
 
 
 # Define global Variables.
 IS_TEST = True
-SEED = 4222
+SEED = 42
 VERSION = str(__file__).split('_')[0]
 TARGET = 'sales'
 NUM_ITEMS = 30490
@@ -58,7 +59,7 @@ MODEL_PATH = f'result/model/{VERSION}.pkl'
 IMPORTANCE_PATH = f'result/importance/{VERSION}.png'
 SCORE_PATH = f'result/score/{VERSION}.pkl'
 
-GROUP_ID = ('dept_id',)  # one version, one group
+GROUP_ID = ('store_id',)  # one version, one group
 GROUPS = get_groups(GROUP_ID)
 
 """ Transform
@@ -591,7 +592,7 @@ class CustomWRMSSE(WRMSSEEvaluator):
         fobj_weight, fojb_scale = self.get_series_weight(train_ids)
         self.custom_fobj_weight = 2 * np.square(fobj_weight) / fojb_scale
 
-    def custom_fobj(self, preds, dtrain):
+    def lgb_custom_fobj(self, preds, dtrain):
         actual = dtrain.get_label()
         weight = self.custom_fobj_weight
 
@@ -619,111 +620,6 @@ Output: models
 """
 
 
-class LGBM_Wrapper():
-
-    def __init__(self):
-        self.model = None
-        self.importance = None
-
-        self.train_bin_path = 'tmp_train_set.bin'
-        self.valid_bin_path = 'tmp_valid_set.bin'
-
-    def _remove_bin_file(self, filename):
-        if os.path.exists(filename):
-            os.remove(filename)
-
-    def dataset_to_binary(self, train_dataset, valid_dataset):
-        # Remove Binary Cache.
-        self._remove_bin_file(self.train_bin_path)
-        self._remove_bin_file(self.valid_bin_path)
-        # Save Binary Cache.
-        train_dataset.save_binary(self.train_bin_path)
-        valid_dataset.save_binary(self.valid_bin_path)
-        # Reload Binary Cache.
-        train_dataset = lgb.Dataset(self.train_bin_path)
-        valid_dataset = lgb.Dataset(self.valid_bin_path)
-        return train_dataset, valid_dataset
-
-    def fit(self, params, train_param,
-            X_train, y_train, X_valid, y_valid,
-            train_weight=None, valid_weight=None):
-        train_dataset = lgb.Dataset(
-            X_train, y_train, feature_name=X_train.columns.tolist(), weight=train_weight)
-        valid_dataset = lgb.Dataset(
-            X_valid, y_valid, weight=valid_weight, reference=train_dataset)
-
-        train_dataset, valid_dataset = self.dataset_to_binary(train_dataset, valid_dataset)
-
-        self.model = lgb.train(
-            params,
-            train_dataset,
-            valid_sets=[valid_dataset],
-            **train_param
-        )
-        # Remove Binary Cache.
-        self._remove_bin_file(self.train_bin_path)
-        self._remove_bin_file(self.valid_bin_path)
-
-    def predict(self, data):
-        return self.model.predict(data, num_iteration=self.model.best_iteration)
-
-    def model_importance(self):
-        model = self.model
-        f_name = model.feature_name()
-        f_imp = model.feature_importance(
-            importance_type='gain', iteration=model.best_iteration)
-
-        importance = pd.Series(dict(zip(f_name, f_imp)), name='Importance').to_frame()
-        importance.sort_values(by='Importance', inplace=True)
-        return importance
-
-    def save_importance(self, filepath, max_num_features=50, figsize=(18, 25)):
-        imp_df = self.model_importance()
-        # Plot Importance DataFrame.
-        plt.figure(figsize=figsize)
-        imp_df[-max_num_features:].plot(
-            kind='barh', title='Feature importance', figsize=figsize,
-            y='Importance', align="center"
-        )
-        plt.savefig(filepath)
-        plt.close('all')
-
-
-class XGBoost_Wrapper():
-    def __init__(self):
-        self.model = None
-
-    def fit(self, params, train_param,
-            X_train, y_train, X_valid, y_valid,
-            train_weight=None, valid_weight=None):
-        train_dataset = xgb.DMatrix(X_train, label=y_train, weight=train_weight)
-        valid_dataset = xgb.DMatrix(X_valid, label=y_valid, weight=valid_weight)
-
-        self.model = xgb.train(
-            params,
-            train_dataset,
-            evals=[(valid_dataset, 'valid')],
-            **train_param
-        )
-
-    def predict(self, data):
-        data = xgb.DMatrix(data)
-        return self.model.predict(data, ntree_limit=self.model.best_ntree_limit)
-
-    def save_importance(self, filepath, max_num_features=50, figsize=(18, 25)):
-        importance = pd.Series(self.model.get_fscore(), name='Importance').to_frame()
-        importance.sort_values(by='Importance', inplace=True)
-
-        # Plot Importance DataFrame.
-        plt.figure(figsize=figsize)
-        importance[-max_num_features:].plot(
-            kind='barh', title='Feature importance', figsize=figsize,
-            y='Importance', align="center"
-        )
-        plt.savefig(filepath)
-        plt.close('all')
-
-
 def train_valid_split(df, go_back_days=28):
     valid_duration = 28
 
@@ -747,7 +643,7 @@ def get_decayed_weights(df, days_keep_weight=0):
     return weight
 
 
-def train_group_models():
+def train_group_models(seed=SEED):
     evaluator = load_pickle(EVALUATOR_PATH)
 
     params = {
@@ -758,14 +654,14 @@ def train_group_models():
             'metric': 'custom',
             'num_leaves': 2**7 - 1,
             'min_data_in_leaf': 50,
-            'seed': SEED,
+            'seed': seed,
             'learning_rate': 0.03,  # 0.1
             'subsample': 0.5,  # ~v05006, 0.8
             'subsample_freq': 1,
             'feature_fraction': 0.5,  # ~v05006, 0.8
             # 'lambda_l1': 0.1, # v06012, 0.554 -> 0.561
             'lambda_l2': 0.1,  # v06012, 0.554 -> 0.555
-            # 'max_bin': 100,  # Score did not change.
+            'max_bin': 100,  # Score did not change.
             'force_row_wise': True,
             'verbose': -1
         },
@@ -797,17 +693,17 @@ def train_group_models():
 
         use_weight = True
         if use_weight:
-            weight_decayed = get_decayed_weights(train_data, 90)
-            weight_pastNonZeroRatio = train_data['sales_rolling_NonZeroRatio_t30'].values
             weight, scale = evaluator.get_series_weight(train_data['id'])
-            train_weight = (10000 * weight / np.log1p(scale)) *\
-                (1.3 * weight_decayed + weight_pastNonZeroRatio)
+            wrmsse_weight = 10000 * weight / np.log1p(scale)
 
-            weight, scale = evaluator.get_series_weight(valid_data['id'])
-            valid_weight = (10000 * weight / np.sqrt(scale))
+            weight_decayed = get_decayed_weights(train_data, 90)
+            pastNonZeroRatio = train_data['sales_rolling_NonZeroRatio_t30'].values
+            sample_weight = weight_decayed + pastNonZeroRatio
 
-        is_set_fecal_weight = True
-        if is_set_fecal_weight:
+            train_weight = wrmsse_weight * sample_weight
+
+        is_set_feval_weight = True
+        if is_set_feval_weight:
             evaluator.set_feval_weight(valid_data['id'].drop_duplicates(keep='last'))
 
         X_train, y_train = train_data[features], train_data['sales']
@@ -817,7 +713,7 @@ def train_group_models():
         if '_'.join(g_id) in ['HOBBIES', 'HOUSEHOLD_1']:
             params['model_params']['learning_rate'] = 0.01
 
-        model = LGBM_Wrapper()
+        model = LightGBM_Wrapper()
         model.fit(
             params['model_params'],
             params['train_params'],
@@ -826,19 +722,19 @@ def train_group_models():
             X_valid,
             y_valid,
             train_weight=train_weight,
-            # valid_weight=valid_weight
+            valid_weight=None
         )
         # Save Importance
-        IMPORTANCE_PATH = f'result/importance/{VERSION}/{g_id}.png'
-        os.makedirs(f'result/importance/{VERSION}', exist_ok=True)
+        IMPORTANCE_PATH = f'result/importance/{VERSION}/{seed}/{g_id}.png'
+        os.makedirs(f'result/importance/{VERSION}/{seed}', exist_ok=True)
         model.save_importance(filepath=IMPORTANCE_PATH, max_num_features=80, figsize=(25, 30))
         # Add Model
         group_models[''.join(g_id)] = model
     return group_models
 
 
-def run_train():
-    models = train_group_models()
+def run_train(seed=SEED):
+    models = train_group_models(seed)
     print('')
     dump_pickle(models, MODEL_PATH)
 
@@ -850,7 +746,7 @@ Output: validation scores
 """
 
 
-def run_evaluation():
+def run_evaluation(seed=SEED):
     scores = {}
     lgb_models = load_pickle(MODEL_PATH)
     evaluator = load_pickle(EVALUATOR_PATH)
@@ -873,7 +769,9 @@ def run_evaluation():
     # Export Score and evaluation data
     with open(f'result/score/{VERSION}.json', 'w') as f:
         json.dump(scores, f, indent=4)
-    dump_filepath = f'result/evaluation/{VERSION}_{scores["WRMSSE"]:.05}.csv.gz'
+
+    os.makedirs(f'result/evaluation/{VERSION}', exist_ok=True)
+    dump_filepath = f'result/evaluation/{VERSION}/{seed}_{scores["WRMSSE"]:.05}.csv.gz'
     eval_df = pd.DataFrame({
         'id': eval_data['id'].values,
         'pred': valid_pred
@@ -887,7 +785,7 @@ Output: submision file
 """
 
 
-def run_submission():
+def run_submission(seed=SEED):
     # Load Data.
     lgb_models = load_pickle(MODEL_PATH)
     features = load_pickle(FEATURECOLS_PATH)
@@ -918,7 +816,12 @@ def run_submission():
         scores = json.load(f)['WRMSSE']
     sample_submission = pd.read_pickle('../data/reduced/sample_submission.pkl')
     submission = sample_submission[['id']].merge(submission, how='left', on='id')
-    submission.to_csv(f'submit/{VERSION}__{scores:.05}.csv.gz', index=False, compression='gzip')
+    os.makedirs(f'submit/{VERSION}/', exist_ok=True)
+    submission.to_csv(
+        f'submit/{VERSION}/{seed}_{scores:.05}.csv.gz',
+        index=False,
+        compression='gzip'
+    )
 
     print(submission.shape)
     print(submission.head())
@@ -940,14 +843,22 @@ def main():
     print('\n\n--- Define Evaluator ---\n\n')
     _ = get_evaluator()
 
-    print('\n\n--- Train ---\n\n')
-    run_train()
+    seed = SEED
+    n_fold = 3
+    for i in range(n_fold):
+        seed += i
+        print('#' * 25)
+        print('#' * 5, f'Fold {i+1} / {n_fold}')
+        print('#' * 25)
 
-    print('\n\n--- Evaluation ---\n\n')
-    run_evaluation()
+        print('\n\n--- Train ---\n\n')
+        run_train(seed)
 
-    print('\n\n--- Submission ---\n\n')
-    run_submission()
+        print('\n\n--- Evaluation ---\n\n')
+        run_evaluation(seed)
+
+        print('\n\n--- Submission ---\n\n')
+        run_submission(seed)
 
 
 if __name__ == '__main__':
